@@ -87,11 +87,11 @@ CMS and framework:
 
 Read Nginx access.log from a file (text or Gzip) or from terminal pipe and parse it into an [SQLite](https://www.sqlite.org/) database.
 
-Analyze LDB parsed data and anontate entries with aditionnal information based on matches.
 
 ### v0.1
 
-Report detection in format: json, json.gz, csv, echo
+Analyze parsed data and anontate entries with aditionnal information that matches the first detected items.
+Report detection in format: json, json.gz, csv, echo.
 
 Attack detection:
 * SQL injection
