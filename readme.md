@@ -2,8 +2,6 @@
 
 The log translate (logslate) project aims is to create a dead simple tool that will help web developers and system administrators to secure their customers websites. This will be accomplished by periodicaly reading the access.log file from popular web servers and by creating an actionable report.
 
-It will specifically **not support** Windows related technologies.
-
 ## Reporting
 
 Execution will create a timestamped .json.gz report on disk, that will then be used to generate other forms of reports.
@@ -11,13 +9,15 @@ Execution will create a timestamped .json.gz report on disk, that will then be u
 ## Commands
 
 ```
-logslate ${path}/access.log
+logslate [parse,analyze,report]
+--logs ${path}/access*.log(.gz)
+--db ${path}/parsed-log.ldb
 --start "timestamp"
 --end "timestamp"
 --period "duration"
 --detect [attack,exploit,bots,ad]
 --report_format [json,csv,echo,email]
---report_folder
+--report_folder ${folder}
 ```
 
 ## Detection goal
@@ -81,7 +81,9 @@ CMS and framework:
 
 ### v0.1
 
-Read Nginx access.log files
+Read Nginx access.log from a file (text or Gzip) or from terminal pipe and parse it into [LevelDB](https://github.com/syndtr/goleveldb).
+
+Analyze LDB parsed data and anontate entries with aditionnal information based on matches.
 
 Report format: json, json.gz, csv, echo
 
