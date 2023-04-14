@@ -1,6 +1,10 @@
 # Log "translate"
 
-The log translate (logslate) project aims is to create a dead simple tool that will help web developers and system administrators to secure their customers websites. This will be accomplished by periodicaly reading the access.log file from popular web servers and by creating an actionable report.
+The log translate (logslate) project aims is to create a free and dead simple tool that will help web developers and system administrators to secure their customers websites. This will be accomplished by periodicaly reading the access.log file from popular web servers and by creating an actionable report.
+
+## License
+
+This project is licended under [GPL v3.0](license.md)
 
 ## Reporting
 
@@ -79,13 +83,15 @@ CMS and framework:
 
 ## Development roadmap
 
-### v0.1
+### v0.0
 
-Read Nginx access.log from a file (text or Gzip) or from terminal pipe and parse it into [LevelDB](https://github.com/syndtr/goleveldb).
+Read Nginx access.log from a file (text or Gzip) or from terminal pipe and parse it into an [SQLite](https://www.sqlite.org/) database.
 
 Analyze LDB parsed data and anontate entries with aditionnal information based on matches.
 
-Report format: json, json.gz, csv, echo
+### v0.1
+
+Report detection in format: json, json.gz, csv, echo
 
 Attack detection:
 * SQL injection
