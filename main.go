@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"gitlab.com/gnufred/logslate/pipe"
+)
 
 func main() {
-	fmt.Println("Gotta start somewhere!")
+	pipe.Read()
 }
