@@ -12,9 +12,11 @@ Execution will create a timestamped .json.gz report on disk, that will then be u
 
 ## Commands
 
+All available commands:
+
 ```
 logslate [parse,analyze,report]
---logs ${path}/access*.log(.gz)
+--logs ${path}/access*.log
 --db ${path}/parsed-log.ldb
 --start "timestamp"
 --end "timestamp"
@@ -22,6 +24,12 @@ logslate [parse,analyze,report]
 --detect [attack,exploit,bots,ad]
 --report_format [json,csv,echo,email]
 --report_folder ${folder}
+```
+
+Process compressed log data from the pipe:
+
+```
+zcat logs/access*.log.gz | logslate
 ```
 
 ## Detection goal
@@ -85,7 +93,7 @@ CMS and framework:
 
 ### v0.0
 
-Read Nginx access.log from a file (text or Gzip) or from terminal pipe and parse it into an [SQLite](https://www.sqlite.org/) database.
+Read Nginx access.log from terminal pipe and parse it into an [SQLite](https://www.sqlite.org/) database.
 
 
 ### v0.1
