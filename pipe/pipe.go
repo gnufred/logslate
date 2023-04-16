@@ -10,14 +10,6 @@ func IsText() bool {
 	// Check if piped data is text (uncompressed logs)
 }
 
-func IsGzip() bool {
-	// Check if piped data is Gzip (.gz compressed logs)
-}
-
-func Unzip() (bytes, err) {
-	// Unzip Gziped compressed data
-}
-
 func ReadLine() (string, err) {
 	// Read and return a line from the pipe data
 }
