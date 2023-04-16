@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	pipe := pipe.New()
 	pipe.Read()
 }
