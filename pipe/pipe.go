@@ -2,7 +2,7 @@ package pipe
 
 import (
 	"bufio"
-	"fmt"
+	"io"
 	"os"
 )
 
@@ -16,8 +16,16 @@ func New() *Piper {
 	}
 }
 
-func (pi *Piper) Read() {
-	for pi.scanner.Scan() {
-		fmt.Println(pi.scanner.Text())
+func (pi *Piper) ReadLine() (string, error) {
+	if scanned := pi.scanner.Scan(); scanned {
+		line := pi.scanner.Text()
+		return line, nil
+	} else {
+		if err := pi.scanner.Err(); err == nil {
+			// if Scan() is false and Err() is nil, we reached io.EOF
+			return "", io.EOF
+		} else {
+			return "", err
+		}
 	}
 }
