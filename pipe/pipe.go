@@ -9,20 +9,21 @@ import (
 )
 
 type Piper struct {
-	bytes  int64
-	chunks int64
+	Bytes  int64
+	Chunks int64
 }
 
 func New() *Piper {
 	return &Piper{
-		bytes:  0,
-		chunks: 0,
+		Bytes:  0,
+		Chunks: 0,
 	}
 }
 
 func (pi *Piper) Read() {
-	//Bind copy/paste of https://zetcode.com/golang/pipe/
-	nBytes, nChunks := int64(0), int64(0)
+	// Based on https://zetcode.com/golang/pipe/
+	pi.Bytes = 0
+	pi.Chunks = 0
 	r := bufio.NewReader(os.Stdin)
 	buf := make([]byte, 0, 4*1024)
 
@@ -44,8 +45,8 @@ func (pi *Piper) Read() {
 			log.Fatal(err)
 		}
 
-		nChunks++
-		nBytes += int64(len(buf))
+		pi.Chunks++
+		pi.Bytes += int64(len(buf))
 
 		fmt.Println(string(buf))
 
@@ -54,7 +55,7 @@ func (pi *Piper) Read() {
 		}
 	}
 
-	fmt.Println("Bytes:", nBytes, "Chunks:", nChunks)
+	fmt.Println("Bytes:", pi.Bytes, "Chunks:", pi.Chunks)
 }
 
 /* TODO
