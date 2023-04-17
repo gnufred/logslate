@@ -24,8 +24,8 @@ func mockStdin(input []byte) error {
 	return nil
 }
 
-// Based on https://stackoverflow.com/questions/46365221/fill-os-stdin-for-function-that-reads-from-it
-func (p *Piper) testReadLine(t *testing.T) {
+// https://stackoverflow.com/questions/46365221/fill-os-stdin-for-function-that-reads-from-it
+func (p *Piper) TestReadLine(t *testing.T) {
 	input := []byte("anything")
 	err := mockStdin(input)
 	if err != nil {
@@ -35,4 +35,5 @@ func (p *Piper) testReadLine(t *testing.T) {
 	if text != string(input) {
 		t.Fatalf("io.stding read failure. got %s, expected %s", text, input)
 	}
+	t.Log("Its alive")
 }
