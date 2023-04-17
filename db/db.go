@@ -35,7 +35,7 @@ func (d *Dber) Create(dns string, file string) error {
 }
 
 func (d *Dber) createTables() error {
-	sql := `CREATE TABLE entries (
+	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
 		"raw" TEXT
 	);`
@@ -47,7 +47,6 @@ func (d *Dber) createTables() error {
 	st.Exec()
 
 	return nil
-
 }
 
 func (d *Dber) Close() error {
@@ -75,6 +74,19 @@ func (d *Dber) createFileIfNotExists() error {
 
 func (d *Dber) Destroy() error {
 	err := os.Remove(d.file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *Dber) InsertLog(raw string) error {
+	sql := `INSERT INTO logs (raw) VALUES (?)`
+	st, err := d.db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	_, err = st.Exec(raw)
 	if err != nil {
 		return err
 	}

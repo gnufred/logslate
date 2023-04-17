@@ -1,6 +1,8 @@
 package db
 
 import (
+	"bufio"
+	"os"
 	"testing"
 )
 
@@ -10,6 +12,21 @@ func TestCreate(t *testing.T) {
 	err := dber.Create(dns, file)
 	if err != nil {
 		t.Fatalf("Fail: Create() failed with error %s", err)
+	}
+}
+
+func TestInsertLog(t *testing.T) {
+	file, err := os.Open("testdata/ahrefs.log")
+	if err != nil {
+		t.Fatalf("Fail: Opening test data file failed with error %s", err)
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		err = dber.InsertLog(scanner.Text())
+		if err != nil {
+			t.Fatalf("Fail: InsertLog() failed with error %s", err)
+		}
 	}
 }
 
