@@ -39,7 +39,6 @@ func (d *Dber) Create(dns string, file string) error {
 func (d *Dber) createTables() error {
 	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-		"hash" TEXT,
 		"raw" TEXT
 	);`
 
