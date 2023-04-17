@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -21,7 +23,7 @@ func (d *Dber) Create(dns string, file string) error {
 
 	err := d.createFileIfNotExists()
 	if err != nil {
-		return err
+		log.Fatalf("Fatal error: Unable to create database file. Error: %s.", err)
 	}
 
 	d.db, err = sql.Open("sqlite3", d.file)
@@ -37,6 +39,7 @@ func (d *Dber) Create(dns string, file string) error {
 func (d *Dber) createTables() error {
 	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+		"hash" TEXT,
 		"raw" TEXT
 	);`
 
@@ -44,7 +47,11 @@ func (d *Dber) createTables() error {
 	if err != nil {
 		return err
 	}
-	st.Exec()
+
+	_, err = st.Exec()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -60,7 +67,7 @@ func (d *Dber) Close() error {
 func (d *Dber) createFileIfNotExists() error {
 	_, err := os.Stat(d.file)
 	if os.IsNotExist(err) == false {
-		return nil
+		return fmt.Errorf("File %s already exists", d.file)
 	}
 
 	fileHandle, err := os.Create(d.file)
