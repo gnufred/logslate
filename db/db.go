@@ -10,7 +10,7 @@ import (
 type Dber struct {
 	dns  string
 	file string
-	conn *sql.DB
+	db   *sql.DB
 }
 
 var dber = Dber{}
@@ -19,34 +19,52 @@ func (d *Dber) Create(dns string, file string) error {
 	d.dns = dns
 	d.file = file
 
-	err := createFileIfNotExists(d.file)
+	err := d.createFileIfNotExists()
 	if err != nil {
 		return err
 	}
 
-	d.conn, err = sql.Open("sqlite3", d.file)
+	d.db, err = sql.Open("sqlite3", d.file)
 	if err != nil {
 		return err
 	}
+
+	d.createTables()
 
 	return nil
+}
+
+func (d *Dber) createTables() error {
+	sql := `CREATE TABLE entries (
+		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+		"raw" TEXT
+	);`
+
+	st, err := d.db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	st.Exec()
+
+	return nil
+
 }
 
 func (d *Dber) Close() error {
-	err := d.conn.Close()
+	err := d.db.Close()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func createFileIfNotExists(file string) error {
-	_, err := os.Stat(file)
+func (d *Dber) createFileIfNotExists() error {
+	_, err := os.Stat(d.file)
 	if os.IsNotExist(err) == false {
 		return nil
 	}
 
-	fileHandle, err := os.Create(file)
+	fileHandle, err := os.Create(d.file)
 	if err != nil {
 		return err
 	}
