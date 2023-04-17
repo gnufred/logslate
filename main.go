@@ -8,6 +8,10 @@ import (
 
 func main() {
 	pipe := pipe.New()
-	fmt.Println(pipe.ReadLine())
-	fmt.Println(pipe.ReadLine())
+
+	text, _ := pipe.ReadLine()
+	fmt.Println(text)
+
+	text, _ = pipe.ReadLine()
+	fmt.Println(text)
 }
