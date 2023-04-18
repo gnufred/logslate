@@ -1,7 +1,17 @@
 package main
 
-import "gitlab.com/gnufred/logslate/cmd"
+import (
+	"fmt"
+
+	"gitlab.com/gnufred/logslate/pipe"
+)
 
 func main() {
-	cmd.Execute()
+	pipe := pipe.New()
+
+	text, _ := pipe.ReadLine()
+	fmt.Println(text)
+
+	text, _ = pipe.ReadLine()
+	fmt.Println(text)
 }
