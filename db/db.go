@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -15,10 +16,18 @@ type Dber struct {
 	db   *sql.DB
 }
 
-var dber = Dber{}
+var once sync.Once
+var dbInst *Dber
 
-func (d *Dber) Create(dns string, file string) error {
-	d.dns = dns
+func Singleton() *Dber {
+	once.Do(func() {
+		dbInst = &Dber{}
+	})
+	return dbInst
+}
+
+func (d *Dber) Create(file string) error {
+	d.dns = "file:" + file + "?cache=shared&mode=rw"
 	d.file = file
 
 	err := d.createFileIfNotExists()
