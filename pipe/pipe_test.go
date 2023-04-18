@@ -30,6 +30,7 @@ func TestReadLine_OneLineBasic(t *testing.T) {
 
 	// do the actual test
 	pipe := New()
+	//checkBytes(t, pipe, 215)
 	checkData(t, pipe, data)
 }
 
@@ -49,6 +50,7 @@ func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 
 	// run tests
 	pipe := New()
+	//checkBytes(t, pipe, 393)
 	checkData(t, pipe, data)
 }
 
@@ -60,23 +62,33 @@ func checkData(t *testing.T, pipe *Piper, data []mockedStdinExpect) {
 	}
 }
 
+func checkBytes(t *testing.T, pipe *Piper, expected uint64) {
+	len, err := pipe.BytesLen()
+	if err != nil {
+		t.Fatalf("BytesLen() error %s", err)
+	}
+	if len != expected {
+		t.Fatalf("Got %d bytes, expeted %d", len, expected)
+	}
+}
+
 func checkLine(t *testing.T, got string, expected int) {
 	gotLen := len(got)
 	if gotLen != expected {
-		t.Fatalf("Fail: got %d text, expeced %d", gotLen, expected)
+		t.Fatalf("Got %d text, expeced %d", gotLen, expected)
 	}
 }
 
 func checkError(t *testing.T, got error, expected error) {
 	if got != expected {
-		t.Fatalf("Failure: got error %s, expected %s", got, expected)
+		t.Fatalf("Got error %s, expected %s", got, expected)
 	}
 }
 
 func mockStdin(t *testing.T, input []byte) {
 	r, w, err := os.Pipe()
 	if err != nil {
-		t.Fatalf("Fatal error while mocking Stdin")
+		t.Fatalf("Mocking Stdin failed: %s", err)
 	}
 
 	_, err = w.Write(input)
