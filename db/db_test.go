@@ -7,9 +7,9 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	dns := "file:/tmp/test.db?cache=shared&mode=rw"
 	file := "/tmp/test.db"
-	err := dber.Create(dns, file)
+	db := Singleton()
+	err := db.Create(file)
 	if err != nil {
 		t.Fatalf("Fail: Create() failed with error %s", err)
 	}
@@ -22,8 +22,9 @@ func TestInsertLog(t *testing.T) {
 	}
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
+	db := Singleton()
 	for scanner.Scan() {
-		err = dber.InsertLog(scanner.Text())
+		err = db.InsertLog(scanner.Text())
 		if err != nil {
 			t.Fatalf("Fail: InsertLog() failed with error %s", err)
 		}
@@ -31,14 +32,16 @@ func TestInsertLog(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	err := dber.Close()
+	db := Singleton()
+	err := db.Close()
 	if err != nil {
 		t.Fatalf("Fail: Close() failed with error %s", err)
 	}
 }
 
 func TestDestroy(t *testing.T) {
-	err := dber.Destroy()
+	db := Singleton()
+	err := db.Destroy()
 	if err != nil {
 		t.Fatalf("Fail: Destroy() failed with error %s", err)
 	}

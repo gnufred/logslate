@@ -1,17 +1,51 @@
 package main
 
 import (
-	"fmt"
+	"io"
+	"log"
 
+	"gitlab.com/gnufred/logslate/args"
+	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/pipe"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 func main() {
-	pipe := pipe.New()
+	a := args.Parse()
+	p := pipe.New()
+	db := db.Singleton()
+	bar := progressbar.DefaultBytes(-1, "parsing")
 
-	text, _ := pipe.ReadLine()
-	fmt.Println(text)
+	if a.Db != "" {
+		err := db.Create(a.Db)
+		if err != nil {
+			log.Fatalf("Error while creating database: %s", err)
+		}
+	}
 
-	text, _ = pipe.ReadLine()
-	fmt.Println(text)
+	lineNum := 0
+	for {
+		line, byteCnt, err := p.ReadLine()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatalf("Error while reading piped io.Stding: %s", err)
+			break
+		}
+
+		if line == "" {
+			continue
+		}
+
+		bar.Add(byteCnt)
+
+		if a.Db != "" {
+			db.InsertLog(line)
+		}
+		lineNum++
+	}
 }
