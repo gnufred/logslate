@@ -7,6 +7,7 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/pipe"
+	"gitlab.com/gnufred/logslate/ngxprs"
 
 	"github.com/schollz/progressbar/v3"
 )
@@ -41,11 +42,13 @@ func main() {
 			continue
 		}
 
-		bar.Add(byteCnt)
+        parsedEntry := ngxprs.Parse(line)
 
 		if a.Db != "" {
-			db.InsertLog(line)
+			db.InsertLog(parsedEntry)
 		}
+
+		bar.Add(byteCnt)
 		lineNum++
 	}
 }
