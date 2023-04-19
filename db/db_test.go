@@ -5,7 +5,8 @@ import (
 	"os"
 	"testing"
 
-    "gitlab.com/gnufred/logslate/ngxprs"
+    "gitlab.com/gnufred/logslate/parse/nginx"
+    "gitlab.com/gnufred/logslate/parse/slate"
 )
 
 func TestCreate(t *testing.T) {
@@ -26,8 +27,9 @@ func TestInsertLog(t *testing.T) {
 	scanner.Split(bufio.ScanLines)
 	db := Singleton()
 	for scanner.Scan() {
-        parsed := ngxprs.Parse(scanner.Text())
-		err = db.InsertLog(parsed)
+        nx := nginx.Parse(scanner.Text())
+        sl := slate.ParseNginx(nx)
+		err = db.InsertLog(sl)
 		if err != nil {
 			t.Fatalf("Fail: InsertLog() failed with error %s", err)
 		}
