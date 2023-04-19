@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"os"
 	"testing"
+
+    "gitlab.com/gnufred/logslate/ngxprs"
 )
 
 func TestCreate(t *testing.T) {
@@ -24,7 +26,8 @@ func TestInsertLog(t *testing.T) {
 	scanner.Split(bufio.ScanLines)
 	db := Singleton()
 	for scanner.Scan() {
-		err = db.InsertLog(scanner.Text())
+        parsed := ngxprs.Parse(scanner.Text())
+		err = db.InsertLog(parsed)
 		if err != nil {
 			t.Fatalf("Fail: InsertLog() failed with error %s", err)
 		}

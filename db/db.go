@@ -7,6 +7,8 @@ import (
 	"os"
 	"sync"
 
+    "gitlab.com/gnufred/logslate/ngxprs"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -48,7 +50,17 @@ func (d *Dber) Create(file string) error {
 func (d *Dber) createTables() error {
 	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-		"raw" TEXT
+        "remoteaddr" string,
+        "remoteuser" string,
+        "timelocal" timestamp,
+        "requestmethod" string,
+        "requesturl" string,
+        "requestprotocol" string,
+        "status" integer,
+        "bytessent" integer,
+        "httpreferer" string,
+        "httpuseragent" string,
+        "gzipratio" float
 	);`
 
 	st, err := d.db.Prepare(sql)
@@ -95,15 +107,51 @@ func (d *Dber) Destroy() error {
 	return nil
 }
 
-func (d *Dber) InsertLog(raw string) error {
-	sql := `INSERT INTO logs (raw) VALUES (?)`
+func (d *Dber) InsertLog(e ngxprs.LogEntry) error {
+	sql := `INSERT INTO logs (remoteaddr,remoteuser,timelocal,requestmethod,requesturl,requestprotocol,status,bytessent,httpreferer,httpuseragent,gzipratio) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.db.Prepare(sql)
 	if err != nil {
 		return err
 	}
-	_, err = st.Exec(raw)
+	_, err = st.Exec(
+        e.RemoteAddr,
+        e.RemoteUser,
+        e.TimeLocal,
+        e.RequestMethod,
+        e.RequestUrl,
+        e.RequestProtocol,
+        e.Status,
+        e.BytesSent,
+        e.HttpReferer,
+        e.HttpUserAgent,
+        e.GzipRatio,
+    )
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
+/* ====================
+Related documentation
+* https://www.sqlite.org/cli.html
+
+Supported types
+* https://pkg.go.dev/github.com/mattn/go-sqlite3
++------------------------------+
+|go        | sqlite3           |
+|----------|-------------------|
+|nil       | null              |
+|int       | integer           |
+|int64     | integer           |
+|float64   | float             |
+|bool      | integer           |
+|[]byte    | blob              |
+|string    | text              |
+|time.Time | timestamp/datetime|
++------------------------------+
+
+Examples
+* https://earthly.dev/blog/golang-sqlite/
+
+*/
