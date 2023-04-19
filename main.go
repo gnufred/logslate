@@ -7,7 +7,8 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/pipe"
-	"gitlab.com/gnufred/logslate/ngxprs"
+	"gitlab.com/gnufred/logslate/parse/nginx"
+	"gitlab.com/gnufred/logslate/parse/slate"
 
 	"github.com/schollz/progressbar/v3"
 )
@@ -42,10 +43,10 @@ func main() {
 			continue
 		}
 
-        parsedEntry := ngxprs.Parse(line)
+        log := slate.ParseNginx(nginx.Parse(line))
 
 		if a.Db != "" {
-			db.InsertLog(parsedEntry)
+			db.InsertLog(log)
 		}
 
 		bar.Add(byteCnt)

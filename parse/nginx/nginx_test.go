@@ -1,4 +1,4 @@
-package ngxprs
+package nginx
 
 import (
     "bufio"
@@ -10,7 +10,7 @@ import (
 
 
 func TestParseEmpty(t *testing.T) {
-    expected := LogEntry{}
+    expected := Log{}
     got := Parse("")
     if got != expected {
         log.Fatalf("Parse returned %+v, expected %+v", got, expected)
@@ -20,14 +20,12 @@ func TestParseEmpty(t *testing.T) {
 func TestParseUptimeRobot(t *testing.T) {
     line := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
 
-    timeEct, _ := time.Parse(ngxTimeLayout, "05/Jan/2023:07:07:54 +0000")
-    expected := LogEntry{
+    timeEct, _ := time.Parse(TimeLayout, "05/Jan/2023:07:07:54 +0000")
+    expected := Log{
         RemoteAddr: "208.115.199.20",
         RemoteUser: "-",
         TimeLocal: timeEct, 
-        RequestMethod: "HEAD",
-        RequestUrl: "/?monitoring=uptimerobot",
-        RequestProtocol: "HTTP/1.1",
+        Request: "HEAD /?monitoring=uptimerobot HTTP/1.1",
         Status: 200,
         BytesSent: 0,
         HttpReferer: "https://moovadapt.fr/?monitoring=uptimerobot",
