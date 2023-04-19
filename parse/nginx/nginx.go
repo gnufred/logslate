@@ -1,4 +1,4 @@
-package ngxprs
+package nginx
 
 import (
     "errors"
@@ -10,13 +10,11 @@ import (
     "gitlab.com/gnufred/logslate/debug"
 )
 
-type LogEntry struct {
+type Log struct {
     RemoteAddr string
     RemoteUser string
     TimeLocal time.Time
-    RequestMethod string
-    RequestUrl string
-    RequestProtocol string
+    Request string
     Status int64
     BytesSent int64
     HttpReferer string
@@ -25,28 +23,26 @@ type LogEntry struct {
 }
 
 var DNF = errors.New("delimiter field not found")
-var ngxTimeLayout = "02/Jan/2006:15:04:05 -0700"
+var TimeLayout = "02/Jan/2006:15:04:05 -0700"
 
-func Parse(log string) LogEntry {
-    p := LogEntry{}
+func Parse(log string) Log {
+    p := Log{}
     
     if log == "" {
-        return LogEntry{}
+        return Log{}
     }
 
-    p.RemoteAddr, log = parseField("-", log, map[int]int{0:0, 1:-1, 2:+2})
-    p.RemoteUser, log = parseField("[", log, map[int]int{0:0,1:-1,2:+1})
-    timeLocalStr, log := parseField("]", log, map[int]int{0:0,1:+0,2:+2})
+    p.RemoteAddr, log = parseField("-", log, [3]int{0,-1,+2})
+    p.RemoteUser, log = parseField("[", log, [3]int{0,-1,+1})
+    timeLocalStr, log := parseField("]", log, [3]int{0,+0,+3})
     p.TimeLocal = parseTime(timeLocalStr)
-    p.RequestMethod, log = parseField(" ", log, map[int]int{0:1,1:+0,2:+1})
-    p.RequestUrl, log = parseField(" ", log, map[int]int{0:0,1:+0,2:+1})
-    p.RequestProtocol, log = parseField(" ", log, map[int]int{0:0,1:-1,2:+1})
-    statusStr, log := parseField(" ", log, map[int]int{0:0,1:0,2:+1})
+    p.Request, log = parseField("\"", log, [3]int{0,+0,+2})
+    statusStr, log := parseField(" ", log, [3]int{0,0,+1})
     p.Status, _ = strconv.ParseInt(statusStr, 10, 64)
-    bytesSentStr, log := parseField(" ", log, map[int]int{0:0,1:0,2:+1})
+    bytesSentStr, log := parseField(" ", log, [3]int{0,0,+1})
     p.BytesSent, _ = strconv.ParseInt(bytesSentStr, 10, 64)
-    p.HttpReferer, log = parseField(" ", log, map[int]int{0:1,1:-1,2:+2})
-    p.HttpUserAgent, log = parseField("\"", log, map[int]int{0:0,1:+0,2:+1})
+    p.HttpReferer, log = parseField(" ", log, [3]int{1,-1,+2})
+    p.HttpUserAgent, log = parseField("\"", log, [3]int{0,+0,+1})
     p.GzipRatio = parseGzipRatio(log)
 
     return p
@@ -64,14 +60,14 @@ func parseGzipRatio(ratio string) float64 {
 }
 
 func parseTime(timeLocal string) time.Time {
-    parsed, err := time.Parse(ngxTimeLayout, timeLocal)
+    parsed, err := time.Parse(TimeLayout, timeLocal)
     if err != nil {
         log.Fatalf("Fatal [unexpected]: time.Parse() returned error\n%s", err)
     }
     return parsed
 }
 
-func parseField(s, substr string, mx map[int]int) (string, string) {
+func parseField(s, substr string, mx [3]int) (string, string) {
     cut, substr, err := cutField(s, substr, mx) 
     if err == DNF {
         log.Fatalf("Fatal [DNF]: Can't parse\n%s", substr)
@@ -83,7 +79,7 @@ func parseField(s, substr string, mx map[int]int) (string, string) {
     return cut, substr
 }
 
-func cutField(s, substr string, mx map[int]int) (string, string, error) {
+func cutField(s, substr string, mx [3]int) (string, string, error) {
     i := strings.Index(substr, s)
     if i == -1 {
         return "", "", DNF

@@ -7,7 +7,7 @@ import (
 	"os"
 	"sync"
 
-    "gitlab.com/gnufred/logslate/ngxprs"
+    "gitlab.com/gnufred/logslate/parse/slate"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -48,19 +48,19 @@ func (d *Dber) Create(file string) error {
 }
 
 func (d *Dber) createTables() error {
-	sql := `CREATE TABLE logs (
+	sql := `CREATE TABLE logslate (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-        "remoteaddr" string,
-        "remoteuser" string,
-        "timelocal" timestamp,
-        "requestmethod" string,
-        "requesturl" string,
-        "requestprotocol" string,
+        "address" string,
+        "user" string,
+        "time" timestamp,
+        "method" string,
+        "path" string,
+        "query" string,
+        "proto" string,
         "status" integer,
-        "bytessent" integer,
-        "httpreferer" string,
-        "httpuseragent" string,
-        "gzipratio" float
+        "sent" integer,
+        "referer" string,
+        "agent" string
 	);`
 
 	st, err := d.db.Prepare(sql)
@@ -107,24 +107,24 @@ func (d *Dber) Destroy() error {
 	return nil
 }
 
-func (d *Dber) InsertLog(e ngxprs.LogEntry) error {
-	sql := `INSERT INTO logs (remoteaddr,remoteuser,timelocal,requestmethod,requesturl,requestprotocol,status,bytessent,httpreferer,httpuseragent,gzipratio) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+func (d *Dber) InsertLog(e slate.Log) error {
+	sql := `INSERT INTO logslate (address,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.db.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	_, err = st.Exec(
-        e.RemoteAddr,
-        e.RemoteUser,
-        e.TimeLocal,
-        e.RequestMethod,
-        e.RequestUrl,
-        e.RequestProtocol,
+        e.Address,
+        e.User,
+        e.Time,
+        e.Method,
+        e.Path,
+        e.Query,
+        e.Proto,
         e.Status,
-        e.BytesSent,
-        e.HttpReferer,
-        e.HttpUserAgent,
-        e.GzipRatio,
+        e.Sent,
+        e.Referer,
+        e.Agent,
     )
 	if err != nil {
 		return err
