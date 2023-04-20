@@ -4,7 +4,7 @@ stages:
   - release
 
 variables:
-  PACKAGE_VERSION: "0.0.1"
+  PACKAGE_VERSION: $CI_COMMIT_TAG
   LINUX_AMD64_BINARY: "logslate-linux-amd64"
   DARWIN_AMD64_BINARY: "logslate-darwin-amd64"
   WINDOWS_AMD64_BINARY: "logslate-windows-amd64.exe"
