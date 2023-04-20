@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
 	"io"
 	"log"
 
@@ -14,6 +15,15 @@ import (
 )
 
 func main() {
+    Banner()
+    ParseStdin()
+}
+
+func Banner() {
+    fmt.Println("Logslate v0.0.0 @ https://gitlab.com/gnufred/logslate")
+}
+
+func ParseStdin() {
 	a := args.Parse()
 	p := pipe.New()
 	db := db.Singleton()
