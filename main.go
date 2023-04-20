@@ -20,7 +20,7 @@ func main() {
 }
 
 func Banner() {
-    fmt.Println("Logslate v0.0.0 @ https://gitlab.com/gnufred/logslate")
+    fmt.Println("Logslate v0.0.1 @ https://gitlab.com/gnufred/logslate")
 }
 
 func ParseStdin() {
