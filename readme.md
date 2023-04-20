@@ -1,20 +1,27 @@
 # Log "translate"
 
-The log translate (logslate) project aims is to create a free and dead simple tool that will help web developers and system administrators to secure their customers websites. This will be accomplished by periodicaly reading the access.log file from popular web servers and by creating an actionable report.
+Log translate (logslate) is a Free and Open Source **defensive security** tool. Its main purpose is to help web developers and system administrators secure their customers websites.
 
-## License
+## Project info
+
+### In development
+
+Current version is v0.0. See the [development roadmap](roadmap.md) for the current status and installation instructions.
+
+### License
 
 This project is licended under [GPL v3.0](license.md)
 
-## Reporting
+### Logo
 
-Execution will create a timestamped .json.gz report on disk, that will then be used to generate other forms of reports.
+This project logo was created by Reddit user Conall Murray as part of the Reddit Collectible Avatars Creator Program. It's named: NO. 1591. Full information at [Future Realities: Conall-in-Space x Reddit Collectible Avatars - Series-MI▐ ▒N░N0. #1591](https://opensea.io/assets/matic/0xc1894ded8f0b81fd174b23d510f08ed722ce63ef/1815).
 
 ## Commands
 
+Upcoming commands:
+
 ```
 logslate [parse,analyze,report]
---logs ${path}/access*.log(.gz)
 --db ${path}/parsed-log.ldb
 --start "timestamp"
 --end "timestamp"
@@ -22,6 +29,12 @@ logslate [parse,analyze,report]
 --detect [attack,exploit,bots,ad]
 --report_format [json,csv,echo,email]
 --report_folder ${folder}
+```
+
+Process compressed log data from the pipe:
+
+```
+zcat logs/access*.log.gz | logslate
 ```
 
 ## Detection goal
@@ -80,97 +93,3 @@ CMS and framework:
 * WordPress
 * Drupal
 * Symfony
-
-## Development roadmap
-
-### v0.0
-
-Read Nginx access.log from a file (text or Gzip) or from terminal pipe and parse it into an [SQLite](https://www.sqlite.org/) database.
-
-
-### v0.1
-
-Analyze parsed data and anontate entries with aditionnal information that matches the first detected items.
-Report detection in format: json, json.gz, csv, echo.
-
-Attack detection:
-* SQL injection
-* Command injection
-* Directory traversal
-
-Detection method:
-* Fake user agent
-* URL pattern
-
-### v0.2
-
-Bot and crawler detection:
-* Google indexer
-* Bing indexer
-* Yandex indexer
-* Semrush bot
-* Moz.com SEO crawler
-
-Detection method:
-* User agent pattern
-* Known IP verification
-
-### v0.3
-
-Ad detection:
-* Google AdWords campaign
-* Facebook ad campaign
-
-### v0.4
-
-Report format:
-* postfix
-* sendmail
-
-### v0.5
-
-Bot and crawler detection:
-* Screaming Frog SEO spider
-* Top 20 search indexers
-
-### v0.6
-
-Attack detection:
-* Top 10 attack methods
-
-### v0.7
-
-Ad campaign detection:
-* Top 20 ad vendor
-
-### v0.8
-
-Exploit detection:
-* Magecart CVEs (for Magento CMS)
-
-### v0.9
-
-Exploit detection:
-* WordPress related CVEs
-
-### v0.10
-
-Exploit detection:
-* Drupal related CVEs
-
-### v0.11
-
-Exploit detection:
-* Symfony
-
-### v0.12
-
-Add support for Apache access.log files
-
-### v0.13
-
-Performance updates
-
-### v0.14 and beyond
-
-Further updates will add small sub features, improvements, and bug fixes in order to move to official v1.0.0 release
