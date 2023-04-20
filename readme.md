@@ -89,3 +89,9 @@ CMS and framework:
 * WordPress
 * Drupal
 * Symfony
+
+## LULZ
+
+State-sponsored hackers, ransomware gangs, cyber criminals, cyber spies, and scammers are all laughing at us.
+
+![A well dressed Sir, holding a glass of wine](sir/fullsize.png)
