@@ -6,7 +6,7 @@ Log translate (logslate) is a Free and Open Source **defensive security** tool. 
 
 ### In development
 
-Current version is v0.0. See the [development roadmap](roadmap.md) for the current status and installation instructions.
+Current version is **v0**. See the [development roadmap](roadmap.md) for the current status and installation instructions.
 
 ### License
 
