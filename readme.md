@@ -12,10 +12,6 @@ Current version is v0.0. See the [development roadmap](roadmap.md) for the curre
 
 This project is licended under [GPL v3.0](license.md)
 
-### Logo
-
-This project logo was created by Reddit user Conall Murray as part of the Reddit Collectible Avatars Creator Program. It's named: NO. 1591. Full information at [Future Realities: Conall-in-Space x Reddit Collectible Avatars - Series-MI▐ ▒N░N0. #1591](https://opensea.io/assets/matic/0xc1894ded8f0b81fd174b23d510f08ed722ce63ef/1815).
-
 ## Commands
 
 Upcoming commands:
