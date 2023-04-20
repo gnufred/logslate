@@ -4,7 +4,7 @@
 
 ```
 git clone https://gitlab.com/gnufred/logslate
-git checkout v0.0.0
+git checkout v0.0.1
 sh/test
 sh/build
 ```
@@ -19,14 +19,6 @@ cat access.log | logslate
 ```
 
 ## Upcoming versions
-
-### v0.0 (completed, upcoming release)
-
-Read Nginx access.log from terminal pipe and parse it into an [SQLite](https://www.sqlite.org/) database.
-
-#### v0.0.1
-
-Warn about slow write speed when writing `--db` outside of `/tmp`
 
 ### v0.1
 
