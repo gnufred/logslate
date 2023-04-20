@@ -1,0 +1,9 @@
+#!/bin/bash
+
+root_dir=$(git rev-parse --show-toplevel)
+cd $root_dir
+rm -fr bin/*
+GOOS=linux GOARCH=amd64 go build -o bin/logslate-amd64-linux
+GOOS=darwin GOARCH=amd64 go build -o bin/logslate-amd64-darwin
+GOOS=windows GOARCH=amd64 go build -o bin/logslate-amd64-windows.exe
+ls -al bin/
