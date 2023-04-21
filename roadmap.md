@@ -1,15 +1,8 @@
 # Development roadmap
 
-## Installation instruction
+## Installation
 
-```
-git clone https://gitlab.com/gnufred/logslate
-git checkout v0.0.1
-sh/test
-sh/build
-```
-
-Logslate will be available in `bin/logslate`
+Good old manual download from https://gitlab.com/gnufred/logslate/-/releases
 
 ## Completed commands
 
