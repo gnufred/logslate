@@ -82,8 +82,8 @@ Exploit detection:
 
 ### v0.9
 
-Exploit detection:
-* WordPress related CVEs
+Exploit detection: WordPress related CVEs
+* [EvalPHP](https://blog.sucuri.net/2023/04/massive-abuse-of-abandoned-evalphp-wordpress-plugin.html)
 
 ### v0.10
 
