@@ -92,6 +92,6 @@ CMS and framework:
 
 ## LULZ
 
-State-sponsored hackers, ransomware gangs, cyber criminals, cyber spies, and scammers are all laughing at us.
+State-sponsored hackers, ransomware gangs, cyber criminals, cyber spies, and scammers are laughing at our security.
 
 ![A well dressed Sir, holding a glass of wine](sir/fullsize.png)
