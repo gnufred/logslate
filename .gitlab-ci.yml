@@ -4,11 +4,12 @@ stages:
   - release
 
 variables:
+  BIN_NAME: "logslate"
   PACKAGE_VERSION: $CI_COMMIT_TAG
-  LINUX_AMD64_BINARY: "logslate-linux-amd64"
-  DARWIN_AMD64_BINARY: "logslate-darwin-amd64"
-  WINDOWS_AMD64_BINARY: "logslate-windows-amd64.exe"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/logslate/${PACKAGE_VERSION}"
+  LINUX_AMD64_BINARY: "${BIN_NAME}-linux-amd64"
+  DARWIN_AMD64_BINARY: "${BIN_NAME}-darwin-amd64"
+  WINDOWS_AMD64_BINARY: "${BIN_NAME}-windows-amd64.exe"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${BIN_NAME}/${PACKAGE_VERSION}"
 
 build:
   stage: build
@@ -44,6 +45,6 @@ release:
   script:
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-        --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\"}" \
-        --assets-link "{\"name\":\"${DARWIN_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DARWIN_AMD64_BINARY}\"}" \
-        --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}\"}" \
+        --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\",\"link_type\":\"package\"}" \
+        --assets-link "{\"name\":\"${DARWIN_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DARWIN_AMD64_BINARY}\",\"link_type\":\"package\"}" \
+        --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}\",\"link_type\":\"package\"}" \
