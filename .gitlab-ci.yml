@@ -1,24 +1,34 @@
 stages:
+  - test
   - build
   - upload
   - release
 
 variables:
+  BIN_NAME: "logslate"
   PACKAGE_VERSION: $CI_COMMIT_TAG
-  LINUX_AMD64_BINARY: "logslate-linux-amd64"
-  DARWIN_AMD64_BINARY: "logslate-darwin-amd64"
-  WINDOWS_AMD64_BINARY: "logslate-windows-amd64.exe"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/logslate/${PACKAGE_VERSION}"
+  LINUX_AMD64_BINARY: "${BIN_NAME}-linux-amd64"
+  DARWIN_AMD64_BINARY: "${BIN_NAME}-darwin-amd64"
+  WINDOWS_AMD64_BINARY: "${BIN_NAME}-windows-amd64.exe"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${BIN_NAME}/${PACKAGE_VERSION}"
 
+test:
+  stage: test
+  image: golang:1.20
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - sh/test
+    
 build:
   stage: build
   image: golang:1.20
   rules:
     - if: $CI_COMMIT_TAG
   script:
-    - GOOS=linux GOARCH=amd64 go build -o bin/${LINUX_AMD64_BINARY}
-    - GOOS=darwin GOARCH=amd64 go build -o bin/${DARWIN_AMD64_BINARY}
-    - GOOS=windows GOARCH=amd64 go build -o bin/${WINDOWS_AMD64_BINARY}
+    - GOOS=linux GOARCH=amd64 go build -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" -o bin/${LINUX_AMD64_BINARY}
+    - GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" -o bin/${DARWIN_AMD64_BINARY}
+    - GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" -o bin/${WINDOWS_AMD64_BINARY}
   artifacts:
     paths:
       - bin/
@@ -37,8 +47,6 @@ upload:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${WINDOWS_AMD64_BINARY} "${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}"
 
 release:
-  # Caution, as of 2021-02-02 these assets links require a login, see:
-  # https://gitlab.com/gitlab-org/gitlab/-/issues/299384
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
@@ -46,6 +54,6 @@ release:
   script:
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-        --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\"}" \
-        --assets-link "{\"name\":\"${DARWIN_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DARWIN_AMD64_BINARY}\"}" \
-        --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}\"}" \
+        --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\",\"link_type\":\"package\"}" \
+        --assets-link "{\"name\":\"${DARWIN_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DARWIN_AMD64_BINARY}\",\"link_type\":\"package\"}" \
+        --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}\",\"link_type\":\"package\"}" \
