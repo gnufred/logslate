@@ -27,7 +27,10 @@ func TestInsertLog(t *testing.T) {
 	scanner.Split(bufio.ScanLines)
 	db := Singleton()
 	for scanner.Scan() {
-        nx := nginx.Parse(scanner.Text())
+        nx, _ := nginx.Parse(scanner.Text())
+        if err != nil {
+            t.Fatalf("Fail: nginx.Parsed() failed with error %s", err)
+        }
         sl := slate.ParseNginx(nx)
 		err = db.InsertLog(sl)
 		if err != nil {
