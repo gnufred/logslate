@@ -2,10 +2,10 @@ package nginx
 
 import (
     "errors"
-    "log"
     "strings"
     "time"
     "strconv"
+    "fmt"
 
     "gitlab.com/gnufred/logslate/debug"
 )
@@ -25,58 +25,85 @@ type Log struct {
 var DNF = errors.New("delimiter field not found")
 var TimeLayout = "02/Jan/2006:15:04:05 -0700"
 
-func Parse(log string) Log {
+func Parse(log string) (Log, error) {
     p := Log{}
+    var err error = nil
     
     if log == "" {
-        return Log{}
+        return Log{}, err
     }
 
-    p.RemoteAddr, log = parseField("-", log, [3]int{0,-1,+2})
-    p.RemoteUser, log = parseField("[", log, [3]int{0,-1,+1})
-    timeLocalStr, log := parseField("]", log, [3]int{0,+0,+3})
-    p.TimeLocal = parseTime(timeLocalStr)
-    p.Request, log = parseField("\"", log, [3]int{0,+0,+2})
-    statusStr, log := parseField(" ", log, [3]int{0,0,+1})
-    p.Status, _ = strconv.ParseInt(statusStr, 10, 64)
-    bytesSentStr, log := parseField(" ", log, [3]int{0,0,+1})
-    p.BytesSent, _ = strconv.ParseInt(bytesSentStr, 10, 64)
-    p.HttpReferer, log = parseField(" ", log, [3]int{1,-1,+2})
-    p.HttpUserAgent, log = parseField("\"", log, [3]int{0,+0,+1})
-    p.GzipRatio = parseGzipRatio(log)
+    p.RemoteAddr, log, err = parseField("-", log, [3]int{0,-1,+2})
+    if err != nil { return Log{}, err }
 
-    return p
+    p.RemoteUser, log, err = parseField("[", log, [3]int{0,-1,+1})
+    if err != nil { return Log{}, err }
+
+    timeLocalStr, log, err := parseField("]", log, [3]int{0,+0,+3})
+    if err != nil { return Log{}, err }
+
+    p.TimeLocal, err = parseTime(timeLocalStr)
+    if err != nil { return Log{}, err }
+
+    p.Request, log, err = parseField("\"", log, [3]int{0,+0,+2})
+    if err != nil { return Log{}, err }
+
+    statusStr, log, err := parseField(" ", log, [3]int{0,0,+1})
+    if err != nil { return Log{}, err }
+
+    p.Status, err = strconv.ParseInt(statusStr, 10, 64)
+    if err != nil { return Log{}, fmt.Errorf("parseStatus [unexpected]: strconv.ParseInt error %s", err) }
+
+    bytesSentStr, log, err := parseField(" ", log, [3]int{0,0,+1})
+    if err != nil { return Log{}, err }
+
+    p.BytesSent, err = strconv.ParseInt(bytesSentStr, 10, 64)
+    if err != nil { return Log{}, err }
+
+    p.HttpReferer, log, err = parseField(" ", log, [3]int{1,-1,+2})
+    if err != nil { return Log{}, err }
+
+    p.HttpUserAgent, log, err = parseField("\"", log, [3]int{0,+0,+1})
+    if err != nil { return Log{}, err }
+
+    p.GzipRatio, err = parseGzipRatio(log)
+    if err != nil { return Log{}, err }
+
+    return p, err
 }
 
-func parseGzipRatio(ratio string) float64 {
+func parseGzipRatio(ratio string) (float64, error) {
     if ratio == "" {
-        return 0
+        return 0, nil
     }
     trimed := strings.Replace(ratio, " ", "", -1)
     trimed = strings.Replace(trimed, "\"", "", -1)
-    conv, _ := strconv.ParseFloat(trimed, 64)
+    conv, err := strconv.ParseFloat(trimed, 64)
+    if err != nil {
+        return 0, fmt.Errorf("parseGzipRatio [unexpected]: strconv.ParseFloat error %s", err)
+    }
     debug.Log(conv)
-    return conv
+    return conv, err
 }
 
-func parseTime(timeLocal string) time.Time {
+func parseTime(timeLocal string) (time.Time, error) {
     parsed, err := time.Parse(TimeLayout, timeLocal)
     if err != nil {
-        log.Fatalf("Fatal [unexpected]: time.Parse() returned error\n%s", err)
+        return time.Now(), fmt.Errorf("parseTime [unexpected]: time.Parse() error %s", err)
     }
-    return parsed
+    return parsed, nil
 }
 
-func parseField(s, substr string, mx [3]int) (string, string) {
+func parseField(s, substr string, mx [3]int) (string, string, error) {
     cut, substr, err := cutField(s, substr, mx) 
     if err == DNF {
-        log.Fatalf("Fatal [DNF]: Can't parse\n%s", substr)
+        return "", "", fmt.Errorf("parseField [DNF]: Can't parse\n%s", substr)
     }
     if err != nil {
-        log.Fatalf("Fatal [unexpected]: Can't parse\n%s\n%s", substr, err)
+        return "", "", fmt.Errorf("parseField [unexpected]: Can't parse\n%s\n%s", substr, err)
     }
     debug.Log(cut)
-    return cut, substr
+    return cut, substr, nil
 }
 
 func cutField(s, substr string, mx [3]int) (string, string, error) {
