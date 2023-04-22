@@ -28,9 +28,12 @@ func Banner() {
 func ParseStdin() {
 	a := args.Parse()
 	p := pipe.New()
-	db := db.Singleton()
-	bar := progressbar.DefaultBytes(-1, "parsing")
 
+    if p.IsPiped() != true {
+        log.Fatalf("Error: no input data")
+    }
+
+	db := db.Singleton()
 	if a.Db != "" {
 		err := db.Create(a.Db)
 		if err != nil {
@@ -39,6 +42,7 @@ func ParseStdin() {
 	}
 
 	lineNum := 0
+	bar := progressbar.DefaultBytes(-1, "parsing")
 	for {
 		line, byteCnt, err := p.ReadLine()
 
@@ -63,5 +67,5 @@ func ParseStdin() {
 
 		bar.Add(byteCnt)
 		lineNum++
-	}
+    }
 }

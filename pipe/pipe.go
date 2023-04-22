@@ -28,6 +28,15 @@ func (p *Piper) BytesLen() (uint64, error) {
 	return cnt, nil
 }
 
+// Source: https://stackoverflow.com/a/26567513/6900541
+func (p *Piper) IsPiped() bool {
+    stat, _ := os.Stdin.Stat()
+    if (stat.Mode() & os.ModeCharDevice) == 0 {
+        return true
+    }
+    return false
+}
+
 func (p *Piper) ReadLine() (string, int, error) {
 	if scanned := p.scanner.Scan(); scanned {
 		line := p.scanner.Text()
