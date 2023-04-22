@@ -26,7 +26,10 @@ func TestParseNginx(t *testing.T) {
         Agent: "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)",
     }
 
-    ngxLog := nginx.Parse(line)
+    ngxLog, err := nginx.Parse(line)
+    if err != nil {
+        t.Fatalf("nginx.Parse() error %s", err)
+    }
     got := ParseNginx(ngxLog)
 
     if got != expected {
