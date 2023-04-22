@@ -87,7 +87,7 @@ func checkLine(t *testing.T, got string, expected int) {
 
 func checkError(t *testing.T, got error, expected error) {
 	if got != expected {
-		t.Fatalf("Got error %s, expected %s", got, expected)
+		t.Fatalf("Got error %s, expected error %s", got, expected)
 	}
 }
 
@@ -99,7 +99,7 @@ func mockStdin(t *testing.T, input []byte) {
 
 	_, err = w.Write(input)
 	if err != nil {
-		t.Fatalf("Fatal error while mocking Stdin")
+		t.Fatalf("Error while mocking Stdin")
 	}
 	w.Close()
 
