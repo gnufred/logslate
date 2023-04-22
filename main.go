@@ -41,7 +41,7 @@ func ParseStdin() {
 		}
 	}
 
-	lineNum := 0
+	lineNum, lineErr := 0, 0
 	bar := progressbar.DefaultBytes(-1, "parsing")
 	for {
 		line, byteCnt, err := p.ReadLine()
@@ -59,13 +59,23 @@ func ParseStdin() {
 			continue
 		}
 
-        log := slate.ParseNginx(nginx.Parse(line))
+        nx, err := nginx.Parse(line)
+        if err != nil {
+            lineErr++
+            continue
+        }
+
+        ls := slate.ParseNginx(nx)
 
 		if a.Db != "" {
-			db.InsertLog(log)
+			db.InsertLog(ls)
 		}
 
 		bar.Add(byteCnt)
 		lineNum++
     }
+    // Need to print a return character after the last progress bar terminal update
+    fmt.Print("\n")
+
+    fmt.Printf("  parsed [%d] error [%d]\n", lineNum, lineErr)
 }
