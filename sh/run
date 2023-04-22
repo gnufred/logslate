@@ -2,4 +2,9 @@
 
 root_dir=$(git rev-parse --show-toplevel)
 cd $root_dir
-go run main.go $@
+
+ver=$(git describe --tags --always)
+
+go run \
+    -ldflags="-X 'main.Version=${ver}'" \
+    main.go $@

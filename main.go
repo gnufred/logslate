@@ -14,13 +14,15 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
+var Version = "dev"
+
 func main() {
     Banner()
     ParseStdin()
 }
 
 func Banner() {
-    fmt.Println("Logslate v0.0.1 @ https://gitlab.com/gnufred/logslate")
+    fmt.Printf("Logslate %s @ https://gitlab.com/gnufred/logslate\n", Version)
 }
 
 func ParseStdin() {
