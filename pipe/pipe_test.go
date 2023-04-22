@@ -30,6 +30,9 @@ func TestReadLine_OneLineBasic(t *testing.T) {
 
 	// do the actual test
 	pipe := New()
+    if pipe.IsPiped() != true {
+        t.Fatalf("data not from pipe")
+    }
 	//checkBytes(t, pipe, 215)
 	checkData(t, pipe, data)
 }
@@ -50,6 +53,9 @@ func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 
 	// run tests
 	pipe := New()
+    if pipe.IsPiped() != true {
+        t.Fatalf("data not from pipe")
+    }
 	//checkBytes(t, pipe, 393)
 	checkData(t, pipe, data)
 }
