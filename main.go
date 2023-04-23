@@ -17,6 +17,7 @@ import (
 var Version = "dev"
 
 func main() {
+    args.Parse()
     Banner()
     ParseStdin()
 }
@@ -26,7 +27,7 @@ func Banner() {
 }
 
 func ParseStdin() {
-	a := args.Parse()
+	a := args.Get()
 	p := pipe.New()
 
     if p.IsPiped() != true {
