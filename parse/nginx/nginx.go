@@ -113,8 +113,8 @@ func Parse(log string) (Log, error) {
 
 func logParseFailure(log string, cut string, err error) {
     fmt.Println()
-    debug.Log("[NGINX parse error]")
-    debug.Log(err)
+    debug.Log(debug.V, "NxParseFail", err)
+    debug.Log(debug.V, "FailingLog", log)
 }
 
 func parseGzipRatio(ratio string) (float64, error) {
