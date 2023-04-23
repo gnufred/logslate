@@ -14,10 +14,22 @@ This project is licended under [GPL v3.0](license.md)
 
 ## Commands
 
-Upcoming commands:
+### Basic usage
+
+Current:
 
 ```
-logslate [parse,analyze,report]
+cat access.log | logslate
+--db ${path}/parsed-log.ldb
+```
+
+Upcoming:
+
+```
+cat access.log | logslate
+--parse
+--analyze
+--report
 --db ${path}/parsed-log.ldb
 --start "timestamp"
 --end "timestamp"
@@ -26,6 +38,12 @@ logslate [parse,analyze,report]
 --report_format [json,csv,echo,email]
 --report_folder ${folder}
 ```
+
+### Debug
+
+To activate debug output you can use either commands `-v, -vv, -vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
+
+### Examples
 
 Process compressed log data from the pipe:
 
