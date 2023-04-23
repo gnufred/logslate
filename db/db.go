@@ -42,7 +42,13 @@ func (d *Dber) Create(file string) error {
 		return err
 	}
 
-	d.createTables()
+    d.db.Exec("PRAGMA synchronous = OFF")
+    d.db.Exec("PRAGMA journal_mode = OFF")
+
+	err = d.createTables()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
