@@ -4,8 +4,9 @@ root_dir=$(git rev-parse --show-toplevel)
 cd $root_dir
 go clean -testcache
 go test \
+    ./args/... \
+    ./db/... \
+    ./debug/... \
     ./parse/nginx/... \
     ./parse/slate/... \
-    ./db/... \
-    ./args/... \
-    ./pipe/...
+    ./pipe/... \
