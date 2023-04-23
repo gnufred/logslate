@@ -4,6 +4,8 @@ import (
     "fmt"
     "os"
     "strconv"
+
+    "gitlab.com/gnufred/logslate/args"
 )
 
 const OFF = int(0)
@@ -14,8 +16,17 @@ const VVV = int(3)
 var verbosity = int(0)
 
 func init() {
-    wantverb, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
-    setVerbosity(wantverb)
+    // set verbosity from environment variable
+    v, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
+    if v == OFF || v == V || v == VV || v == VVV {
+        setVerbosity(v)
+    }
+
+    // override value from command line flag if set
+    a := args.Get()
+    if a.V { setVerbosity(V) }
+    if a.Vv { setVerbosity(VV) }
+    if a.Vvv { setVerbosity(VVV) }
 }
 
 func Log(msgverb int, name string, msg interface{}) error {
