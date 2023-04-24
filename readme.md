@@ -12,6 +12,10 @@ Current version is **v0**. See the [development roadmap](roadmap.md) for the cur
 
 This project is licended under [GPL v3.0](license.md)
 
+## Installation
+
+Good old manual downloads from https://gitlab.com/gnufred/logslate/-/releases
+
 ## Commands
 
 ### Basic usage
@@ -27,9 +31,6 @@ Upcoming:
 
 ```
 cat access.log | logslate
---parse
---analyze
---report
 --db ${path}/parsed-log.ldb
 --start "timestamp"
 --end "timestamp"
