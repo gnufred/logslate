@@ -16,21 +16,21 @@ This project is licended under [GPL v3.0](license.md)
 
 Good old manual downloads from https://gitlab.com/gnufred/logslate/-/releases
 
-## Commands
+## Usage
 
-### Basic usage
+See **[the comprehensive usage guide](usage.md)** for detailed use cases.
 
 Current:
 
 ```
-cat access.log | logslate
+cat access.log | logslate -v[vv]
 --db ${path}/parsed-log.ldb
 ```
 
-Upcoming:
+Upcoming (0.14):
 
 ```
-cat access.log | logslate
+cat access.log | logslate -v[vv]
 --db ${path}/parsed-log.ldb
 --start "timestamp"
 --end "timestamp"
@@ -38,18 +38,6 @@ cat access.log | logslate
 --detect [attack,exploit,bots,ad]
 --report_format [json,csv,echo,email]
 --report_folder ${folder}
-```
-
-### Debug
-
-To activate debug output you can use either commands `-v, -vv, -vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
-
-### Examples
-
-Process compressed log data from the pipe:
-
-```
-zcat logs/access*.log.gz | logslate
 ```
 
 ## Detection goal
