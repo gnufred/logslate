@@ -19,11 +19,13 @@ Detection method:
 ### v0.2
 
 Bot and crawler detection:
-* Google indexer
-* Bing indexer
-* Yandex indexer
-* Semrush bot
-* Moz.com SEO crawler
+* [Search] Google indexer
+* [Search] Bing indexer
+* [Search] Yandex indexer
+* [Marketing] Semrush bot
+* [Marketing] Moz.com SEO crawler
+* [Marketing] "Caliperbot/1.0" http://www.conductor.com/caliperbot
+* [Marketing] "Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)" https://ahrefs.com/robot/
 
 Detection method:
 * User agent pattern
