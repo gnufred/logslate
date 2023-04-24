@@ -8,7 +8,7 @@ import (
 )
 
 type Log struct {
-    Address string
+    Ip string
     User string
     Time time.Time
     Method string
@@ -23,7 +23,7 @@ type Log struct {
 
 func ParseNginx(nx nginx.Log) Log {
     ls := Log{
-        Address: nx.RemoteAddr,
+        Ip: nx.RemoteAddr,
         User: nx.RemoteUser,
         Time: nx.TimeLocal,
         Status: nx.Status,
