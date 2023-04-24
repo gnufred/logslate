@@ -13,9 +13,9 @@ const V   = int(1)
 const VV  = int(2)
 const VVV = int(3)
 
-var verbosity = int(0)
+var verbosity = OFF
 
-func init() {
+func Init() {
     // set verbosity from environment variable
     v, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
     if v == OFF || v == V || v == VV || v == VVV {
@@ -30,7 +30,7 @@ func init() {
 }
 
 func Log(msgverb int, name string, msg interface{}) error {
-    verb := getVerbosity()
+    verb := GetVerbosity()
     
     if verb == OFF {
         return fmt.Errorf("error: debug output disabled")
@@ -52,6 +52,6 @@ func setVerbosity(wantverb int) error {
     return fmt.Errorf("Invalid debug verbosity value: %d", wantverb)
 }
 
-func getVerbosity() int {
+func GetVerbosity() int {
     return verbosity
 }
