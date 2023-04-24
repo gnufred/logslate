@@ -112,7 +112,9 @@ func Parse(log string) (Log, error) {
 }
 
 func logParseFailure(log string, cut string, err error) {
-    fmt.Println()
+    if debug.GetVerbosity() != debug.OFF {
+        fmt.Println()
+    }
     debug.Log(debug.V, "NxParseFail", err)
     debug.Log(debug.V, "FailingLog", log)
 }
