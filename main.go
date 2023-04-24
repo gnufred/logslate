@@ -7,6 +7,7 @@ import (
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
+	"gitlab.com/gnufred/logslate/debug"
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/parse/nginx"
 	"gitlab.com/gnufred/logslate/parse/slate"
@@ -17,9 +18,14 @@ import (
 var Version = "dev"
 
 func main() {
-    args.Parse()
+    Init()
     Banner()
     ParseStdin()
+}
+
+func Init() {
+    args.Parse()
+    debug.Init()
 }
 
 func Banner() {
@@ -57,6 +63,7 @@ func ParseStdin() {
 		}
 
 		if line == "" {
+            lineErr++
 			continue
 		}
 
