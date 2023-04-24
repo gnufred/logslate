@@ -13,31 +13,31 @@ const V   = int(1)
 const VV  = int(2)
 const VVV = int(3)
 
-var verbosity = int(0)
+var verbosity = OFF
 
-func init() {
+func Init() {
     // set verbosity from environment variable
-    v, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
-    if v == OFF || v == V || v == VV || v == VVV {
-        setVerbosity(v)
+    env, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
+    if env == OFF || env == V || env == VV || env == VVV {
+        setVerbosity(env)
     }
 
     // override value from command line flag if set
-    a := args.Get()
-    if a.V { setVerbosity(V) }
-    if a.Vv { setVerbosity(VV) }
-    if a.Vvv { setVerbosity(VVV) }
+    arg := args.Get()
+    if arg.V { setVerbosity(V) }
+    if arg.Vv { setVerbosity(VV) }
+    if arg.Vvv { setVerbosity(VVV) }
 }
 
 func Log(msgverb int, name string, msg interface{}) error {
-    verb := getVerbosity()
+    verb := GetVerbosity()
     
     if verb == OFF {
         return fmt.Errorf("error: debug output disabled")
     }
     
     if msgverb <= verb {
-        fmt.Printf("(debug%d){%s} %v\n", msgverb, name, msg)
+        fmt.Printf("(debug%d)|%s| %v\n", msgverb, name, msg)
         return nil
     }
 
@@ -52,6 +52,6 @@ func setVerbosity(wantverb int) error {
     return fmt.Errorf("Invalid debug verbosity value: %d", wantverb)
 }
 
-func getVerbosity() int {
+func GetVerbosity() int {
     return verbosity
 }

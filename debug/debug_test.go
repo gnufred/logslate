@@ -10,18 +10,41 @@ import (
    that we don't want to have in there. So, we just test failures.
 */
 
-func TestDebugDisabled(t *testing.T) {
-    err := setVerbosity(OFF)
+func TestValidVerbosityLevels(t *testing.T) {
+    testValidVerbosity(t, OFF)
+    testValidVerbosity(t, V)
+    testValidVerbosity(t, VV)
+    testValidVerbosity(t, VVV)
+}
+
+func testValidVerbosity(t *testing.T, wantverb int) {
+    err := setVerbosity(wantverb)
     if err != nil {
         t.Fatal(err)
     }
-
-    verb := getVerbosity()
-    if verb != OFF {
-        t.Fatal("getVerbosity() unexpected return value")
+    verb := GetVerbosity()
+    if verb != wantverb {
+        t.Fatalf("GetVerbosity() got %d, expected %d", verb, wantverb)
     }
 
-    err = Log(V, "log_name: test", "log_message: test")
+}
+
+func TestInvalidVerbosityLevels(t *testing.T) {
+    testInvalidVerbosity(t, -1)
+    testInvalidVerbosity(t, 4)
+}
+
+func testInvalidVerbosity(t *testing.T, wantverb int) {
+    err := setVerbosity(wantverb)
+    if err == nil {
+        t.Fatal("No error returned while one is expected")
+    }
+
+}
+
+func TestDebugDisabled(t *testing.T) {
+    setVerbosity(OFF)
+    err := Log(V, "log_name: test", "log_message: test")
     if err == nil {
         t.Fatal("Log() did not report an error, and should have")
     }
