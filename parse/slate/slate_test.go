@@ -13,7 +13,7 @@ func TestParseNginx(t *testing.T) {
 
     timeEct, _ := time.Parse(nginx.TimeLayout, "05/Jan/2023:07:07:54 +0000")
     expected := Log{
-        Address: "208.115.199.20",
+        Ip: "208.115.199.20",
         User: "-",
         Time: timeEct, 
         Method: "HEAD",
