@@ -1,16 +1,5 @@
 # Development roadmap
 
-## Installation
-
-Good old manual download from https://gitlab.com/gnufred/logslate/-/releases
-
-## Completed commands
-
-```
-cat access.log | logslate 
---logs ${path}/access*.log
-```
-
 ## Upcoming versions
 
 ### v0.1
