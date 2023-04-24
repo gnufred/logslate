@@ -54,9 +54,9 @@ func (d *Dber) Create(file string) error {
 }
 
 func (d *Dber) createTables() error {
-	sql := `CREATE TABLE logslate (
+	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-        "address" string,
+        "ip" string,
         "user" string,
         "time" timestamp,
         "method" string,
@@ -114,13 +114,13 @@ func (d *Dber) Destroy() error {
 }
 
 func (d *Dber) InsertLog(e slate.Log) error {
-	sql := `INSERT INTO logslate (address,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.db.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	_, err = st.Exec(
-        e.Address,
+        e.Ip,
         e.User,
         e.Time,
         e.Method,
