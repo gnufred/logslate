@@ -4,6 +4,7 @@ import (
     "fmt"
 	"io"
 	"log"
+    "os"
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
@@ -24,8 +25,10 @@ func main() {
 }
 
 func Init() {
-    args.Parse()
+    args.Init()
     debug.Init()
+    debug.Log(debug.VVV, "os.Args", os.Args)
+    debug.Log(debug.VVV, "args.Get", args.Get())
 }
 
 func Banner() {
