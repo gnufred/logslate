@@ -18,7 +18,7 @@ Download from https://gitlab.com/gnufred/logslate/-/releases or via `brew`
 
 ```
 # install
-brew tap gnufred/logslate git@gitlab.com:gnufred/logslate.git
+brew tap gnufred/logslate git@gitlab.com:gnufred/logslate
 brew install logslate
 # update
 brew update && brew upgrade logslate
