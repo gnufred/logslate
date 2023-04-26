@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "Uploading Linux package."
+curl \
+    --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+    --upload-file \
+        bin/${LINUX_AMD64_BINARY} \
+        "${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}"
+echo ""
+
+echo "Uploading MacOS package."
+curl \
+    --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+    --upload-file \
+        bin/${DARWIN_AMD64_BINARY} \
+        "${PACKAGE_REGISTRY_URL}/${DARWIN_AMD64_BINARY}"
+echo ""
+
+echo "Uploading Windows package."
+curl \
+    --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+    --upload-file \
+        bin/${WINDOWS_AMD64_BINARY} \
+        "${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}"
+echo ""
