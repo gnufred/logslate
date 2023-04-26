@@ -14,7 +14,15 @@ This project is licended under [GPL v3.0](license.md)
 
 ## Installation
 
-Good old manual downloads from https://gitlab.com/gnufred/logslate/-/releases
+Download from https://gitlab.com/gnufred/logslate/-/releases or via `brew`
+
+```
+# install
+brew tap gnufred/logslate git@gitlab.com:gnufred/logslate.git
+brew install logslate
+# update
+brew update && brew upgrade logslate
+```
 
 ## Usage
 
