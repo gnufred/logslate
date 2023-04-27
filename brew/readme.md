@@ -14,4 +14,4 @@ You must then create CI/CD variable named `CI_BREW_TOKEN` and activate the **Mas
 
 ## Pipelines
 
-The last part of the automation create a new commit with the final brew installation file. **If this triggers a pipeline** use the `-o ci.skip` with `git push`. Otherwise, you'll have inifitine CI loop.
+The last part of the automation create a new commit with the final brew installation file. Don't remove the `-o ci.skip` option for `git push`. Otherwise, you might start an inifitine CI loop.
