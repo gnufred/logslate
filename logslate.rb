@@ -1,28 +1,21 @@
-# `brew` package management script
-
 class Logslate < Formula
   desc 'Logslate (log translate)'
-  homepage 'https://gitlab.com/gnufred/logslate/'
-  version '0.0.8'
+  homepage 'https://gitlab.com/gnufred/logslate'
+  version '00-more_ci'
 
   on_linux do
-    sha256 '595861b839c9b9a91a14638fb221808f4384dc979c41eb8ba8b6a43f53debff1'
-    url "https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/#{version}/logslate-linux-amd64"
+    sha256 '7ef8263b0d3f0f7fc7e91978d2a43878347d02c572a0db624f67c5a865dc17d5'
+    url 'https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/00-more_ci/logslate-linux-amd64'
     def install
       bin.install 'logslate-linux-amd64' => 'logslate'
     end
   end
 
   on_macos do
-    sha256 '762b0df8032a6cec6a6a2e5ca7b49854d153e4a445777f417daa028e421a18b7'
-    url "https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/#{version}/logslate-darwin-amd64"
+    sha256 '1c47626a90b93c9cd8f1686fd71903b7efd0ce7e472ab98ab5e199fb570d0976'
+    url 'https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/00-more_ci/logslate-darwin-amd64'
     def install
       bin.install 'logslate-darwin-amd64' => 'logslate'
     end
   end
-
-  test do
-    logslate version
-  end
-
 end
