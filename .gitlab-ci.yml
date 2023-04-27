@@ -23,8 +23,8 @@ release:
   only:
     - tags
   script: 
-    - gitlab/test
-    - gitlab/build
-    - gitlab/package
-    - gitlab/release
-    - brew/release
+    - .gitlab/test
+    - .gitlab/build
+    - .gitlab/package
+    - .gitlab/release
+    - .brew/release
