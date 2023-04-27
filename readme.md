@@ -104,4 +104,4 @@ CMS and framework:
 
 State-sponsored hackers, ransomware gangs, cyber criminals, cyber spies, and scammers are laughing at our security.
 
-![A well dressed Sir, holding a glass of wine](sir/fullsize.png)
+![A well dressed Sir, holding a glass of wine](.sir/fullsize.png)
