@@ -8,7 +8,8 @@ variables:
   DARWIN_AMD64_BINARY: "${BIN_NAME}-darwin-amd64"
   WINDOWS_AMD64_BINARY: "${BIN_NAME}-windows-amd64.exe"
   PACKAGE_API_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages"
-  PACKAGE_REGISTRY_URL: "${PACKAGE_API_URL}/generic/${BIN_NAME}/${PACKAGE_VERSION}"
+  PACKAGE_REGISTRY_CURRENT: "${PACKAGE_API_URL}/generic/${BIN_NAME}/${PACKAGE_VERSION}"
+  PACKAGE_REGISTRY_LATEST: "${PACKAGE_API_URL}/generic/${BIN_NAME}/latest"
   BREW_BIN: $BIN_NAME
   BREW_DESCRIPTION: "Logslate (log translate)"
   BREW_BOT_EMAIL: "gnufred+gitlab-ci@gmail.com"
@@ -24,6 +25,6 @@ release:
   script: 
     - gitlab/test
     - gitlab/build
-    - gitlab/upload
+    - gitlab/package
     - gitlab/release
     - brew/release
