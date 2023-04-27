@@ -33,7 +33,7 @@ export BREW_RELEASE_VERSION
 export BREW_SHA256_PACKAGE_LINUX
 export BREW_SHA256_PACKAGE_DARWIN
 
-. brew/template.rb > "${BREW_BIN}.rb"
+. .brew/template.rb > "${BREW_BIN}.rb"
 
 
 #####################################################
