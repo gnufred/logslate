@@ -13,9 +13,10 @@ import (
 )
 
 type Dber struct {
-	dns  string
+	dns string
 	file string
-	db   *sql.DB
+	db *sql.DB
+    tx *sql.Tx 
 }
 
 var once sync.Once
@@ -113,13 +114,26 @@ func (d *Dber) Destroy() error {
 	return nil
 }
 
+func (d *Dber) Begin() error {
+    tx, err := d.db.Begin()
+    if err != nil {
+        return err
+    }
+    d.tx = tx
+    return nil
+}
+
+func (d *Dber) Commit() error {
+    return d.tx.Commit()
+}
+
 func (d *Dber) InsertLog(e slate.Log) error {
 	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
-	st, err := d.db.Prepare(sql)
+	st, err := d.tx.Prepare(sql)
 	if err != nil {
 		return err
 	}
-	_, err = st.Exec(
+	_, err = d.tx.Stmt(st).Exec(
         e.Ip,
         e.User,
         e.Time,

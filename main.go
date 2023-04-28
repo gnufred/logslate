@@ -43,16 +43,24 @@ func ParseStdin() {
         log.Fatalf("Error: no input data")
     }
 
-	db := db.Singleton()
+	d := db.Singleton()
 	if a.Db != "" {
-		err := db.Create(a.Db)
+		err := d.Create(a.Db)
 		if err != nil {
 			log.Fatalf("Error while creating database: %s", err)
 		}
 	}
 
+    if a.Db != "" {
+        d.Begin()
+        defer func(d *db.Dber) {
+            d.Commit()
+        }(d)
+    }
+
 	lineNum, lineErr := 0, 0
 	bar := progressbar.DefaultBytes(-1, "parsing")
+
 	for {
 		line, byteCnt, err := p.ReadLine()
 
@@ -79,7 +87,13 @@ func ParseStdin() {
         ls := slate.ParseNginx(nx)
 
 		if a.Db != "" {
-			db.InsertLog(ls)
+			d.InsertLog(ls)
+            // From my basic tests, commiting 5 inserts at a time is what
+            // gives me the best performance gain
+            if lineNum % 5 == 0 {
+                d.Commit()
+                d.Begin()
+            }
 		}
 
 		bar.Add(byteCnt)

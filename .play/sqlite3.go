@@ -49,6 +49,11 @@ func main() {
     InsertNumRows(db, 1000, testStr)
     fmt.Printf("%v => 1000 single inserts\n", time.Since(timer))
 
+    // 1000 transact inserts
+    timer = time.Now()
+    TransactNumRows(db, 1000, testStr)
+    fmt.Printf("%v => 1000 transact inserts\n", time.Since(timer))
+
     // 1000 single inserts
     db.Exec("PRAGMA synchronous = OFF")
     timer = time.Now()
@@ -60,6 +65,26 @@ func main() {
     timer = time.Now()
     InsertNumRows(db, 1000, testStr)
     fmt.Printf("%v => 1000 single inserts (sync off, journal mem)\n", time.Since(timer))
+
+    // 1000 transact inserts
+    timer = time.Now()
+    TransactNumRows(db, 1000, testStr)
+    fmt.Printf("%v => 1000 transact inserts (sync off, journal mem)\n", time.Since(timer))
+}
+
+func TransactNumRows(db *sql.DB, num int, row string) {
+    tx, _ := db.Begin()
+    for i := 0; i < num; i++ {
+        sql := `INSERT INTO test (row) VALUES (?);`
+        _, err := tx.Query(sql, row)
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+    err := tx.Commit()
+    if err != nil {
+        log.Fatal(err)
+    }
 }
 
 func InsertNumRows(db *sql.DB, num int, row string) {
