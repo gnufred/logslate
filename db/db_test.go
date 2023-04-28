@@ -23,9 +23,14 @@ func TestInsertLog(t *testing.T) {
 	if err != nil {
         t.Fatalf("Opening test data file failed: %s", err)
 	}
+
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
+
 	db := Singleton()
+    db.Begin()
+    defer db.Commit()
+
 	for scanner.Scan() {
         nx, _ := nginx.Parse(scanner.Text())
         if err != nil {
