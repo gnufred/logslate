@@ -7,10 +7,4 @@ cd $root_dir
 
 go clean -testcache
 
-go test $@ \
-    ./args/... \
-    ./db/... \
-    ./debug/... \
-    ./parse/nginx/... \
-    ./parse/slate/... \
-    ./pipe/... \
+go test $@ ./... | grep -v '\[no test files\]'
