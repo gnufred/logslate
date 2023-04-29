@@ -22,7 +22,7 @@ type Log struct {
     GzipRatio float64
 }
 
-var DNF = errors.New("delimiter field not found")
+var errDNF = errors.New("delimiter field not found")
 var TimeLayout = "02/Jan/2006:15:04:05 -0700"
 
 func Parse(log string) (Log, error) {
@@ -142,7 +142,7 @@ func parseTime(timeLocal string) (time.Time, error) {
 
 func parseField(s, substr string, mx [3]int) (string, string, error) {
     cut, sub, err := cutField(s, substr, mx) 
-    if err == DNF {
+    if err == errDNF {
         return "", "", fmt.Errorf("parseField [DNF]\n(log) %s", substr)
     }
     if err != nil {
@@ -154,7 +154,7 @@ func parseField(s, substr string, mx [3]int) (string, string, error) {
 func cutField(s, substr string, mx [3]int) (string, string, error) {
     i := strings.Index(substr, s)
     if i == -1 {
-        return "", "", DNF
+        return "", "", errDNF
     }
     return substr[mx[0]:i+mx[1]], substr[i+mx[2]:], nil
 }

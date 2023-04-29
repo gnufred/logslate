@@ -35,7 +35,7 @@ func (d *Dber) Create(file string) error {
 
 	err := d.createFileIfNotExists()
 	if err != nil {
-        return fmt.Errorf("Unable to create database: %s.", err)
+        return fmt.Errorf("unable to create database: %s", err)
 	}
 
 	d.db, err = sql.Open("sqlite3", d.file)
@@ -57,7 +57,7 @@ func (d *Dber) Create(file string) error {
 
 func (d *Dber) createTables() error {
     if !d.open {
-        return fmt.Errorf("Database closed")
+        return fmt.Errorf("database closed")
     }
 	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -98,8 +98,8 @@ func (d *Dber) Close() error {
 
 func (d *Dber) createFileIfNotExists() error {
 	_, err := os.Stat(d.file)
-	if os.IsNotExist(err) == false {
-		return fmt.Errorf("File %s already exists", d.file)
+	if !os.IsNotExist(err) {
+		return fmt.Errorf("file %s already exists", d.file)
 	}
 
 	fileHandle, err := os.Create(d.file)
@@ -120,9 +120,6 @@ func (d *Dber) Destroy() error {
 }
 
 func (d *Dber) Begin() error {
-    if !d.open {
-        return fmt.Errorf("Database closed")
-    }
     tx, err := d.db.Begin()
     if err != nil {
         return err
@@ -137,7 +134,7 @@ func (d *Dber) Commit() error {
 
 func (d *Dber) InsertLog(e slate.Log) error {
     if !d.open {
-        return fmt.Errorf("Database closed")
+        return fmt.Errorf("database closed")
     }
 	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.tx.Prepare(sql)

@@ -22,11 +22,12 @@ func TestDbExists(t *testing.T) {
 	input, _ := os.ReadFile("testdata/3ok3broken.log")
 	mock.Stdin(input)
 
-    os.Create("testdata/exist.db")
-    defer os.Remove("testdata/exist.db")
+    dbPath := "testdata/exist.db"
+    os.Create(dbPath)
+    defer os.Remove(dbPath)
 
     a := args.Get()
-    a.Db = "exist.db"
+    a.Db = dbPath
 	_, _, err := ParseStdin(a)
     if err == nil {
         t.Fatalf("Did not get the expected error")
