@@ -10,11 +10,11 @@ import (
 
 // Must fail given there's no data in os.Stdin
 func TestNoData(t *testing.T) {
-    a := args.Get()
+	a := args.Get()
 	_, _, err := ParseStdin(a)
-    if err == nil {
-        t.Fatalf("Did not get the expected error")
-    }
+	if err == nil {
+		t.Fatalf("Did not get the expected error")
+	}
 }
 
 // Must fail given the database file already exists
@@ -22,21 +22,21 @@ func TestDbExists(t *testing.T) {
 	input, _ := os.ReadFile("testdata/3ok3broken.log")
 	mock.Stdin(input)
 
-    dbPath := "testdata/exist.db"
-    os.Create(dbPath)
-    defer os.Remove(dbPath)
+	dbPath := "testdata/exist.db"
+	os.Create(dbPath)
+	defer os.Remove(dbPath)
 
-    a := args.Get()
-    a.Db = dbPath
+	a := args.Get()
+	a.Db = dbPath
 	_, _, err := ParseStdin(a)
-    if err == nil {
-        t.Fatalf("Did not get the expected error")
-    }
+	if err == nil {
+		t.Fatalf("Did not get the expected error")
+	}
 }
 
 func TestMockedData(t *testing.T) {
-    testInputData(t, "testdata/3ok3broken.log", 3, 3)
-    testInputData(t, "testdata/20ok.log", 20, 0)
+	testInputData(t, "testdata/3ok3broken.log", 3, 3)
+	testInputData(t, "testdata/20ok.log", 20, 0)
 }
 
 func testInputData(t *testing.T, file string, parsedExpect int, unparsedExpect int) {

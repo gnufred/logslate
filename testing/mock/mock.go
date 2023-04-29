@@ -1,8 +1,8 @@
 package mock
 
 import (
-    "os"
-    "log"
+	"log"
+	"os"
 )
 
 func Stdin(input []byte) {

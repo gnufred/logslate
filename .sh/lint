@@ -2,9 +2,4 @@
 
 root_dir=$(git rev-parse --show-toplevel)
 cd $root_dir
-
-# https://staticcheck.io/docs/getting-started/
-staticcheck ./...
-
-# https://pkg.go.dev/cmd/vet
-go vet ./...
+. .gitlab/lint
