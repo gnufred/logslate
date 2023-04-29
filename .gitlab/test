@@ -7,4 +7,4 @@ cd $root_dir
 
 go clean -testcache
 
-go test $@ ./... | grep -v '\[no test files\]'
+go test $@ ./...

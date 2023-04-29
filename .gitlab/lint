@@ -1,0 +1,11 @@
+#!/bin/bash
+
+root_dir=$(git rev-parse --show-toplevel)
+cd $root_dir
+
+# https://staticcheck.io/docs/getting-started/
+go install honnef.co/go/tools/cmd/staticcheck@latest
+staticcheck ./...
+
+# https://pkg.go.dev/cmd/vet
+go vet ./...

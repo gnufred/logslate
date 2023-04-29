@@ -31,10 +31,7 @@ func (p *Piper) BytesLen() (uint64, error) {
 // Source: https://stackoverflow.com/a/26567513/6900541
 func (p *Piper) IsPiped() bool {
     stat, _ := os.Stdin.Stat()
-    if (stat.Mode() & os.ModeCharDevice) == 0 {
-        return true
-    }
-    return false
+    return (stat.Mode() & os.ModeCharDevice) == 0
 }
 
 func (p *Piper) ReadLine() (string, int, error) {

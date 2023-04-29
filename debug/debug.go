@@ -41,7 +41,7 @@ func Log(msgverb int, name string, msg interface{}) error {
         return nil
     }
 
-    return fmt.Errorf("Dedug message level %d does not meet current set verbosity %d", msgverb, verb)
+    return fmt.Errorf("dedug message level %d does not meet current set verbosity %d", msgverb, verb)
 }
 
 func setVerbosity(wantverb int) error {
@@ -49,7 +49,7 @@ func setVerbosity(wantverb int) error {
         verbosity = wantverb
         return nil
     }
-    return fmt.Errorf("Invalid debug verbosity value: %d", wantverb)
+    return fmt.Errorf("invalid debug verbosity value: %d", wantverb)
 }
 
 func GetVerbosity() int {

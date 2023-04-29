@@ -16,15 +16,15 @@ import (
 func ParseStdin(a args.Args) (int, int, error) {
 	p := pipe.New()
 
-	if p.IsPiped() != true {
-		return 0, 0, fmt.Errorf("Error: no input data")
+	if !p.IsPiped() {
+		return 0, 0, fmt.Errorf("error: no input data")
 	}
 
 	d := db.Singleton()
 	if a.Db != "" {
 		err := d.Create(a.Db)
 		if err != nil {
-			return 0, 0, fmt.Errorf("Error while creating database: %s", err)
+			return 0, 0, fmt.Errorf("error while creating database: %s", err)
 		}
 	}
 
@@ -46,7 +46,7 @@ func ParseStdin(a args.Args) (int, int, error) {
 		}
 
 		if err != nil {
-			return 0, 0, fmt.Errorf("Error while reading piped io.Stding: %s", err)
+			return 0, 0, fmt.Errorf("error while reading piped io.Stding: %s", err)
 		}
 
 		if line == "" {
