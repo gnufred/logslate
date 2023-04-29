@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"sync"
 
@@ -16,6 +15,7 @@ type Dber struct {
 	dns string
 	file string
 	db *sql.DB
+    open bool
     tx *sql.Tx 
 }
 
@@ -35,13 +35,14 @@ func (d *Dber) Create(file string) error {
 
 	err := d.createFileIfNotExists()
 	if err != nil {
-		log.Fatalf("Fatal error: Unable to create database file. Error: %s.", err)
+        return fmt.Errorf("Unable to create database: %s.", err)
 	}
 
 	d.db, err = sql.Open("sqlite3", d.file)
 	if err != nil {
 		return err
 	}
+    d.open = true
 
     d.db.Exec("PRAGMA synchronous = OFF")
     d.db.Exec("PRAGMA journal_mode = OFF")
@@ -55,6 +56,9 @@ func (d *Dber) Create(file string) error {
 }
 
 func (d *Dber) createTables() error {
+    if !d.open {
+        return fmt.Errorf("Database closed")
+    }
 	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "ip" string,
@@ -88,6 +92,7 @@ func (d *Dber) Close() error {
 	if err != nil {
 		return err
 	}
+    d.open = false
 	return nil
 }
 
@@ -115,6 +120,9 @@ func (d *Dber) Destroy() error {
 }
 
 func (d *Dber) Begin() error {
+    if !d.open {
+        return fmt.Errorf("Database closed")
+    }
     tx, err := d.db.Begin()
     if err != nil {
         return err
@@ -128,6 +136,9 @@ func (d *Dber) Commit() error {
 }
 
 func (d *Dber) InsertLog(e slate.Log) error {
+    if !d.open {
+        return fmt.Errorf("Database closed")
+    }
 	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.tx.Prepare(sql)
 	if err != nil {
