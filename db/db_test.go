@@ -10,7 +10,7 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	file := "/tmp/test.db"
+	file := "testdata/test.db"
 	db := Singleton()
 	err := db.Create(file)
 	if err != nil {

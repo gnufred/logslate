@@ -4,6 +4,8 @@ import (
 	"io"
 	"os"
 	"testing"
+
+	"gitlab.com/gnufred/logslate/testing/mock"
 )
 
 /* ============
@@ -20,7 +22,7 @@ type mockedStdinExpect struct {
 func TestReadLine_OneLineBasic(t *testing.T) {
 	// mock stding
 	input, _ := os.ReadFile("testdata/oneline.log")
-	mockStdin(t, input)
+	mock.Stdin(input)
 	defer func(v *os.File) { os.Stdin = v }(os.Stdin)
 
 	// prepare data
@@ -40,7 +42,7 @@ func TestReadLine_OneLineBasic(t *testing.T) {
 func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 	// mock stding
 	input, _ := os.ReadFile("testdata/twolinespluseof.log")
-	mockStdin(t, input)
+	mock.Stdin(input)
 	defer func(v *os.File) { os.Stdin = v }(os.Stdin)
 
 	// prepare data
@@ -89,20 +91,4 @@ func checkError(t *testing.T, got error, expected error) {
 	if got != expected {
 		t.Fatalf("Got error %s, expected error %s", got, expected)
 	}
-}
-
-func mockStdin(t *testing.T, input []byte) {
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("Mocking Stdin failed: %s", err)
-	}
-
-	_, err = w.Write(input)
-	if err != nil {
-		t.Fatalf("Error while mocking Stdin")
-	}
-	w.Close()
-
-	// restore stdin
-	os.Stdin = r
 }
