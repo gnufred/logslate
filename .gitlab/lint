@@ -1,11 +1,21 @@
 #!/bin/bash
 
-root_dir=$(git rev-parse --show-toplevel)
-cd $root_dir
+# download dependencies
+go install honnef.co/go/tools/cmd/staticcheck@latest
 
 # https://staticcheck.io/docs/getting-started/
-go install honnef.co/go/tools/cmd/staticcheck@latest
+echo "Lint: staticcheck"
 staticcheck ./...
 
 # https://pkg.go.dev/cmd/vet
+echo "Lint: go vet"
 go vet ./...
+
+# https://pkg.go.dev/cmd/gofmt
+echo "Lint: gofmt"
+unformated=$(gofmt -l .)
+if [[ ! -z "$unformated" ]]; then
+	echo "gofmt: unformatted files"
+	echo "$unformated"
+	exit 1
+fi

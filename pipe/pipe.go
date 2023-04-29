@@ -30,14 +30,14 @@ func (p *Piper) BytesLen() (uint64, error) {
 
 // Source: https://stackoverflow.com/a/26567513/6900541
 func (p *Piper) IsPiped() bool {
-    stat, _ := os.Stdin.Stat()
-    return (stat.Mode() & os.ModeCharDevice) == 0
+	stat, _ := os.Stdin.Stat()
+	return (stat.Mode() & os.ModeCharDevice) == 0
 }
 
 func (p *Piper) ReadLine() (string, int, error) {
 	if scanned := p.scanner.Scan(); scanned {
 		line := p.scanner.Text()
-		byteCnt := utf8.RuneCountInString(line) +2 /* +2 because of "\n" */
+		byteCnt := utf8.RuneCountInString(line) + 2 /* +2 because of "\n" */
 		return line, byteCnt, nil
 	} else {
 		if err := p.scanner.Err(); err == nil {

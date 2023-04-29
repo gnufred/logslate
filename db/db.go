@@ -6,17 +6,17 @@ import (
 	"os"
 	"sync"
 
-    "gitlab.com/gnufred/logslate/parse/slate"
+	"gitlab.com/gnufred/logslate/parse/slate"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Dber struct {
-	dns string
+	dns  string
 	file string
-	db *sql.DB
-    open bool
-    tx *sql.Tx 
+	db   *sql.DB
+	open bool
+	tx   *sql.Tx
 }
 
 var once sync.Once
@@ -35,17 +35,17 @@ func (d *Dber) Create(file string) error {
 
 	err := d.createFileIfNotExists()
 	if err != nil {
-        return fmt.Errorf("unable to create database: %s", err)
+		return fmt.Errorf("unable to create database: %s", err)
 	}
 
 	d.db, err = sql.Open("sqlite3", d.file)
 	if err != nil {
 		return err
 	}
-    d.open = true
+	d.open = true
 
-    d.db.Exec("PRAGMA synchronous = OFF")
-    d.db.Exec("PRAGMA journal_mode = OFF")
+	d.db.Exec("PRAGMA synchronous = OFF")
+	d.db.Exec("PRAGMA journal_mode = OFF")
 
 	err = d.createTables()
 	if err != nil {
@@ -56,9 +56,9 @@ func (d *Dber) Create(file string) error {
 }
 
 func (d *Dber) createTables() error {
-    if !d.open {
-        return fmt.Errorf("database closed")
-    }
+	if !d.open {
+		return fmt.Errorf("database closed")
+	}
 	sql := `CREATE TABLE logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "ip" string,
@@ -92,7 +92,7 @@ func (d *Dber) Close() error {
 	if err != nil {
 		return err
 	}
-    d.open = false
+	d.open = false
 	return nil
 }
 
@@ -120,40 +120,40 @@ func (d *Dber) Destroy() error {
 }
 
 func (d *Dber) Begin() error {
-    tx, err := d.db.Begin()
-    if err != nil {
-        return err
-    }
-    d.tx = tx
-    return nil
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+	d.tx = tx
+	return nil
 }
 
 func (d *Dber) Commit() error {
-    return d.tx.Commit()
+	return d.tx.Commit()
 }
 
 func (d *Dber) InsertLog(e slate.Log) error {
-    if !d.open {
-        return fmt.Errorf("database closed")
-    }
+	if !d.open {
+		return fmt.Errorf("database closed")
+	}
 	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.tx.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	_, err = d.tx.Stmt(st).Exec(
-        e.Ip,
-        e.User,
-        e.Time,
-        e.Method,
-        e.Path,
-        e.Query,
-        e.Proto,
-        e.Status,
-        e.Sent,
-        e.Referer,
-        e.Agent,
-    )
+		e.Ip,
+		e.User,
+		e.Time,
+		e.Method,
+		e.Path,
+		e.Query,
+		e.Proto,
+		e.Status,
+		e.Sent,
+		e.Referer,
+		e.Agent,
+	)
 	if err != nil {
 		return err
 	}
