@@ -35,15 +35,33 @@ func TestDbExists(t *testing.T) {
 }
 
 func TestMockedData(t *testing.T) {
-	testInputData(t, "testdata/3ok3broken.log", 3, 3)
-	testInputData(t, "testdata/20ok.log", 20, 0)
+	a := args.Get()
+	dbPath := "testdata/sql.db"
+
+	data := []struct {
+		file     string
+		parsed   int
+		unparsed int
+	}{
+		{"testdata/3ok3broken.log", 3, 3},
+		{"testdata/20ok.log", 20, 0},
+	}
+
+	for _, dt := range data {
+		testInputData(t, a, dt.file, dt.parsed, dt.unparsed)
+	}
+
+	a.Db = dbPath
+	for _, dt := range data {
+		testInputData(t, a, dt.file, dt.parsed, dt.unparsed)
+		os.Remove(dbPath)
+	}
 }
 
-func testInputData(t *testing.T, file string, parsedExpect int, unparsedExpect int) {
+func testInputData(t *testing.T, a args.Args, file string, parsedExpect int, unparsedExpect int) {
 	input, _ := os.ReadFile(file)
 	mock.Stdin(input)
 
-	a := args.Get()
 	parsedGot, unparsedGot, err := ParseStdin(a)
 
 	if parsedExpect != parsedGot {
