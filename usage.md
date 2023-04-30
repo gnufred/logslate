@@ -14,7 +14,7 @@ If you want to use `logslate` on your local workstation, it's recommended to use
 
 ```
 # install
-brew tap gnufred/logslate git@gitlab.com:gnufred/logslate
+brew tap gnufred/logslate https://gitlab.com/gnufred/logslate
 brew install logslate
 # update
 brew update && brew upgrade logslate
