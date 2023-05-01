@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
+	"github.com/trstringer/go-systemd-time/pkg/systemdtime"
 )
 
 type Args struct {
@@ -23,6 +24,7 @@ type Args struct {
 
 var args = Args{}
 
+// Default time value for unset or unparsed time values
 // Use this variable to compare to time.Time arguments
 // if sometime == args.UnsetTime { fmt.Print("not set") }
 var UnsetTime = time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -33,21 +35,17 @@ func Init() {
 	}
 
 	parse()
-	validate(args)
-	parseStartTime()
-	parseEndTime()
+	validate()
 }
 
-func validate(args Args) {
+func validate() {
 	// https://pkg.go.dev/flag#NFlag
 	// NArg is the number of arguments remaining after flags have been processed.
-	if narg := flag.NArg(); narg == 0 {
-		return
+	if narg := flag.NArg(); narg != 0 {
+		fmt.Printf("unknown argument(s) found\nUsage of logslate:\n")
+		flag.PrintDefaults()
+		os.Exit(2)
 	}
-
-	fmt.Printf("unknown argument(s) found\nUsage of logslate:\n")
-	flag.PrintDefaults()
-	os.Exit(2)
 }
 
 func parse() {
@@ -68,38 +66,36 @@ func parse() {
 
 	// return structured arguments
 	args = Args{
-		V:     bool(*vFlag),
-		Vv:    bool(*vvFlag),
-		Vvv:   bool(*vvvFlag),
-		Db:    string(*dbFlag),
-		Since: string(*sinceFlag),
-		Until: string(*untilFlag),
+		V:         bool(*vFlag),
+		Vv:        bool(*vvFlag),
+		Vvv:       bool(*vvvFlag),
+		Db:        string(*dbFlag),
+		Since:     string(*sinceFlag),
+		Until:     string(*untilFlag),
+		StartTime: parseTimestamp(string(*sinceFlag), UnsetTime),
+		EndTime:   parseTimestamp(string(*untilFlag), time.Now()),
 	}
 }
 
-func parseStartTime() {
-	if args.Since == "" {
-		return
+func parseTimestamp(timestamp string, unset time.Time) time.Time {
+	// return default time.Time if string is empty
+	if timestamp == "" {
+		return unset
 	}
 
-	startTime, err := dateparse.ParseLocal(args.Since)
-	if err != nil {
-		log.Fatalf("parsing %s error %s", startTime, err)
-	}
-	args.StartTime = startTime
-}
-
-func parseEndTime() {
-	if args.Until == "" {
-		args.EndTime = time.Now()
-		return
+	// return time.Time parsed from systemd.time format
+	now := time.Now()
+	adjustedTime, err := systemdtime.AdjustTime(now, timestamp)
+	if err == nil {
+		return adjustedTime
 	}
 
-	endTime, err := dateparse.ParseLocal(args.Until)
-	if err != nil {
-		log.Fatalf("parsing %s error %s", endTime, err)
+	// return time.Time parsed from unknown layout
+	parsedTime, err := dateparse.ParseLocal(timestamp)
+	if err == nil {
+		log.Fatalf("parsing %s error %s", timestamp, err)
 	}
-	args.EndTime = endTime
+	return parsedTime
 }
 
 func Get() Args {
