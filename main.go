@@ -31,9 +31,9 @@ func Banner() {
 
 func ParseStdin() {
 	a := args.Get()
-	parsed, unparsed, err := rootcmd.ParseStdin(a)
+	par, err := rootcmd.ParseStdin(a)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("  parsed [%d] error [%d]\n", parsed, unparsed)
+	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
 }

@@ -11,7 +11,7 @@ import (
 // Must fail given there's no data in os.Stdin
 func TestNoData(t *testing.T) {
 	a := args.Get()
-	_, _, err := ParseStdin(a)
+	_, err := ParseStdin(a)
 	if err == nil {
 		t.Fatalf("Did not get the expected error")
 	}
@@ -28,7 +28,7 @@ func TestDbExists(t *testing.T) {
 
 	a := args.Get()
 	a.Db = dbPath
-	_, _, err := ParseStdin(a)
+	_, err := ParseStdin(a)
 	if err == nil {
 		t.Fatalf("Did not get the expected error")
 	}
@@ -39,37 +39,40 @@ func TestMockedData(t *testing.T) {
 	dbPath := "testdata/sql.db"
 
 	data := []struct {
-		file     string
-		parsed   int
-		unparsed int
+		file   string
+		expect Parsed
 	}{
-		{"testdata/3ok3broken.log", 3, 3},
-		{"testdata/20ok.log", 20, 0},
+		{"testdata/3ok3broken.log", Parsed{3, 0, 3}},
+		{"testdata/20ok.log", Parsed{20, 0, 0}},
 	}
 
 	for _, dt := range data {
-		testInputData(t, a, dt.file, dt.parsed, dt.unparsed)
+		testInputData(t, a, dt.file, dt.expect)
 	}
 
 	a.Db = dbPath
 	for _, dt := range data {
-		testInputData(t, a, dt.file, dt.parsed, dt.unparsed)
+		testInputData(t, a, dt.file, dt.expect)
 		os.Remove(dbPath)
 	}
 }
 
-func testInputData(t *testing.T, a args.Args, file string, parsedExpect int, unparsedExpect int) {
+func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 	input, _ := os.ReadFile(file)
 	mock.Stdin(input)
 
-	parsedGot, unparsedGot, err := ParseStdin(a)
+	got, err := ParseStdin(a)
 
-	if parsedExpect != parsedGot {
-		t.Fatalf("Expected parsed %d, got %d", parsedExpect, parsedGot)
+	if expect.Ok != got.Ok {
+		t.Fatalf("ok: expect %d, got %d", expect.Ok, got.Ok)
 	}
 
-	if unparsedExpect != unparsedGot {
-		t.Fatalf("Expected unparsed %d, got %d", unparsedExpect, unparsedGot)
+	if expect.Skip != got.Skip {
+		t.Fatalf("skip: expect %d, got %d", expect.Skip, got.Skip)
+	}
+
+	if expect.Err != got.Err {
+		t.Fatalf("err: expect %d, got %d", expect.Err, got.Err)
 	}
 
 	if err != nil {
