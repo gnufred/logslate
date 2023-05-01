@@ -7,4 +7,4 @@ ver=$(git describe --tags --always)
 
 go run \
     -ldflags="-X 'main.Version=${ver}'" \
-    main.go $@
+    main.go "$@"
