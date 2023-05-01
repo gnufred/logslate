@@ -13,18 +13,25 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-func ParseStdin(a args.Args) (int, int, error) {
-	p := pipe.New()
+type Parsed struct {
+	Ok   int
+	Skip int
+	Err  int
+}
 
-	if !p.IsPiped() {
-		return 0, 0, fmt.Errorf("error: no input data")
+func ParseStdin(a args.Args) (Parsed, error) {
+	pi := pipe.New()
+	par := Parsed{0, 0, 0}
+
+	if !pi.IsPiped() {
+		return par, fmt.Errorf("error: no input data")
 	}
 
 	d := db.Singleton()
 	if a.Db != "" {
 		err := d.Create(a.Db)
 		if err != nil {
-			return 0, 0, fmt.Errorf("error while creating database: %s", err)
+			return par, fmt.Errorf("error while creating database: %s", err)
 		}
 	}
 
@@ -35,28 +42,27 @@ func ParseStdin(a args.Args) (int, int, error) {
 		}(d)
 	}
 
-	lineNum, lineErr := 0, 0
 	bar := progressbar.DefaultBytes(-1, "parsing")
 
 	for {
-		line, byteCnt, err := p.ReadLine()
+		line, byteCnt, err := pi.ReadLine()
 
 		if err == io.EOF {
 			break
 		}
 
 		if err != nil {
-			return 0, 0, fmt.Errorf("error while reading piped io.Stding: %s", err)
+			return par, fmt.Errorf("error while reading piped io.Stding: %s", err)
 		}
 
 		if line == "" {
-			lineErr++
+			par.Err++
 			continue
 		}
 
 		nx, err := nginx.Parse(line)
 		if err != nil {
-			lineErr++
+			par.Err++
 			continue
 		}
 
@@ -66,17 +72,17 @@ func ParseStdin(a args.Args) (int, int, error) {
 			d.InsertLog(ls)
 			// From my basic tests, commiting 5 inserts at a time is what
 			// gives me the best performance gain
-			if lineNum%5 == 0 {
+			if par.Ok%5 == 0 {
 				d.Commit()
 				d.Begin()
 			}
 		}
 
 		bar.Add(byteCnt)
-		lineNum++
+		par.Ok++
 	}
 	// Need to print a return character after the last progress bar terminal update
 	fmt.Print("\n")
 
-	return lineNum, lineErr, nil
+	return par, nil
 }
