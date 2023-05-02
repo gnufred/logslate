@@ -33,7 +33,7 @@ export BREW_RELEASE_VERSION
 export BREW_SHA256_PACKAGE_LINUX
 export BREW_SHA256_PACKAGE_DARWIN
 
-. .brew/template.rb > "${BREW_BIN}.rb"
+bash .brew/template.rb > "${BREW_BIN}.rb"
 
 
 #####################################################
@@ -41,7 +41,7 @@ echo "Commiting brew release file to release branch."
 git config user.email "${BREW_BOT_EMAIL}"
 git config user.name "ci-brew-release"
 git remote add gitlab "https://oauth2:${CI_BREW_TOKEN}@${BREW_GITLAB_URL}"
-git add "${BIN_NAME}.rb"
+git add "${BREW_BIN}.rb"
 git commit -m "Brew release ${BREW_RELEASE_VERSION}"
 
 # IMPORTANT: `-o ci.skip` tell GitLab to skip pipelines
