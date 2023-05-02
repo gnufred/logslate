@@ -5,22 +5,23 @@ cd $root_dir
 
 ver=$(git describe --tags --always)
 
-rm -f bin/logslate-*
+mkdir -p .bin
+rm -f .bin/logslate-*
 
 # linux 64
 GOOS=linux GOARCH=amd64 \
     go build \
     -ldflags="-X 'main.Version=${ver}'" \
-    -o bin/logslate-amd64-linux
+    -o .bin/logslate-amd64-linux
 
 # mac 64
 GOOS=darwin GOARCH=amd64 \
     go build \
     -ldflags="-X 'main.Version=${ver}'" \
-    -o bin/logslate-amd64-darwin
+    -o .bin/logslate-amd64-darwin
 
 # windows 64
 GOOS=windows GOARCH=amd64 \
     go build \
     -ldflags="-X 'main.Version=${ver}'" \
-    -o bin/logslate-amd64-windows.exe
+    -o .bin/logslate-amd64-windows.exe

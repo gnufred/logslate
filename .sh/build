@@ -5,7 +5,8 @@ cd $root_dir
 
 ver=$(git describe --tags --always)
 
-rm -fr bin/logslate
+mkdir -p .bin
+rm -fr .bin/logslate
 go build \
     -ldflags="-X 'main.Version=${ver}'" \
-    -o bin/logslate
+    -o .bin/logslate
