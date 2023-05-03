@@ -34,26 +34,103 @@ func TestDbExists(t *testing.T) {
 	}
 }
 
+type testData struct {
+	file   string
+	expect Parsed
+}
+
 func TestMockedData(t *testing.T) {
+	testNormalLogs(t)
+	testBrokenLogs(t)
+	testDatabase(t)
+	testTimeArgs(t)
+}
+
+func testNormalLogs(t *testing.T) {
 	a := args.Get()
-	dbPath := "testdata/sql.db"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/20ok.log", Parsed{20, 0, 0}},
+			{"testdata/googlebot.log", Parsed{50, 0, 0}},
+		},
+	)
+}
 
-	data := []struct {
-		file   string
-		expect Parsed
-	}{
-		{"testdata/3ok3broken.log", Parsed{3, 0, 3}},
-		{"testdata/20ok.log", Parsed{20, 0, 0}},
-	}
+func testBrokenLogs(t *testing.T) {
+	a := args.Get()
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/3ok3broken.log", Parsed{3, 0, 3}},
+		},
+	)
+}
 
-	for _, dt := range data {
-		testInputData(t, a, dt.file, dt.expect)
-	}
+func testDatabase(t *testing.T) {
+	a := args.Get()
+	a.Db = "testdata/test.db"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/20ok.log", Parsed{20, 0, 0}},
+			{"testdata/3ok3broken.log", Parsed{3, 0, 3}},
+			{"testdata/googlebot.log", Parsed{50, 0, 0}},
+		},
+	)
+}
 
-	a.Db = dbPath
-	for _, dt := range data {
-		testInputData(t, a, dt.file, dt.expect)
-		os.Remove(dbPath)
+func testTimeArgs(t *testing.T) {
+	a := args.Get()
+
+	// empty values should return all results
+	a.Since = ""
+	a.Until = ""
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/googlebot.log", Parsed{50, 0, 0}},
+		})
+
+	// should not return anything
+	a.Since = "2000-01-01 00:00"
+	a.Until = "2000-01-01 00:01"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/googlebot.log", Parsed{0, 50, 0}},
+		})
+
+	// should return all lines, first and last should match
+	a.Since = "07/Apr/2023:13:40:26 +0000"
+	a.Until = "14/Apr/2023:09:40:59 +0000"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/googlebot.log", Parsed{50, 0, 0}},
+		})
+
+	// should return all lines, but the first and last
+	a.Since = "07/Apr/2023:13:40:27 +0000"
+	a.Until = "14/Apr/2023:09:40:58 +0000"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/googlebot.log", Parsed{48, 2, 0}},
+		})
+
+	a.Since = "13/Apr/2023"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/googlebot.log", Parsed{9, 41, 0}},
+		})
+
+	a.Until = "13/Apr/2023"
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/googlebot.log", Parsed{41, 9, 0}},
+		})
+}
+
+func testInputDataLoop(t *testing.T, a args.Args, d []testData) {
+	for _, data := range d {
+		testInputData(t, a, data.file, data.expect)
+		if a.Db != "" {
+			os.Remove(a.Db)
+		}
 	}
 }
 
