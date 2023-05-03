@@ -3,6 +3,7 @@ package rootcmd
 import (
 	"os"
 	"testing"
+	"time"
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/testing/mock"
@@ -39,14 +40,7 @@ type testData struct {
 	expect Parsed
 }
 
-func TestMockedData(t *testing.T) {
-	testNormalLogs(t)
-	testBrokenLogs(t)
-	testDatabase(t)
-	testTimeArgs(t)
-}
-
-func testNormalLogs(t *testing.T) {
+func TestNormalLogs(t *testing.T) {
 	a := args.Get()
 	testInputDataLoop(t, a,
 		[]testData{
@@ -56,7 +50,7 @@ func testNormalLogs(t *testing.T) {
 	)
 }
 
-func testBrokenLogs(t *testing.T) {
+func TestBrokenLogs(t *testing.T) {
 	a := args.Get()
 	testInputDataLoop(t, a,
 		[]testData{
@@ -65,7 +59,7 @@ func testBrokenLogs(t *testing.T) {
 	)
 }
 
-func testDatabase(t *testing.T) {
+func TestDatabase(t *testing.T) {
 	a := args.Get()
 	a.Db = "testdata/test.db"
 	testInputDataLoop(t, a,
@@ -77,7 +71,7 @@ func testDatabase(t *testing.T) {
 	)
 }
 
-func testTimeArgs(t *testing.T) {
+func TestTimeArgs(t *testing.T) {
 	a := args.Get()
 
 	// empty values should return all results
@@ -99,6 +93,8 @@ func testTimeArgs(t *testing.T) {
 	// should return all lines, first and last should match
 	a.Since = "07/Apr/2023:13:40:26 +0000"
 	a.Until = "14/Apr/2023:09:40:59 +0000"
+	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
+	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{50, 0, 0}},
@@ -107,21 +103,29 @@ func testTimeArgs(t *testing.T) {
 	// should return all lines, but the first and last
 	a.Since = "07/Apr/2023:13:40:27 +0000"
 	a.Until = "14/Apr/2023:09:40:58 +0000"
+	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
+	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{48, 2, 0}},
 		})
 
 	a.Since = "13/Apr/2023"
+	a.Until = ""
+	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
+	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{9, 41, 0}},
+			{"testdata/googlebot.log", Parsed{12, 38, 0}},
 		})
 
+	a.Since = ""
 	a.Until = "13/Apr/2023"
+	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
+	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{41, 9, 0}},
+			{"testdata/googlebot.log", Parsed{38, 12, 0}},
 		})
 }
 

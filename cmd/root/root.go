@@ -3,6 +3,7 @@ package rootcmd
 import (
 	"fmt"
 	"io"
+	"time"
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
@@ -68,6 +69,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		ls := slate.ParseNginx(nx)
 
+		if !timeMatch(ls.Time, bool(a.Since != ""), bool(a.Until != ""), a.StartTime, a.EndTime) {
+			par.Skip++
+			continue
+		}
+
 		if a.Db != "" {
 			d.InsertLog(ls)
 			// From my basic tests, commiting 5 inserts at a time is what
@@ -85,4 +91,35 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	fmt.Print("\n")
 
 	return par, nil
+}
+
+func timeMatch(ts time.Time, since bool, until bool, start time.Time, end time.Time) bool {
+	// first possibility: no arguments
+	if !since && !until {
+		return true
+	}
+
+	// second possibility: since is specified
+	if since && !until {
+		if ts.Equal(start) || ts.After(start) {
+			return true
+		}
+	}
+
+	// third possibility: until is specified
+	if !since && until {
+		if ts.Before(end) || ts.Equal(end) {
+			return true
+		}
+	}
+
+	// fourth possibility: both are specified
+	if since && until {
+		if (ts.Equal(start) || ts.After(start)) &&
+			(ts.Before(end) || ts.Equal(end)) {
+			return true
+		}
+	}
+
+	return false
 }

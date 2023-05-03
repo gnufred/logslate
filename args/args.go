@@ -34,11 +34,11 @@ func Init() {
 		return
 	}
 
-	parse()
-	validate()
+	Parse()
+	Validate()
 }
 
-func validate() {
+func Validate() {
 	// https://pkg.go.dev/flag#NFlag
 	// NArg is the number of arguments remaining after flags have been processed.
 	if narg := flag.NArg(); narg != 0 {
@@ -48,7 +48,7 @@ func validate() {
 	}
 }
 
-func parse() {
+func Parse() {
 	// debug flags
 	vFlag := flag.Bool("v", false, "Debug: verbose")
 	vvFlag := flag.Bool("vv", false, "Debug: very verbose")
@@ -72,12 +72,12 @@ func parse() {
 		Db:        string(*dbFlag),
 		Since:     string(*sinceFlag),
 		Until:     string(*untilFlag),
-		StartTime: parseTimestamp(string(*sinceFlag), UnsetTime),
-		EndTime:   parseTimestamp(string(*untilFlag), time.Now()),
+		StartTime: ParseTimestamp(string(*sinceFlag), UnsetTime),
+		EndTime:   ParseTimestamp(string(*untilFlag), time.Now()),
 	}
 }
 
-func parseTimestamp(timestamp string, unset time.Time) time.Time {
+func ParseTimestamp(timestamp string, unset time.Time) time.Time {
 	// return default time.Time if string is empty
 	if timestamp == "" {
 		return unset
@@ -92,7 +92,7 @@ func parseTimestamp(timestamp string, unset time.Time) time.Time {
 
 	// return time.Time parsed from unknown layout
 	parsedTime, err := dateparse.ParseLocal(timestamp)
-	if err == nil {
+	if err != nil {
 		log.Fatalf("parsing %s error %s", timestamp, err)
 	}
 	return parsedTime
