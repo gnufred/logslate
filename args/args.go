@@ -16,10 +16,10 @@ type Args struct {
 	Vv        bool
 	Vvv       bool
 	Db        string
-	Since     string
-	Until     string
-	StartTime time.Time
-	EndTime   time.Time
+	since     string
+	until     string
+	startTime time.Time
+	endTime   time.Time
 }
 
 var args = Args{}
@@ -34,11 +34,11 @@ func Init() {
 		return
 	}
 
-	Parse()
-	Validate()
+	parse()
+	validate()
 }
 
-func Validate() {
+func validate() {
 	// https://pkg.go.dev/flag#NFlag
 	// NArg is the number of arguments remaining after flags have been processed.
 	if narg := flag.NArg(); narg != 0 {
@@ -48,7 +48,7 @@ func Validate() {
 	}
 }
 
-func Parse() {
+func parse() {
 	// debug flags
 	vFlag := flag.Bool("v", false, "Debug: verbose")
 	vvFlag := flag.Bool("vv", false, "Debug: very verbose")
@@ -66,18 +66,23 @@ func Parse() {
 
 	// return structured arguments
 	args = Args{
-		V:         bool(*vFlag),
-		Vv:        bool(*vvFlag),
-		Vvv:       bool(*vvvFlag),
-		Db:        string(*dbFlag),
-		Since:     string(*sinceFlag),
-		Until:     string(*untilFlag),
-		StartTime: ParseTimestamp(string(*sinceFlag), UnsetTime),
-		EndTime:   ParseTimestamp(string(*untilFlag), time.Now()),
+		V:   bool(*vFlag),
+		Vv:  bool(*vvFlag),
+		Vvv: bool(*vvvFlag),
+		Db:  string(*dbFlag),
 	}
+
+	args.SetSinceUntil(string(*sinceFlag), string(*untilFlag))
 }
 
-func ParseTimestamp(timestamp string, unset time.Time) time.Time {
+func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) {
+	a.since = sincestamp
+	a.until = untilstamp
+	a.startTime = parseTimestamp(sincestamp, UnsetTime)
+	a.endTime = parseTimestamp(untilstamp, time.Now())
+}
+
+func parseTimestamp(timestamp string, unset time.Time) time.Time {
 	// return default time.Time if string is empty
 	if timestamp == "" {
 		return unset
@@ -100,4 +105,20 @@ func ParseTimestamp(timestamp string, unset time.Time) time.Time {
 
 func Get() Args {
 	return args
+}
+
+func (a *Args) Since() string {
+	return a.since
+}
+
+func (a *Args) Until() string {
+	return a.until
+}
+
+func (a *Args) StartTime() time.Time {
+	return a.startTime
+}
+
+func (a *Args) EndTime() time.Time {
+	return a.endTime
 }

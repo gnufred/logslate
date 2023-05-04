@@ -3,7 +3,6 @@ package rootcmd
 import (
 	"os"
 	"testing"
-	"time"
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/testing/mock"
@@ -75,54 +74,40 @@ func TestTimeArgs(t *testing.T) {
 	a := args.Get()
 
 	// empty values should return all results
-	a.Since = ""
-	a.Until = ""
+	a.SetSinceUntil("", "")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{50, 0, 0}},
 		})
 
 	// should not return anything
-	a.Since = "2000-01-01 00:00"
-	a.Until = "2000-01-01 00:01"
+	a.SetSinceUntil("2000-01-01 00:00", "2000-01-01 00:01")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{0, 50, 0}},
 		})
 
 	// should return all lines, first and last should match
-	a.Since = "07/Apr/2023:13:40:26 +0000"
-	a.Until = "14/Apr/2023:09:40:59 +0000"
-	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
-	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
+	a.SetSinceUntil("07/Apr/2023:13:40:26 +0000", "14/Apr/2023:09:40:59 +0000")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{50, 0, 0}},
 		})
 
 	// should return all lines, but the first and last
-	a.Since = "07/Apr/2023:13:40:27 +0000"
-	a.Until = "14/Apr/2023:09:40:58 +0000"
-	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
-	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
+	a.SetSinceUntil("07/Apr/2023:13:40:27 +0000", "14/Apr/2023:09:40:58 +0000")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{48, 2, 0}},
 		})
 
-	a.Since = "13/Apr/2023"
-	a.Until = ""
-	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
-	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
+	a.SetSinceUntil("13/Apr/2023", "")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{9, 41, 0}},
 		})
 
-	a.Since = ""
-	a.Until = "13/Apr/2023"
-	a.StartTime = args.ParseTimestamp(a.Since, args.UnsetTime)
-	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
+	a.SetSinceUntil("", "13/Apr/2023")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{41, 9, 0}},

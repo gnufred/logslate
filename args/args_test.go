@@ -23,17 +23,17 @@ func TestDefaultArgs(t *testing.T) {
 		log.Fatal("db flag is not an empty string")
 	}
 
-	if args.Since != "" {
+	if args.since != "" {
 		log.Fatal("db flag is not an empty string")
 	}
-	if args.Until != "" {
+	if args.until != "" {
 		log.Fatal("db flag is not an empty string")
 	}
 
-	if args.StartTime != UnsetTime {
+	if args.startTime != UnsetTime {
 		log.Fatal("db flag is not an empty string")
 	}
-	if args.EndTime != UnsetTime {
+	if args.endTime != UnsetTime {
 		log.Fatal("db flag is not an empty string")
 	}
 }
@@ -65,7 +65,7 @@ func TestTrstringerGosystemdtime(t *testing.T) {
 }
 
 func testSingleSystemdtime(t *testing.T, timestamp string, expected time.Time) {
-	got := ParseTimestamp(timestamp, UnsetTime).Truncate(time.Minute)
+	got := parseTimestamp(timestamp, UnsetTime).Truncate(time.Minute)
 	if !got.Equal(expected) {
 		t.Fatalf("parseTimestamp() error: got %v, expected %v", got, expected)
 	}
@@ -91,7 +91,7 @@ func TestAraddonDateparse(t *testing.T) {
 }
 
 func testSingleTimestamp(t *testing.T, timestamp string, expected time.Time) {
-	got := ParseTimestamp(timestamp, UnsetTime)
+	got := parseTimestamp(timestamp, UnsetTime)
 	if !got.Equal(expected) {
 		t.Fatalf("parseTimestamp() error: got %v, expected %v", got, expected)
 	}
