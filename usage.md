@@ -38,6 +38,16 @@ If you have logs in multiple location you can `find /var/log/sites/ -type f -nam
 
 You can also, get logs directly from your server `ssh webserver 'find /var/log/sites/ -type f -name 'access.log' | xargs cat' | logslate --db all.db`.
 
+## Using time stamps
+
+You can use the `--since` and `--until` arguments to parse only the wanted lines. You can use any time format that's listed in [araddon/dateparse](https://github.com/araddon/dateparse#extended-example) **or better** [systemd.time](https://www.man7.org/linux/man-pages/man7/systemd.time.7.html) format.
+
+The *three* main ways you'll use this is:
+
+* copy and paste from NGINX logs `--since '07/Jan/2023:13:03:23 +0000' --until '14/Jan/2023:08:21:12 +0000'`.
+* with systemd.time ` --since '2 days ago' --until '1 day ago'`.
+* from a cronjob `--since '-24 hours'`.
+
 ## Parsing errors
 
 Unparsable log entries are ignored. You can output them with `-v`.

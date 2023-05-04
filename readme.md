@@ -28,6 +28,8 @@ Current:
 ```
 cat access.log | logslate -v[vv]
 --db ${path}/parsed-log.ldb
+--since '-24 hours'
+--until '-12 hours'
 ```
 
 Upcoming (0.14):
