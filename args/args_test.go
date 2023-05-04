@@ -72,20 +72,18 @@ func testSingleSystemdtime(t *testing.T, timestamp string, expected time.Time) {
 }
 
 func TestAraddonDateparse(t *testing.T) {
-	loc, _ := time.LoadLocation("Europe/Paris")
-
 	// test random timestamp format
-	tm, _ := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", loc)
+	tm, _ := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.UTC)
 	testSingleTimestamp(t, "2023", tm)
 	testSingleTimestamp(t, "1st Jan 2023", tm)
 	testSingleTimestamp(t, "jan 1 2023", tm)
 	testSingleTimestamp(t, "2023-01-01", tm)
 
 	// test NGINX format
-	tm, _ = time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", loc)
+	tm, _ = time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.UTC)
 	testSingleTimestamp(t, "01/Jan/2023", tm)
 	testSingleTimestamp(t, "01/Jan/2023:00:00:00", tm)
-	testSingleTimestamp(t, "01/Jan/2023:00:00:00 +0100", tm)
+	testSingleTimestamp(t, "01/Jan/2023:00:00:00 +0000", tm)
 
 	// test NGINX format in UTC
 	tm, _ = time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.UTC)

@@ -5,4 +5,4 @@ cd $root_dir
 
 go clean -testcache
 
-go test $@ ./... | grep -v '\[no test files\]'
+TZ=Etc/UTC go test "$@" ./... | grep -v '\[no test files\]'

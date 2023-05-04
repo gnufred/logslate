@@ -116,7 +116,7 @@ func TestTimeArgs(t *testing.T) {
 	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{12, 38, 0}},
+			{"testdata/googlebot.log", Parsed{9, 41, 0}},
 		})
 
 	a.Since = ""
@@ -125,7 +125,7 @@ func TestTimeArgs(t *testing.T) {
 	a.EndTime = args.ParseTimestamp(a.Until, time.Now())
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{38, 12, 0}},
+			{"testdata/googlebot.log", Parsed{41, 9, 0}},
 		})
 }
 
