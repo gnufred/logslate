@@ -70,7 +70,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		ls := slate.ParseNginx(nx)
 
-		if !timeMatch(ls.Time, bool(a.Since != ""), bool(a.Until != ""), a.StartTime, a.EndTime) {
+		if !timeMatch(ls.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
 			continue
 		}
