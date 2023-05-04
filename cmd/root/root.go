@@ -47,6 +47,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	for {
 		line, byteCnt, err := pi.ReadLine()
+		bar.Add(byteCnt)
 
 		if err == io.EOF {
 			break
@@ -84,7 +85,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		bar.Add(byteCnt)
 		par.Ok++
 	}
 	// Need to print a return character after the last progress bar terminal update
