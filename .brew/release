@@ -46,4 +46,4 @@ git commit -m "Brew release ${BREW_RELEASE_VERSION}"
 
 # IMPORTANT: `-o ci.skip` tell GitLab to skip pipelines
 # Watch out, you can end up with infinite pipeline loop
-git push gitlab HEAD:refs/heads/"${BREW_RELEASE_VERSION}"
+git push gitlab HEAD:refs/heads/"${BREW_RELEASE_VERSION}" -o ci.skip
