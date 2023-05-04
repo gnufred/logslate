@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# A wetrun is the opposite of dryrun.
+# It tests ON PRODUCTION and MAKE CHANGES!
+# ... not really testing on prod here per say,
+# but on a local log collection that aren't in
+# the repo.
+
+root_dir=$(git rev-parse --show-toplevel)
+cd $root_dir
+
+find logs/ -type f|grep -v panic|xargs cat|.sh/run
