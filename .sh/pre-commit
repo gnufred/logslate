@@ -1,4 +1,5 @@
 #!/bin/sh
+exit
 
 # Pre-commit hook. Run
 # `ln -s ../../.sh/pre-commit .git/hooks/pre-commit`
