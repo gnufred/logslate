@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.com/gnufred/logslate/parse/nginx"
+	nginx "gitlab.com/gnufred/logslate/nxparse"
 )
 
 type Log struct {
@@ -21,15 +21,15 @@ type Log struct {
 	Agent   string
 }
 
-func ParseNginx(nx nginx.Log) Log {
+func ParseNginx(nx nginx.Entry) Log {
 	ls := Log{
 		Ip:      nx.RemoteAddr,
 		User:    nx.RemoteUser,
 		Time:    nx.TimeLocal,
 		Status:  nx.Status,
 		Sent:    nx.BytesSent,
-		Referer: nx.HttpReferer,
-		Agent:   nx.HttpUserAgent,
+		Referer: nx.Http["referer"],
+		Agent:   nx.Http["user_agent"],
 	}
 	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
 	return ls
