@@ -7,7 +7,7 @@ import (
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
-	"gitlab.com/gnufred/logslate/parse/nginx"
+	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/parse/slate"
 	"gitlab.com/gnufred/logslate/pipe"
 
@@ -62,7 +62,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			continue
 		}
 
-		nx, err := nginx.Parse(line)
+		nx, err := nginx.Parse(nginx.Combined, line)
 		if err != nil {
 			par.Err++
 			continue

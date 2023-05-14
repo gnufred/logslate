@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/gnufred/logslate/parse/nginx"
+	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/parse/slate"
 )
 
@@ -32,7 +32,7 @@ func TestInsertLog(t *testing.T) {
 	defer db.Commit()
 
 	for scanner.Scan() {
-		nx, _ := nginx.Parse(scanner.Text())
+		nx, _ := nginx.Parse(nginx.Combined, scanner.Text())
 		if err != nil {
 			t.Fatalf("nginx.Parsed() failed: %s", err)
 		}
