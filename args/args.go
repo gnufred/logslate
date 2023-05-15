@@ -18,7 +18,7 @@ type Args struct {
 	Vv        bool
 	Vvv       bool
 	Db        string
-	Format    string
+	LogFrmt   string
 	since     string
 	until     string
 	startTime time.Time
@@ -65,18 +65,18 @@ func parse() {
 	untilFlag := flag.String("until", "", "Parse entries until specified date")
 
 	// NGINX `log_format` flags
-	formatFlag := flag.String("format", nginx.Combined, "NGINX log_format directive")
+	logfrmtFlag := flag.String("log_format", nginx.Combined, "NGINX log_format directive")
 
 	// process CLIS flags
 	flag.Parse()
 
 	// return structured arguments
 	args = Args{
-		V:      bool(*vFlag),
-		Vv:     bool(*vvFlag),
-		Vvv:    bool(*vvvFlag),
-		Db:     string(*dbFlag),
-		Format: string(*formatFlag),
+		V:       bool(*vFlag),
+		Vv:      bool(*vvFlag),
+		Vvv:     bool(*vvvFlag),
+		Db:      string(*dbFlag),
+		LogFrmt: string(*logfrmtFlag),
 	}
 
 	args.SetSinceUntil(string(*sinceFlag), string(*untilFlag))

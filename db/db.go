@@ -142,7 +142,7 @@ func (d *Dber) InsertLog(e slate.Log) error {
 		return err
 	}
 	_, err = d.tx.Stmt(st).Exec(
-		e.Ip,
+		e.Ip.String(),
 		e.User,
 		e.Time,
 		e.Method,

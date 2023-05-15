@@ -1,18 +1,25 @@
 package rootcmd
 
 import (
+	"errors"
 	"os"
 	"testing"
 
 	"gitlab.com/gnufred/logslate/args"
+	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/testing/mock"
 )
+
+type testData struct {
+	file   string
+	expect Parsed
+}
 
 // Must fail given there's no data in os.Stdin
 func TestNoData(t *testing.T) {
 	a := args.Get()
 	_, err := ParseStdin(a)
-	if err == nil {
+	if !errors.Is(err, ErrNoInputData) {
 		t.Fatalf("Did not get the expected error")
 	}
 }
@@ -29,18 +36,22 @@ func TestDbExists(t *testing.T) {
 	a := args.Get()
 	a.Db = dbPath
 	_, err := ParseStdin(a)
-	if err == nil {
+	if errors.Is(err, ErrDbCreateFail) {
 		t.Fatalf("Did not get the expected error")
 	}
 }
 
-type testData struct {
-	file   string
-	expect Parsed
+func TestNoFormat(t *testing.T) {
+	a := args.Get()
+	_, err := ParseStdin(a)
+	if !errors.Is(err, ErrNoFormat) {
+		t.Fatalf("Did not get the expected error")
+	}
 }
 
 func TestNormalLogs(t *testing.T) {
 	a := args.Get()
+	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/20ok.log", Parsed{20, 0, 0}},
@@ -51,6 +62,7 @@ func TestNormalLogs(t *testing.T) {
 
 func TestBrokenLogs(t *testing.T) {
 	a := args.Get()
+	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/3ok3broken.log", Parsed{3, 0, 3}},
@@ -61,6 +73,7 @@ func TestBrokenLogs(t *testing.T) {
 func TestDatabase(t *testing.T) {
 	a := args.Get()
 	a.Db = "testdata/test.db"
+	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/20ok.log", Parsed{20, 0, 0}},
@@ -72,6 +85,7 @@ func TestDatabase(t *testing.T) {
 
 func TestTimeArgs(t *testing.T) {
 	a := args.Get()
+	a.LogFrmt = nginx.Combined
 
 	// empty values should return all results
 	a.SetSinceUntil("", "")

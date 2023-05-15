@@ -1,6 +1,7 @@
 package rootcmd
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -20,19 +21,30 @@ type Parsed struct {
 	Err  int
 }
 
+var (
+	ErrNoFormat     = errors.New("no log_format specified")
+	ErrNoInputData  = errors.New("no input data")
+	ErrDbCreateFail = errors.New("database creation error")
+	ErrReadPipe     = errors.New("error while reading piped io.Stdin")
+)
+
 func ParseStdin(a args.Args) (Parsed, error) {
 	pi := pipe.New()
 	par := Parsed{0, 0, 0}
 
 	if !pi.IsPiped() {
-		return par, fmt.Errorf("error: no input data")
+		return par, ErrNoInputData
+	}
+
+	if a.LogFrmt == "" {
+		return par, ErrNoFormat
 	}
 
 	d := db.Singleton()
 	if a.Db != "" {
 		err := d.Create(a.Db)
 		if err != nil {
-			return par, fmt.Errorf("error while creating database: %s", err)
+			return par, fmt.Errorf("%s: %w", err, ErrDbCreateFail)
 		}
 	}
 
@@ -54,7 +66,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}
 
 		if err != nil {
-			return par, fmt.Errorf("error while reading piped io.Stding: %s", err)
+			return par, fmt.Errorf("%s: %w", err, ErrReadPipe)
 		}
 
 		if line == "" {
@@ -62,7 +74,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			continue
 		}
 
-		nx, err := nginx.Parse(nginx.Combined, line)
+		nx, err := nginx.Parse(a.LogFrmt, line)
 		if err != nil {
 			par.Err++
 			continue

@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// We need to test the Combined parsing both in nxparse and in parse given it's cached.
+// Other formats don't need duplicated test. We can test them in nxparse given the format
+// will be parsed, cached, and the line will also be parsed.
 func TestParseLine(t *testing.T) {
 	checkMatch := func(t *testing.T, got, exp interface{}) {
 		if got != exp {
@@ -15,28 +18,16 @@ func TestParseLine(t *testing.T) {
 		}
 	}
 
-	file, err := os.Open("testdata/combined_oneline.log")
+	lineCombined := "216.245.221.84 - - [27/Apr/2023:09:49:32 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://example.com/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\""
+
+	e, err := Parse(Combined, lineCombined)
 	if err != nil {
-		t.Fatal("opening test data failed: ", err)
+		t.Fatal(err)
 	}
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	frmt, _ := cache.get(Combined)
-
-	entries := []Entry{}
-	for scanner.Scan() {
-		entry, err := parseLine(frmt, scanner.Text())
-		if err != nil {
-			t.Fatal(err)
-		}
-		entries = append(entries, entry)
-	}
-	e := entries[0]
-
-	checkMatch(t, e.RemoteAddr, "216.245.221.84")
+	checkMatch(t, e.RemoteAddr.String(), "216.245.221.84")
 	checkMatch(t, e.RemoteUser, "-")
-	tm, _ := time.Parse(timeLayoutLocal, "27/Apr/2023:09:49:32 +0000")
+	tm, _ := time.Parse(TimeLayoutLocal, "27/Apr/2023:09:49:32 +0000")
 	checkMatch(t, e.TimeLocal, tm)
 	checkMatch(t, e.Request, "HEAD /?monitoring=uptimerobot HTTP/1.1")
 	checkMatch(t, e.Status, int64(200))
@@ -129,7 +120,7 @@ func TestAssignToEntry(t *testing.T) {
 	}
 
 	assignToEntry(&e, "remote_addr", "234.28.148.10")
-	checkMatch(t, e.RemoteAddr, "234.28.148.10")
+	checkMatch(t, e.RemoteAddr.String(), "234.28.148.10")
 
 	assignToEntry(&e, "remote_user", "bad_actor_net")
 	checkMatch(t, e.RemoteUser, "bad_actor_net")
@@ -147,10 +138,10 @@ func TestAssignToEntry(t *testing.T) {
 	checkMatch(t, e.Status, int64(200))
 
 	assignToEntry(&e, "time_iso8601", "2022-09-27 18:00:00.000")
-	tm, _ := time.Parse(timeLayoutIso8601, "2022-09-27 18:00:00.000")
+	tm, _ := time.Parse(TimeLayoutIso8601, "2022-09-27 18:00:00.000")
 	checkMatch(t, e.TimeIso8601, tm)
 
 	assignToEntry(&e, "time_local", "27/Apr/2023:09:49:32 +0000")
-	tm, _ = time.Parse(timeLayoutLocal, "27/Apr/2023:09:49:32 +0000")
+	tm, _ = time.Parse(TimeLayoutLocal, "27/Apr/2023:09:49:32 +0000")
 	checkMatch(t, e.TimeLocal, tm)
 }
