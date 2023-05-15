@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	nginx "gitlab.com/gnufred/logslate/nxparse"
+
 	"github.com/araddon/dateparse"
 	"github.com/trstringer/go-systemd-time/pkg/systemdtime"
 )
@@ -16,6 +18,7 @@ type Args struct {
 	Vv        bool
 	Vvv       bool
 	Db        string
+	Format    string
 	since     string
 	until     string
 	startTime time.Time
@@ -61,15 +64,19 @@ func parse() {
 	sinceFlag := flag.String("since", "", "Parse entries since specified date")
 	untilFlag := flag.String("until", "", "Parse entries until specified date")
 
+	// NGINX `log_format` flags
+	formatFlag := flag.String("format", nginx.Combined, "NGINX log_format directive")
+
 	// process CLIS flags
 	flag.Parse()
 
 	// return structured arguments
 	args = Args{
-		V:   bool(*vFlag),
-		Vv:  bool(*vvFlag),
-		Vvv: bool(*vvvFlag),
-		Db:  string(*dbFlag),
+		V:      bool(*vFlag),
+		Vv:     bool(*vvFlag),
+		Vvv:    bool(*vvvFlag),
+		Db:     string(*dbFlag),
+		Format: string(*formatFlag),
 	}
 
 	args.SetSinceUntil(string(*sinceFlag), string(*untilFlag))
