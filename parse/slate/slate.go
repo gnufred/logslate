@@ -1,6 +1,7 @@
 package slate
 
 import (
+	"net"
 	"strings"
 	"time"
 
@@ -8,7 +9,7 @@ import (
 )
 
 type Log struct {
-	Ip      string
+	Ip      net.IP
 	User    string
 	Time    time.Time
 	Method  string
@@ -25,12 +26,28 @@ func ParseNginx(nx nginx.Entry) Log {
 	ls := Log{
 		Ip:      nx.RemoteAddr,
 		User:    nx.RemoteUser,
-		Time:    nx.TimeLocal,
 		Status:  nx.Status,
-		Sent:    nx.BytesSent,
 		Referer: nx.Http["referer"],
 		Agent:   nx.Http["user_agent"],
 	}
+
+	// assigned the parsed time
+	// given we'll have TimeLocal most of the time, we test it first
+	if !nx.TimeLocal.IsZero() {
+		ls.Time = nx.TimeLocal
+	} else if !nx.TimeIso8601.IsZero() {
+		ls.Time = nx.TimeIso8601
+	}
+
+	// assign bytes set
+	// here, we want BytesSent, if available, otherwise BodyBytesSent
+	if nx.BytesSent > 0 {
+		ls.Sent = nx.BytesSent
+	} else {
+		ls.Sent = nx.BodyBytesSent
+	}
+
+	//splint NGINX request into 4 different parts
 	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
 	return ls
 }

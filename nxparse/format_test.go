@@ -57,6 +57,21 @@ func TestParseCombined(t *testing.T) {
 	testParseFormat(t, Combined, frmt)
 }
 
+func TestParseCombined8601(t *testing.T) {
+	testParseFormat(t,
+		"$remote_addr - $remote_user [$time_iso8601] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"",
+		Format{Vars: map[int]FormatVar{
+			0: {"remote_addr", " - "},
+			1: {"remote_user", " ["},
+			2: {"time_iso8601", "] \""},
+			3: {"request", "\" "},
+			4: {"status", " "},
+			5: {"body_bytes_sent", " \""},
+			6: {"http_referer", "\" \""},
+			7: {"http_user_agent", "\""},
+		}})
+}
+
 func testParseFormat(t *testing.T, frmt string, exp Format) {
 	got := parseFormat(frmt)
 	for i := 0; i <= len(exp.Vars); i++ {

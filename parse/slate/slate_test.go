@@ -1,21 +1,19 @@
 package slate
 
 import (
-	"log"
+	"net"
 	"testing"
 	"time"
 
 	nginx "gitlab.com/gnufred/logslate/nxparse"
 )
 
-const timeLayoutLocal = "02/Jan/2006:15:04:05 -0700"
+func TestParseNginxCombined(t *testing.T) {
+	lineCombined := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
 
-func TestParseNginx(t *testing.T) {
-	line := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
-
-	timeEct, _ := time.Parse(timeLayoutLocal, "05/Jan/2023:07:07:54 +0000")
-	expected := Log{
-		Ip:      "208.115.199.20",
+	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "05/Jan/2023:07:07:54 +0000")
+	exp := Log{
+		Ip:      net.ParseIP("208.115.199.20"),
 		User:    "-",
 		Time:    timeEct,
 		Method:  "HEAD",
@@ -28,13 +26,58 @@ func TestParseNginx(t *testing.T) {
 		Agent:   "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)",
 	}
 
-	ngxLog, err := nginx.Parse(nginx.Combined, line)
+	ngxLog, err := nginx.Parse(nginx.Combined, lineCombined)
 	if err != nil {
 		t.Fatalf("Parse() error %s", err)
 	}
 	got := ParseNginx(ngxLog)
+	compareStruct(t, got, exp)
+}
 
-	if got != expected {
-		log.Fatalf("Parse returned %+v, expected %+v", got, expected)
+func TestParseNginxIso8601(t *testing.T) {
+
+	frmtCombIso8601 := "$remote_addr - $remote_user [$time_iso8601] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\""
+	lineCombIso8601 := "82.100.10.100 - - [2023-05-15T09:25:22+00:00] \"POST /locator/index/ HTTP/1.1\" 302 31 \"https://www.example.com/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\""
+
+	timeEct, _ := time.Parse(nginx.TimeLayoutIso8601, "2023-05-15T09:25:22+00:00")
+	exp := Log{
+		Ip:      net.ParseIP("82.100.10.100"),
+		User:    "-",
+		Time:    timeEct,
+		Method:  "POST",
+		Path:    "/locator/index/",
+		Query:   "",
+		Proto:   "HTTP/1.1",
+		Status:  302,
+		Sent:    31,
+		Referer: "https://www.example.com/",
+		Agent:   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+	}
+
+	ngxLog, err := nginx.Parse(frmtCombIso8601, lineCombIso8601)
+	if err != nil {
+		t.Fatalf("Parse() error %s", err)
+	}
+	got := ParseNginx(ngxLog)
+	compareStruct(t, got, exp)
+}
+
+func compareStruct(t *testing.T, got, exp Log) {
+	checkMatch(t, got.Ip.String(), exp.Ip.String())
+	checkMatch(t, got.User, exp.User)
+	checkMatch(t, got.Time, exp.Time)
+	checkMatch(t, got.Method, exp.Method)
+	checkMatch(t, got.Path, exp.Path)
+	checkMatch(t, got.Query, exp.Query)
+	checkMatch(t, got.Proto, exp.Proto)
+	checkMatch(t, got.Status, exp.Status)
+	checkMatch(t, got.Sent, exp.Sent)
+	checkMatch(t, got.Referer, exp.Referer)
+	checkMatch(t, got.Agent, exp.Agent)
+}
+
+func checkMatch(t *testing.T, got, exp interface{}) {
+	if got != exp {
+		t.Fatalf("wrong value assigned to entry: got %v, exp %v", got, exp)
 	}
 }

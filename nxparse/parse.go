@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	timeLayoutIso8601 = time.RFC3339
-	timeLayoutLocal   = "02/Jan/2006:15:04:05 -0700"
+	TimeLayoutIso8601 = time.RFC3339
+	TimeLayoutLocal   = "02/Jan/2006:15:04:05 -0700"
 )
 
 // parse errors
@@ -35,7 +35,7 @@ type Entry struct {
 	Http               map[string]string
 	Msec               int64
 	Pipe               bool
-	RemoteAddr         string
+	RemoteAddr         net.IP
 	RemoteUser         string
 	Request            string
 	RequestLength      int64
@@ -142,7 +142,7 @@ func assignToEntry(ent *Entry, name, val string) error {
 		if addr == nil {
 			return fmt.Errorf("%s: %s: %w", name, val, ErrIpConvFail)
 		}
-		ent.RemoteAddr = addr.String() //string
+		ent.RemoteAddr = addr //net.IP
 	case "remote_user":
 		ent.RemoteUser = val //string
 	case "request":
@@ -166,13 +166,13 @@ func assignToEntry(ent *Entry, name, val string) error {
 		}
 		ent.Status = i //int64
 	case "time_iso8601":
-		t, e := time.Parse(timeLayoutIso8601, val)
+		t, e := time.Parse(TimeLayoutIso8601, val)
 		if e != nil {
 			return fmt.Errorf("%s: %s: %w", name, val, ErrConverFail)
 		}
 		ent.TimeIso8601 = t //time.Time
 	case "time_local":
-		t, e := time.Parse(timeLayoutLocal, val)
+		t, e := time.Parse(TimeLayoutLocal, val)
 		if e != nil {
 			return fmt.Errorf("%s: %s: %w", name, val, ErrConverFail)
 		}

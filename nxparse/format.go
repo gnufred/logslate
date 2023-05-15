@@ -111,9 +111,9 @@ func parseFormat(format string) Format {
 }
 
 // isVarNameChar check if a character is a valid character for an NGINX `log_format`
-// variable. Valid characters [a-z_].
+// variable. Valid characters [a-z0-9_].
 func isVarNameChar(c rune) bool {
-	return (c >= 'a' && c <= 'z') || c == '_'
+	return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'
 }
 
 // Format.appendVar appends a new FormatVar at the end of a FormatVar map
