@@ -38,11 +38,39 @@ If you have logs in multiple location you can `find /var/log/sites/ -type f -nam
 
 You can also, get logs directly from your server `ssh webserver 'find /var/log/sites/ -type f -name 'access.log' | xargs cat' | logslate --db all.db`.
 
+## NGINX `log_format`
+
+The default value for `--log_format` is [NGINX default combined format](https://nginx.org/en/docs/http/ngx_http_log_module.html).
+```
+log_format combined '$remote_addr - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent"';
+```
+
+You don't have to pass this to `--log_format`, but would work and look like this
+```
+--log_format '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"'
+```
+
+If **you use different format**, you can copy/paste your format to the `--format_log` argument.
+
+For example, if you used `time_iso8601` instead of `time_local` and `bytes_sent` instead of `body_bytes_sent`, your NGINX config would be
+```
+log_format combiso8 '$remote_addr - $remote_user [$time_iso8601] '
+                    '"$request" $status $bytes_sent '
+                    '"$http_referer" "$http_user_agent"';
+```
+
+and `--log_format`
+```
+--log_format '$remote_addr - $remote_user [$time_iso8601] "$request" $status $bytes_sent "$http_referer" "$http_user_agent"'
+```
+
 ## Using time stamps
 
 You can use the `--since` and `--until` arguments to parse only the wanted lines. You can use any time format that's listed in [araddon/dateparse](https://github.com/araddon/dateparse#extended-example) **or better** [systemd.time](https://www.man7.org/linux/man-pages/man7/systemd.time.7.html) format.
 
-The *three* main ways you'll use this is:
+The **three** main ways you'll use this is:
 
 * copy and paste from NGINX logs `--since '07/Jan/2023:13:03:23 +0000' --until '14/Jan/2023:08:21:12 +0000'`.
 * with systemd.time ` --since '2 days ago' --until '1 day ago'`.
