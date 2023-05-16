@@ -23,26 +23,12 @@ Install with `curl`, `brew`, or manual downloads.
 
 See **[the comprehensive usage guide](usage.md)** for detailed use cases.
 
-Current:
-
 ```
 cat access.log | logslate -v[vv]
 --db ${path}/parsed-log.ldb
---since '-24 hours'
---until '-12 hours'
-```
-
-Upcoming (0.14):
-
-```
-cat access.log | logslate -v[vv]
---db ${path}/parsed-log.ldb
---start "timestamp"
---end "timestamp"
---period "duration"
---detect [attack,exploit,bots,ad]
---report_format [json,csv,echo,email]
---report_folder ${folder}
+--since "timestamp"
+--until "timestamp"
+--log_format "NGINX log_format string"
 ```
 
 ## Detection goal
