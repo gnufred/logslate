@@ -60,7 +60,7 @@ func TestBrokenLogs(t *testing.T) {
 
 func TestDatabase(t *testing.T) {
 	a := args.Get()
-	a.Db = "testdata/test.db"
+	a.Db = ":memory:"
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/20ok.log", Parsed{20, 0, 0}},
@@ -117,9 +117,6 @@ func TestTimeArgs(t *testing.T) {
 func testInputDataLoop(t *testing.T, a args.Args, d []testData) {
 	for _, data := range d {
 		testInputData(t, a, data.file, data.expect)
-		if a.Db != "" {
-			os.Remove(a.Db)
-		}
 	}
 }
 
@@ -128,6 +125,9 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 	mock.Stdin(input)
 
 	got, err := ParseStdin(a)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if expect.Ok != got.Ok {
 		t.Fatalf("ok: expect %d, got %d", expect.Ok, got.Ok)
