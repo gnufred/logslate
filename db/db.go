@@ -30,15 +30,18 @@ func Singleton() *Dber {
 }
 
 func (d *Dber) Create(file string) error {
-	d.dns = "file:" + file + "?cache=shared&mode=rw"
 	d.file = file
+	d.dns = "file:" + file + "?mode=rw"
 
-	err := d.createFileIfNotExists()
-	if err != nil {
-		return fmt.Errorf("unable to create database: %s", err)
+	var err error
+	if d.file != ":memory:" {
+		err = d.createFileIfNotExists()
+		if err != nil {
+			return fmt.Errorf("unable to create database: %s", err)
+		}
 	}
 
-	d.db, err = sql.Open("sqlite3", d.file)
+	d.db, err = sql.Open("sqlite3", d.dns)
 	if err != nil {
 		return err
 	}
@@ -59,7 +62,7 @@ func (d *Dber) createTables() error {
 	if !d.open {
 		return fmt.Errorf("database closed")
 	}
-	sql := `CREATE TABLE logs (
+	sql := `CREATE TABLE IF NOT EXISTS logs (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "ip" string,
         "user" string,

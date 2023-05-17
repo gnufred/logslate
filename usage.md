@@ -92,7 +92,7 @@ Debug mode has 4 levels: OFF (0), V (1), VV (2), VVV (3).
 
 If your disk is slow or you are not permitted to save the data on your workstation for compliance reasons, you can save the database in tmpfs.
 
-For example, on Arch Linux you would use `--db /tmp/log.db` and, on Ubuntu `-db /run/user/1000/log.db`.
+For example, on most Linux systems you'd use `--db /run/user/1000/log.db`.
 
 To follow your **compliance or security** framework, you can use **both** ssh and a tmpfs drive `ssh server 'cat /var/log/www/example.com/access.log' | logslate --db /run/user/1000/example.db` to avoid saving information on permanent storage.
 
