@@ -1,19 +1,19 @@
 class Logslate < Formula
   desc 'Logslate (log translate)'
   homepage 'https://gitlab.com/gnufred/logslate'
-  version '0.0.14'
+  version '0.0.15'
 
   on_linux do
-    sha256 'f3a20de1dfe7cd79344f3d3b68b395133bdf49c18ab6032990e98a0da582c994'
-    url 'https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/0.0.14/logslate-linux-amd64'
+    sha256 '88fd178389f1c17e52665ca2af166b9aed580d14811903332a3855228f6b7f9d'
+    url 'https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/0.0.15/logslate-linux-amd64'
     def install
       bin.install 'logslate-linux-amd64' => 'logslate'
     end
   end
 
   on_macos do
-    sha256 '5d787b4456dd7819ae2968d7bc79aa83ede39d3be9048f728505a107eca771bf'
-    url 'https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/0.0.14/logslate-darwin-amd64'
+    sha256 '585c0df33041247b08dbc780b38c9ed4e0a411bd5a66eba50fe4183619f4cc2b'
+    url 'https://gitlab.com/api/v4/projects/45181636/packages/generic/logslate/0.0.15/logslate-darwin-amd64'
     def install
       bin.install 'logslate-darwin-amd64' => 'logslate'
     end
