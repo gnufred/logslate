@@ -31,7 +31,11 @@ func Singleton() *Dber {
 
 func (d *Dber) Create(file string) error {
 	d.file = file
-	d.dns = "file:" + file + "?mode=rw"
+
+	mode := "mode=rw"     // read & write
+	mutex := "mutex=full" // serialized connections are faster
+	// https://github.com/mattn/go-sqlite3/wiki/DSN#mutex
+	d.dns = "file:" + file + "?" + mode + "&" + mutex
 
 	var err error
 	if d.file != ":memory:" {
@@ -47,15 +51,26 @@ func (d *Dber) Create(file string) error {
 	}
 	d.open = true
 
-	d.db.Exec("PRAGMA synchronous = OFF")
-	d.db.Exec("PRAGMA journal_mode = OFF")
-
 	err = d.createTables()
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (d *Dber) ApplyDefaults() {
+	// Disable the connection pools. We have a single process and no concurrency. Having more than one is
+	// actually harmful for performance.
+	// https://stackoverflow.com/questions/35804884/sqlite-concurrent-writing-performance
+	d.db.SetMaxOpenConns(1)
+	// We don't need to wait for the OS to confirm the data is written.
+	d.Pragma("synchronous = off")
+	// We don't need journal. If the import fails, we have to start over.
+	d.Pragma("journal_mode = off")
+	// We have a single process, using exclusive locking is faster.
+	d.Pragma("locking_mode = exclusive")
+	d.Pragma("transaction_mode = exclusive")
 }
 
 func (d *Dber) createTables() error {
@@ -120,6 +135,11 @@ func (d *Dber) Destroy() error {
 		return err
 	}
 	return nil
+}
+
+func (d *Dber) Pragma(p string) error {
+	_, err := d.db.Exec("PRAGMA " + p)
+	return err
 }
 
 func (d *Dber) Begin() error {

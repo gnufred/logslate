@@ -17,6 +17,7 @@ func TestCreate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create() failed: %s", err)
 	}
+	db.ApplyDefaults()
 }
 
 func TestInsertLog(t *testing.T) {
@@ -63,23 +64,42 @@ func TestDestroy(t *testing.T) {
 
 // === benchmarks ===
 
-func BenchmarkDbInsert(b *testing.B) {
+func BenchmarkDbInsertBulk(b *testing.B) {
+	benchDbInsert(b, 200, []int{1, 3, 5, 7, 9}, []string{})
+}
+
+func BenchmarkDbWithDefaults(b *testing.B) {
+	benchDbInsert(b, 200, []int{1, 3, 5, 7, 9}, []string{
+		"synchronous = off",
+		"journal_mode = off",
+		"locking_mode = exclusive",
+		"transaction_mode = exclusive",
+	})
+}
+
+func benchDbInsert(b *testing.B, rows int, prepare []int, pragmas []string) {
 	// The range is used to check bulk insert performance differences for every "v" insert.
 	// Seems to me like we get the best results when we prepare "7" inserts.
-	for _, v := range []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 50} {
+	for _, v := range prepare {
 		b.Run(fmt.Sprintf("DbInsert-%d", v), func(b *testing.B) {
 			db := Singleton()
 			lineCombined := "216.245.221.84 - - [27/Apr/2023:09:49:32 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://example.com/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\""
 			nx, _ := nginx.Parse(nginx.Combined, lineCombined)
 			sl := slate.ParseNginx(nx)
 
+			// benchmark loop
 			for i := 0; i < b.N; i++ {
 				err := db.Create(":memory:")
 				if err != nil {
 					b.Fatal(err)
 				}
 				db.Begin()
-				for j := 0; j < 200; j++ {
+				for _, p := range pragmas {
+					db.Pragma(p)
+				}
+
+				// bulk insert loop
+				for j := 0; j < rows; j++ {
 					err = db.InsertLog(sl)
 
 					// Commit every "v" lines.
