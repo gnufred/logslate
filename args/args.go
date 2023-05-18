@@ -18,6 +18,8 @@ type Args struct {
 	Vv        bool
 	Vvv       bool
 	Db        string
+	CpuProf   string
+	MemProf   string
 	LogFrmt   string
 	since     string
 	until     string
@@ -57,6 +59,10 @@ func parse() {
 	vvFlag := flag.Bool("vv", false, "Debug: very verbose")
 	vvvFlag := flag.Bool("vvv", false, "Debug: very very verbose")
 
+	// pprof flags
+	cpuprofFlag := flag.String("cpuprof", "", "pprof cpu profile output file")
+	memprofFlag := flag.String("memprof", "", "pprof cpu profile output file")
+
 	// db flags
 	dbFlag := flag.String("db", "", "SQLite3 DB file path")
 
@@ -75,6 +81,8 @@ func parse() {
 		V:       bool(*vFlag),
 		Vv:      bool(*vvFlag),
 		Vvv:     bool(*vvvFlag),
+		CpuProf: string(*cpuprofFlag),
+		MemProf: string(*memprofFlag),
 		Db:      string(*dbFlag),
 		LogFrmt: string(*logfrmtFlag),
 	}

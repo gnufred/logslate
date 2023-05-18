@@ -11,6 +11,7 @@ import (
 	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/parse/slate"
 	"gitlab.com/gnufred/logslate/pipe"
+	"gitlab.com/gnufred/logslate/testing/prof"
 
 	"github.com/schollz/progressbar/v3"
 )
@@ -29,6 +30,9 @@ var (
 )
 
 func ParseStdin(a args.Args) (Parsed, error) {
+	cpuf := prof.StartCpuProfile(a)
+	defer prof.StopCpuProfile(a, cpuf)
+
 	pi := pipe.New()
 	par := Parsed{0, 0, 0}
 
@@ -103,6 +107,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Need to print a return character after the last progress bar terminal update
 	fmt.Print("\n")
 
+	prof.MemProfile(a)
 	return par, nil
 }
 
