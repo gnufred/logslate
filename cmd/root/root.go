@@ -89,9 +89,9 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		if a.Db != "" {
 			d.InsertLog(ls)
-			// From my basic tests, commiting 5 inserts at a time is what
-			// gives me the best performance gain
-			if par.Ok%5 == 0 {
+			// Commit every "x" succesfully parsed lines
+			// Testing with db/BenchmarkDbInsert shows that "7" is the best number of inserts to batch
+			if par.Ok%7 == 0 {
 				d.Commit()
 				d.Begin()
 			}

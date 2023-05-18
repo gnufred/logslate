@@ -1,0 +1,8 @@
+goos: linux
+goarch: amd64
+pkg: gitlab.com/gnufred/logslate/nxparse
+cpu: AMD Ryzen 5 3550H with Radeon Vega Mobile Gfx  
+BenchmarkParse-8       	  783616	      2337 ns/op
+BenchmarkParseLine-8   	  656024	      2234 ns/op
+PASS
+ok  	gitlab.com/gnufred/logslate/nxparse	3.344s
