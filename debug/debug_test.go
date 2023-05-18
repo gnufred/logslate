@@ -1,6 +1,7 @@
 package debug
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -36,8 +37,9 @@ func TestInvalidVerbosityLevels(t *testing.T) {
 
 func testInvalidVerbosity(t *testing.T, wantverb int) {
 	err := setVerbosity(wantverb)
-	if err == nil {
-		t.Fatal("No error returned while one is expected")
+	exp := "invalid debug verb"
+	if !strings.Contains(err.Error(), exp) {
+		t.Fatalf("did not get expected error: %s", err)
 	}
 
 }
@@ -45,21 +47,23 @@ func testInvalidVerbosity(t *testing.T, wantverb int) {
 func TestDebugDisabled(t *testing.T) {
 	setVerbosity(OFF)
 	err := Log(V, "log_name: test", "log_message: test")
-	if err == nil {
-		t.Fatal("Log() did not report an error, and should have")
+	exp := "debug output disabled"
+	if !strings.Contains(err.Error(), exp) {
+		t.Fatalf("did not get expected error: %s", err)
 	}
 }
 
 func TestVerbFailures(t *testing.T) {
 	setVerbosity(V)
+	exp := "does not meet"
 
 	err := Log(VV, "log_name: test", "log_message: test")
-	if err == nil {
-		t.Fatal("Log() did not report an error, and should have")
+	if !strings.Contains(err.Error(), exp) {
+		t.Fatalf("did not get expected error: %s", err)
 	}
 
 	err = Log(VVV, "log_name: test", "log_message: test")
-	if err == nil {
-		t.Fatal("Log() did not report an error, and should have")
+	if !strings.Contains(err.Error(), exp) {
+		t.Fatalf("did not get expected error: %s", err)
 	}
 }
