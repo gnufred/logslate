@@ -8,6 +8,7 @@ import (
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
+	"gitlab.com/gnufred/logslate/debug"
 	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/parse/slate"
 	"gitlab.com/gnufred/logslate/pipe"
@@ -43,6 +44,9 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	if a.LogFrmt == "" {
 		return par, ErrNoFormat
 	}
+
+	debug.Log(debug.V, "start time", a.StartTime())
+	debug.Log(debug.V, "end time", a.EndTime())
 
 	d := db.Singleton()
 	if a.Db != "" {

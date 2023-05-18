@@ -1,10 +1,12 @@
 package args
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	nginx "gitlab.com/gnufred/logslate/nxparse"
@@ -103,9 +105,15 @@ func parseTimestamp(timestamp string, unset time.Time) time.Time {
 		return unset
 	}
 
+	// try and understand english
+	translatedTime, err := translate(timestamp)
+	if err == nil {
+		return translatedTime
+	}
+
 	// return time.Time parsed from systemd.time format
 	now := time.Now()
-	adjustedTime, err := systemdtime.AdjustTime(now, timestamp)
+	adjustedTime, err := systemdtime.AdjustTime(now, extendSDT(timestamp))
 	if err == nil {
 		return adjustedTime
 	}
@@ -116,6 +124,31 @@ func parseTimestamp(timestamp string, unset time.Time) time.Time {
 		log.Fatalf("parsing %s error %s", timestamp, err)
 	}
 	return parsedTime
+}
+
+// "trstringer/go-systemd-time" doesn't really fully support systemd time, so I gotta "extend it"
+func extendSDT(ts string) string {
+	// x time ago
+	if strings.Contains(ts, " ago") {
+		ts = strings.ReplaceAll(ts, " ago", "")
+		ts = "-" + ts
+		return ts
+	}
+	return ts
+}
+
+func translate(ts string) (time.Time, error) {
+	switch ts {
+	case "now":
+		return time.Now(), nil
+	case "today":
+		return time.Now().Truncate(time.Hour * 24), nil
+	case "yesterday":
+		return time.Now().Add(time.Hour * -24).Truncate(time.Hour * 24), nil
+	default:
+		var t time.Time
+		return t, errors.New("unable to translate time")
+	}
 }
 
 func Get() Args {

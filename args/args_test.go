@@ -43,6 +43,34 @@ func TestNullTimestamp(t *testing.T) {
 	testSingleTimestamp(t, "", tm)
 }
 
+func TestTranslatedTimeNow(t *testing.T) {
+	got, _ := translate("now")
+	got = got.Truncate(time.Second)
+	exp := time.Now()
+	exp = exp.Truncate(time.Second)
+	testSingleTime(t, got, exp)
+}
+
+func TestTranslatedTimeToday(t *testing.T) {
+	got, _ := translate("today")
+	exp := time.Now()
+	exp = exp.Truncate(time.Hour * 24)
+	testSingleTime(t, got, exp)
+}
+
+func TestTranslatedTimeYesterday(t *testing.T) {
+	got, _ := translate("yesterday")
+	exp := time.Now()
+	exp = exp.Add(time.Hour * -24).Truncate(time.Hour * 24)
+	testSingleTime(t, got, exp)
+}
+
+func testSingleTime(t *testing.T, got time.Time, expected time.Time) {
+	if !got.Equal(expected) {
+		t.Fatalf("parseTimestamp() error: got %v, expected %v", got, expected)
+	}
+}
+
 func TestTrstringerGosystemdtime(t *testing.T) {
 	tm := time.Now().Truncate(time.Minute)
 	testSingleSystemdtime(t, "0 day", tm)
@@ -58,10 +86,13 @@ func TestTrstringerGosystemdtime(t *testing.T) {
 
 	tm = time.Now().Add(-24 * 2 * time.Hour).Truncate(time.Minute)
 	testSingleSystemdtime(t, "-2 day", tm)
+	testSingleSystemdtime(t, "2 days ago", tm)
 	tm = time.Now().Add(-24 * 3 * time.Hour).Truncate(time.Minute)
 	testSingleSystemdtime(t, "-3 day", tm)
+	testSingleSystemdtime(t, "3 days ago", tm)
 	tm = time.Now().Add(-24 * 4 * time.Hour).Truncate(time.Minute)
 	testSingleSystemdtime(t, "-4 day", tm)
+	testSingleSystemdtime(t, "4 days ago", tm)
 }
 
 func testSingleSystemdtime(t *testing.T, timestamp string, expected time.Time) {
