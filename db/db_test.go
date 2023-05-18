@@ -2,6 +2,7 @@ package db
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"testing"
 
@@ -57,5 +58,41 @@ func TestDestroy(t *testing.T) {
 	err := db.Destroy()
 	if err != nil {
 		t.Fatalf("Destroy() failed: %s", err)
+	}
+}
+
+// === benchmarks ===
+
+func BenchmarkDbInsert(b *testing.B) {
+	// The range is used to check bulk insert performance differences for every "v" insert.
+	// Seems to me like we get the best results when we prepare "7" inserts.
+	for _, v := range []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 50} {
+		b.Run(fmt.Sprintf("DbInsert-%d", v), func(b *testing.B) {
+			db := Singleton()
+			lineCombined := "216.245.221.84 - - [27/Apr/2023:09:49:32 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://example.com/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\""
+			nx, _ := nginx.Parse(nginx.Combined, lineCombined)
+			sl := slate.ParseNginx(nx)
+
+			for i := 0; i < b.N; i++ {
+				err := db.Create(":memory:")
+				if err != nil {
+					b.Fatal(err)
+				}
+				db.Begin()
+				for j := 0; j < 200; j++ {
+					err = db.InsertLog(sl)
+
+					// Commit every "v" lines.
+					if j%v == 0 {
+						db.Commit()
+						db.Begin()
+					}
+
+					if err != nil {
+						b.Fatal(err)
+					}
+				}
+			}
+		})
 	}
 }

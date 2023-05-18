@@ -110,3 +110,16 @@ func TestMainCombinedTruncated(t *testing.T) {
 		}
 	}
 }
+
+// === benchmarks ===
+
+func BenchmarkParse(b *testing.B) {
+	lineCombined := "216.245.221.84 - - [27/Apr/2023:09:49:32 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://example.com/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\""
+
+	for i := 0; i < b.N; i++ {
+		_, err := Parse(Combined, lineCombined)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}

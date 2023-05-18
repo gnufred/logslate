@@ -1,0 +1,20 @@
+#!/bin/bash
+
+root_dir=$(git rev-parse --show-toplevel)
+cd $root_dir
+
+go clean -testcache
+
+# prepare script variables
+ts=$(date +"%y%m%d%H%M%S")
+pkg=$1
+log=".bench/${ts}-${pkg}.log"
+
+# run package benchmark
+TZ=Etc/UTC go test "./$pkg/..." -bench package -bench=. | tee -a $log
+
+# handle errors
+extst=${PIPESTATUS[0]}
+if [[ "$extst" -ne "0" ]]; then
+	rm -r $log
+fi
