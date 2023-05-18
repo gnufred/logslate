@@ -82,12 +82,6 @@ Unparsable log entries are ignored. You can output them with `-v`.
 
 It's safe to ignore them if there's just a few.
 
-## Debug
-
-Activate debug output with `-v, -vv, -vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
-
-Debug mode has 4 levels: OFF (0), V (1), VV (2), VVV (3).
-
 ## Using tmpfs
 
 If your disk is slow or you are not permitted to save the data on your workstation for compliance reasons, you can save the database in tmpfs.
@@ -117,3 +111,13 @@ List all request from an IP, order by URL path and query string
 ```
 select ip, path, query from logs where ip = '208.115.199.20' order by path, query;
 ```
+
+## Debug
+
+Activate debug output with `-v, -vv, -vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
+
+Debug mode has 4 levels: OFF (0), V (1), VV (2), VVV (3).
+
+## Profiling
+
+You can enable `runtime/pprof` CPU and heap profiling with `--cpuprof cpu.prof` and `--memprof mem.prof`.
