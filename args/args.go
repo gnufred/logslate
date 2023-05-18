@@ -1,18 +1,12 @@
 package args
 
 import (
-	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"os"
-	"strings"
 	"time"
 
 	nginx "gitlab.com/gnufred/logslate/nxparse"
-
-	"github.com/araddon/dateparse"
-	"github.com/trstringer/go-systemd-time/pkg/systemdtime"
 )
 
 type Args struct {
@@ -30,11 +24,6 @@ type Args struct {
 }
 
 var args = Args{}
-
-// Default time value for unset or unparsed time values
-// Use this variable to compare to time.Time arguments
-// if sometime == args.UnsetTime { fmt.Print("not set") }
-var UnsetTime = time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 
 func Init() {
 	if flag.Parsed() {
@@ -95,62 +84,9 @@ func parse() {
 func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) {
 	a.since = sincestamp
 	a.until = untilstamp
-	a.startTime = parseTimestamp(sincestamp, UnsetTime)
+	a.startTime = parseTimestamp(sincestamp, time.Time{})
 	a.endTime = parseTimestamp(untilstamp, time.Now())
 }
-
-func parseTimestamp(timestamp string, unset time.Time) time.Time {
-	// return default time.Time if string is empty
-	if timestamp == "" {
-		return unset
-	}
-
-	// try and understand english
-	translatedTime, err := translate(timestamp)
-	if err == nil {
-		return translatedTime
-	}
-
-	// return time.Time parsed from systemd.time format
-	now := time.Now()
-	adjustedTime, err := systemdtime.AdjustTime(now, extendSDT(timestamp))
-	if err == nil {
-		return adjustedTime
-	}
-
-	// return time.Time parsed from unknown layout
-	parsedTime, err := dateparse.ParseLocal(timestamp)
-	if err != nil {
-		log.Fatalf("parsing %s error %s", timestamp, err)
-	}
-	return parsedTime
-}
-
-// "trstringer/go-systemd-time" doesn't really fully support systemd time, so I gotta "extend it"
-func extendSDT(ts string) string {
-	// x time ago
-	if strings.Contains(ts, " ago") {
-		ts = strings.ReplaceAll(ts, " ago", "")
-		ts = "-" + ts
-		return ts
-	}
-	return ts
-}
-
-func translate(ts string) (time.Time, error) {
-	switch ts {
-	case "now":
-		return time.Now(), nil
-	case "today":
-		return time.Now().Truncate(time.Hour * 24), nil
-	case "yesterday":
-		return time.Now().Add(time.Hour * -24).Truncate(time.Hour * 24), nil
-	default:
-		var t time.Time
-		return t, errors.New("unable to translate time")
-	}
-}
-
 func Get() Args {
 	return args
 }
