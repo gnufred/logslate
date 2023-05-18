@@ -13,8 +13,8 @@ func TestNilCachedFormat(t *testing.T) {
 	testVarsMatch(t, frmt.Vars, nilVars)
 
 	err = cache.set("", Format{Vars: nilVars})
-	if err == nil {
-		t.Fatal("expecting error on cache.set() got nil")
+	if !errors.Is(err, ErrOverwriteCache) {
+		t.Fatalf("got a different error than expected: %s", err)
 	}
 }
 
@@ -33,8 +33,8 @@ func TestCombinedCachedFormat(t *testing.T) {
 	testVarsMatch(t, frmt.Vars, combinedVars)
 
 	err = cache.set(Combined, Format{Vars: combinedVars})
-	if err == nil {
-		t.Fatal("expecting error on cache.set() got nil")
+	if !errors.Is(err, ErrOverwriteCache) {
+		t.Fatalf("got a different error than expected: %s", err)
 	}
 }
 

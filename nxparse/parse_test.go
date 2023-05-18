@@ -67,8 +67,8 @@ func TestParseCombinedTruncated(t *testing.T) {
 	for scanner.Scan() {
 		txt := scanner.Text()
 		_, err := parseLine(frmt, txt)
-		if err == nil {
-			t.Fatalf("truncated line did not generate an error\n%s\n", txt)
+		if !errors.Is(err, ErrIpConvFail) && !errors.Is(err, ErrSepNotFound) {
+			t.Fatalf("truncated line did not generate an error\n%s\n%s\n", txt, err)
 		}
 	}
 }
