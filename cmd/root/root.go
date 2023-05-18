@@ -46,6 +46,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		if err != nil {
 			return par, fmt.Errorf("%s: %w", err, ErrDbCreateFail)
 		}
+		d.ApplyDefaults()
 	}
 
 	if a.Db != "" {

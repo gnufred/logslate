@@ -1,0 +1,16 @@
+goos: linux
+goarch: amd64
+pkg: gitlab.com/gnufred/logslate/db
+cpu: AMD Ryzen 5 3550H with Radeon Vega Mobile Gfx  
+BenchmarkDbInsertBulk/DbInsert-1-8         	     115	  14063779 ns/op
+BenchmarkDbInsertBulk/DbInsert-3-8         	     100	  12227482 ns/op
+BenchmarkDbInsertBulk/DbInsert-5-8         	     122	   9307009 ns/op
+BenchmarkDbInsertBulk/DbInsert-7-8         	     135	   8566255 ns/op
+BenchmarkDbInsertBulk/DbInsert-9-8         	     163	   7885964 ns/op
+BenchmarkDbWithDefaults/DbInsert-1-8       	     100	  12127165 ns/op
+BenchmarkDbWithDefaults/DbInsert-3-8       	     133	   8749173 ns/op
+BenchmarkDbWithDefaults/DbInsert-5-8       	     216	   5979549 ns/op
+BenchmarkDbWithDefaults/DbInsert-7-8       	     171	   6014393 ns/op
+BenchmarkDbWithDefaults/DbInsert-9-8       	     190	   7083266 ns/op
+PASS
+ok  	gitlab.com/gnufred/logslate/db	19.080s
