@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gnufred/go-systemd-time/pkg/systemdtime"
+	"gitlab.com/gnufred/logslate/args/sysdt"
 
 	"github.com/araddon/dateparse"
 )
@@ -16,14 +16,14 @@ func parseTimestamp(timestamp string, unset time.Time) time.Time {
 	}
 
 	// try and understand english
-	translatedTime, err := systemdtime.TranslateWords(timestamp)
+	wordedTime, err := sysdt.Worded(timestamp)
 	if err == nil {
-		return translatedTime
+		return wordedTime
 	}
 
 	// return time.Time parsed from systemd.time format
 	now := time.Now()
-	adjustedTime, err := systemdtime.AdjustTime(now, timestamp)
+	adjustedTime, err := sysdt.Adjust(timestamp, now)
 	if err == nil {
 		return adjustedTime
 	}
