@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"gitlab.com/gnufred/logslate/args/systemdtime"
+	"github.com/gnufred/go-systemd-time/pkg/systemdtime"
 
 	"github.com/araddon/dateparse"
 )
