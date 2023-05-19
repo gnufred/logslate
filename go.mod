@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
-	github.com/gnufred/go-systemd-time v0.0.0-20230519164721-ca1519716e19
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/schollz/progressbar/v3 v3.13.1
 )
