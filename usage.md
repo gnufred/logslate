@@ -78,6 +78,8 @@ The **three** main ways you'll use this is:
 
 You can also use those english words: `now`, `today`, `yesterday`.
 
+If you need **specific timezones**, use the calculated value `+XXXX` or short codes. For example `2006-01-02 15:04:05 MST`, `2006-01-02 UTC`, and `2006-01-02 -0700`.
+
 ## Parsing errors
 
 Unparsable log entries are ignored. You can output them with `-v`.
