@@ -9,6 +9,7 @@ go clean -testcache
 ts=$(date +"%y%m%d%H%M%S")
 pkg=$1
 log=".bench/${ts}-${pkg}.log"
+mkdir -p .bench
 
 # run package benchmark
 TZ=Etc/UTC go test "./$pkg/..." -bench package -bench=. | tee -a $log

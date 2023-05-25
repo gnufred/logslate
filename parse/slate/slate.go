@@ -16,8 +16,8 @@ type Log struct {
 	Path    string
 	Query   string
 	Proto   string
-	Status  int64
-	Sent    int64
+	Status  int
+	Sent    int
 	Referer string
 	Agent   string
 }
