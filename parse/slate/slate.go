@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	nginx "gitlab.com/gnufred/logslate/nxparse"
+	nginx "gitlab.com/gnufred/nxparse"
 )
 
 type Log struct {

@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	nginx "gitlab.com/gnufred/logslate/nxparse"
+	nginx "gitlab.com/gnufred/nxparse"
 )
 
 type Args struct {
