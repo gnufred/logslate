@@ -27,6 +27,8 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 gitlab.com/gnufred/nxparse v1.0.3 h1:ri+YXONvDWCDR0LfEyke6abK2JwH8dSk1DCESN+WCr0=
 gitlab.com/gnufred/nxparse v1.0.3/go.mod h1:dbVtADfkZP0htWNhRsvSwe5Gyf6719F8dexd54OZoX4=
+gitlab.com/gnufred/nxparse v1.1.0 h1:BUHju6HyypuODv/RkEEJ1w6crzFiKNE300f0gWZ6n/c=
+gitlab.com/gnufred/nxparse v1.1.0/go.mod h1:dbVtADfkZP0htWNhRsvSwe5Gyf6719F8dexd54OZoX4=
 golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.7.0 h1:3jlCCIQZPdOYu1h8BkNvLz8Kgwtae2cagcG/VamtZRU=
