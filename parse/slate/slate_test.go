@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	nginx "gitlab.com/gnufred/logslate/nxparse"
+	nginx "gitlab.com/gnufred/nxparse"
 )
 
 func TestParseNginxCombined(t *testing.T) {

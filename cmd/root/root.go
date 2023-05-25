@@ -9,12 +9,12 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
-	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/parse/slate"
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/testing/prof"
 
 	"github.com/schollz/progressbar/v3"
+	nginx "gitlab.com/gnufred/nxparse"
 )
 
 type Parsed struct {

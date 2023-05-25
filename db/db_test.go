@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/parse/slate"
+	nginx "gitlab.com/gnufred/nxparse"
 )
 
 func TestCreate(t *testing.T) {

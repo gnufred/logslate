@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"gitlab.com/gnufred/logslate/args"
-	nginx "gitlab.com/gnufred/logslate/nxparse"
 	"gitlab.com/gnufred/logslate/testing/mock"
+	nginx "gitlab.com/gnufred/nxparse"
 )
 
 type testData struct {
