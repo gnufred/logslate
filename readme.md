@@ -2,6 +2,10 @@
 
 Log translate (logslate) is a Free and Open Source **defensive security** tool. Its main purpose is to help web developers and system administrators secure their customers websites.
 
+## NGINX parsing package
+
+If you need a GoLang package to parse NGINX access.log, use [gnufred/nxparse](https://gitlab.com/gnufred/nxparse).
+
 ## Project info
 
 ### In development
