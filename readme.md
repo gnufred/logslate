@@ -28,11 +28,11 @@ Install with `curl`, `brew`, or manual downloads.
 See **[the comprehensive usage guide](usage.md)** for detailed use cases.
 
 ```
-cat access.log | logslate -v[vv]
---db ${path}/parsed-log.ldb
---since "timestamp"
---until "timestamp"
---log_format "NGINX log_format string"
+cat access.log | logslate --v[vv]
+-d, --db ${path}/parsed-log.ldb
+-s, --since "timestamp"
+-u, --until "timestamp"
+-f, --log_format "NGINX log_format string"
 ```
 
 ## Detection goal
