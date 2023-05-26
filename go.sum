@@ -31,6 +31,8 @@ gitlab.com/gnufred/nxparse v1.0.3 h1:ri+YXONvDWCDR0LfEyke6abK2JwH8dSk1DCESN+WCr0
 gitlab.com/gnufred/nxparse v1.0.3/go.mod h1:dbVtADfkZP0htWNhRsvSwe5Gyf6719F8dexd54OZoX4=
 gitlab.com/gnufred/nxparse v1.1.0 h1:BUHju6HyypuODv/RkEEJ1w6crzFiKNE300f0gWZ6n/c=
 gitlab.com/gnufred/nxparse v1.1.0/go.mod h1:dbVtADfkZP0htWNhRsvSwe5Gyf6719F8dexd54OZoX4=
+gitlab.com/gnufred/nxparse v1.2.0 h1:jypC7DltzyhHsUI+AWPq5Di8zYGiKLxHqxx/B/WHnu4=
+gitlab.com/gnufred/nxparse v1.2.0/go.mod h1:dbVtADfkZP0htWNhRsvSwe5Gyf6719F8dexd54OZoX4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 h1:VLliZ0d+/avPrXXH+OakdXhpJuEoBZuwh1m2j7U6Iug=
