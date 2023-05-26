@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"time"
 
 	"gitlab.com/gnufred/logslate/args"
@@ -13,7 +14,7 @@ import (
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/testing/prof"
 
-	"github.com/schollz/progressbar/v3"
+	progbar "github.com/schollz/progressbar/v3"
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
@@ -64,7 +65,19 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}(d)
 	}
 
-	bar := progressbar.DefaultBytes(-1, "parsing")
+	bar := progbar.NewOptions(-1,
+		progbar.OptionSetDescription("parsing"),
+		progbar.OptionSetWriter(os.Stderr),
+		progbar.OptionShowBytes(true),
+		progbar.OptionSetWidth(10),
+		progbar.OptionThrottle(166*time.Millisecond),
+		progbar.OptionShowCount(),
+		progbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stderr, "\n")
+		}),
+		progbar.OptionSpinnerType(14),
+		progbar.OptionSetRenderBlankState(true),
+	)
 
 	for {
 		line, byteCnt, err := pi.ReadLine()
