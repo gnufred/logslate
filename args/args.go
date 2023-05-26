@@ -5,11 +5,12 @@ import (
 	"os"
 	"time"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
 type Args struct {
+	Help      bool
 	V         bool
 	Vv        bool
 	Vvv       bool
@@ -26,50 +27,70 @@ type Args struct {
 var args = Args{}
 
 func Init() {
-	if flag.Parsed() {
-		return
+	if !pflag.Parsed() {
+		parse()
+		validate()
 	}
-
-	parse()
-	validate()
 }
 
 func validate() {
-	// NArg is the number of arguments remaining after flags have been processed.
-	if narg := flag.NArg(); narg != 0 {
-		fmt.Printf("unknown argument(s) found\nUsage of logslate:\n")
-		flag.PrintDefaults()
+	showHelpAndExit := func() {
+		fmt.Printf("Usage:\n")
+		pflag.PrintDefaults()
 		os.Exit(2)
+	}
+
+	if args.Help {
+		showHelpAndExit()
+	}
+	// NArg is the number of arguments remaining after flags have been processed.
+	if narg := pflag.NArg(); narg != 0 {
+		fmt.Printf("Error: unknown argument(s) found\n\n")
+		showHelpAndExit()
 	}
 }
 
 func parse() {
+	flags := pflag.CommandLine
+
+	// help flag
+	helpFlag := flags.BoolP("help", "h", false, "Show help message")
+
 	// debug flags
-	vFlag := flag.BoolP("v", "", false, "Debug: verbose")
-	vvFlag := flag.BoolP("vv", "", false, "Debug: very verbose")
-	vvvFlag := flag.BoolP("vvv", "", false, "Debug: very very verbose")
+	vFlag := flags.BoolP("v", "", false, "Debug: verbose")
+	vvFlag := flags.BoolP("vv", "", false, "Debug: very verbose")
+	vvvFlag := flags.BoolP("vvv", "", false, "Debug: very very verbose")
 
 	// pprof flags
-	cpuprofFlag := flag.StringP("profcpu", "", "", "Profile CPU usage")
-	flag.Lookup("profcpu").NoOptDefVal = "cpu.prof"
-	memprofFlag := flag.StringP("profmem", "", "", "Profile memory usage")
-	flag.Lookup("profmem").NoOptDefVal = "mem.prof"
+	cpuprofFlag := flags.StringP("profcpu", "", "", "Profile CPU usage")
+	flags.Lookup("profcpu").NoOptDefVal = "cpu.prof"
+	memprofFlag := flags.StringP("profmem", "", "", "Profile memory usage")
+	flags.Lookup("profmem").NoOptDefVal = "mem.prof"
 
 	// db flags
-	dbFlag := flag.StringP("db", "d", "", "SQLite3 DB file path")
+	dbFlag := flags.StringP("db", "d", "", "SQLite3 DB file path")
 
 	// time flags
-	sinceFlag := flag.StringP("since", "s", "", "Parse entries since specified date")
-	untilFlag := flag.StringP("until", "u", "", "Parse entries until specified date")
+	sinceFlag := flags.StringP("since", "s", "", "Parse entries since specified date")
+	untilFlag := flags.StringP("until", "u", "", "Parse entries until specified date")
 
 	// NGINX `log_format` flags
-	logfrmtFlag := flag.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive")
+	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive")
+
+	flags.SortFlags = false
+	flags.MarkHidden("help")
+	flags.MarkHidden("v")
+	flags.MarkHidden("vv")
+	flags.MarkHidden("vvv")
+	flags.MarkHidden("profcpu")
+	flags.MarkHidden("profmem")
 
 	// process CLIS flags
-	flag.Parse()
+	pflag.Parse()
 
 	// return structured arguments
 	args = Args{
+		Help:    bool(*helpFlag),
 		V:       bool(*vFlag),
 		Vv:      bool(*vvFlag),
 		Vvv:     bool(*vvvFlag),

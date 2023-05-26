@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"gitlab.com/gnufred/logslate/args"
-	"gitlab.com/gnufred/logslate/cmd/root"
+	rootcmd "gitlab.com/gnufred/logslate/cmd/root"
 	"gitlab.com/gnufred/logslate/debug"
 )
 
