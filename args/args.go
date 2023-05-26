@@ -1,11 +1,11 @@
 package args
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"time"
 
+	flag "github.com/spf13/pflag"
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
@@ -35,7 +35,6 @@ func Init() {
 }
 
 func validate() {
-	// https://pkg.go.dev/flag#NFlag
 	// NArg is the number of arguments remaining after flags have been processed.
 	if narg := flag.NArg(); narg != 0 {
 		fmt.Printf("unknown argument(s) found\nUsage of logslate:\n")
@@ -46,23 +45,25 @@ func validate() {
 
 func parse() {
 	// debug flags
-	vFlag := flag.Bool("v", false, "Debug: verbose")
-	vvFlag := flag.Bool("vv", false, "Debug: very verbose")
-	vvvFlag := flag.Bool("vvv", false, "Debug: very very verbose")
+	vFlag := flag.BoolP("v", "", false, "Debug: verbose")
+	vvFlag := flag.BoolP("vv", "", false, "Debug: very verbose")
+	vvvFlag := flag.BoolP("vvv", "", false, "Debug: very very verbose")
 
 	// pprof flags
-	cpuprofFlag := flag.String("cpuprof", "", "pprof cpu profile output file")
-	memprofFlag := flag.String("memprof", "", "pprof cpu profile output file")
+	cpuprofFlag := flag.StringP("profcpu", "", "", "Profile CPU usage")
+	flag.Lookup("profcpu").NoOptDefVal = "cpu.prof"
+	memprofFlag := flag.StringP("profmem", "", "", "Profile memory usage")
+	flag.Lookup("profmem").NoOptDefVal = "mem.prof"
 
 	// db flags
-	dbFlag := flag.String("db", "", "SQLite3 DB file path")
+	dbFlag := flag.StringP("db", "d", "", "SQLite3 DB file path")
 
 	// time flags
-	sinceFlag := flag.String("since", "", "Parse entries since specified date")
-	untilFlag := flag.String("until", "", "Parse entries until specified date")
+	sinceFlag := flag.StringP("since", "s", "", "Parse entries since specified date")
+	untilFlag := flag.StringP("until", "u", "", "Parse entries until specified date")
 
 	// NGINX `log_format` flags
-	logfrmtFlag := flag.String("log_format", nginx.Combined, "NGINX log_format directive")
+	logfrmtFlag := flag.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive")
 
 	// process CLIS flags
 	flag.Parse()

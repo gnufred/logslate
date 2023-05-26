@@ -82,9 +82,9 @@ If you need **specific timezones**, use the calculated value `+XXXX` or short co
 
 ## Parsing errors
 
-Unparsable log entries are ignored. You can output them with `-v`.
+Unparsable log entries are ignored. You can output them with `--vvv`.
 
-It's safe to ignore them if there's just a few.
+It's usually safe to ignore them.
 
 ## Using tmpfs
 
@@ -118,7 +118,7 @@ select ip, path, query from logs where ip = '208.115.199.20' order by path, quer
 
 ## Debug
 
-Activate debug output with `-v, -vv, -vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
+Activate debug output with `--v, --vv, --vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
 
 Debug mode has 4 levels: OFF (0), V (1), VV (2), VVV (3).
 
