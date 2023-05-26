@@ -61,12 +61,12 @@ func (d *Dber) Create(file string) error {
 
 func (d *Dber) ApplyDefaults() {
 	// Disable the connection pools. We have a single process and no concurrency. Having more than one is
-	// actually harmful for performance.
+	// harmful for performance.
 	// https://stackoverflow.com/questions/35804884/sqlite-concurrent-writing-performance
 	d.db.SetMaxOpenConns(1)
 	// We don't need to wait for the OS to confirm the data is written.
 	d.Pragma("synchronous = off")
-	// We don't need journal. If the import fails, we have to start over.
+	// We don't need the journal. If the import fails, we have to start over.
 	d.Pragma("journal_mode = off")
 	// We have a single process, using exclusive locking is faster.
 	d.Pragma("locking_mode = exclusive")

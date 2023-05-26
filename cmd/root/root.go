@@ -98,8 +98,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		if a.Db != "" {
 			d.InsertLog(ls)
-			// Commit every "x" succesfully parsed lines
-			// Testing with db/BenchmarkDbInsert shows that "7" is the best number of inserts to batch
+			// Commit every "x" successfully parsed lines.
+			// Testing with db/BenchmarkDbInsert shows that "7" is the best number of inserts to batch.
 			if par.Ok%7 == 0 {
 				d.Commit()
 				d.Begin()
@@ -108,7 +108,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		par.Ok++
 	}
-	// Need to print a return character after the last progress bar terminal update
+	// Need to print a return character after the last progress bar terminal update.
 	fmt.Print("\n")
 
 	prof.MemProfile(a)
@@ -116,26 +116,26 @@ func ParseStdin(a args.Args) (Parsed, error) {
 }
 
 func timeMatch(ts time.Time, since bool, until bool, start time.Time, end time.Time) bool {
-	// first possibility: no arguments
+	// First possibility: no arguments.
 	if !since && !until {
 		return true
 	}
 
-	// second possibility: since is specified
+	// Second possibility: since is specified.
 	if since && !until {
 		if ts.Equal(start) || ts.After(start) {
 			return true
 		}
 	}
 
-	// third possibility: until is specified
+	// Third possibility: until is specified.
 	if !since && until {
 		if ts.Before(end) || ts.Equal(end) {
 			return true
 		}
 	}
 
-	// fourth possibility: both are specified
+	// Fourth possibility: both are specified.
 	if since && until {
 		if (ts.Equal(start) || ts.After(start)) &&
 			(ts.Before(end) || ts.Equal(end)) {

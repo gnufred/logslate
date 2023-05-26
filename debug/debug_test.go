@@ -5,11 +5,8 @@ import (
 	"testing"
 )
 
-/* The reason there's no test that check that Log works as expected
-   and does not report an error is that, working debug.Log() output
-   messages. This means, the test results are populated with output
-   that we don't want to have in there. So, we just test failures.
-*/
+// It's currently not possible to test that Log() output works as expected.
+// Everything else is fine.
 
 func TestValidVerbosityLevels(t *testing.T) {
 	testValidVerbosity(t, OFF)

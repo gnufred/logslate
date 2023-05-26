@@ -8,11 +8,9 @@ import (
 	"gitlab.com/gnufred/logslate/testing/mock"
 )
 
-/* ============
-Tests are based on the 2nd answer of this guide
-https://stackoverflow.com/questions/46365221/fill-os-stdin-for-function-that-reads-from-it
-the `defer` is REQUIRED, otherwise the real io.stdin will be read and tests will fail
-*/
+// Tests are based on the 2nd answer from this guide:
+// https://stackoverflow.com/questions/46365221/fill-os-stdin-for-function-that-reads-from-it
+// The `defer` is REQUIRED, otherwise, the real io.Stdin will be read and tests will fail.
 
 type mockedStdinExpect struct {
 	err error
@@ -20,17 +18,17 @@ type mockedStdinExpect struct {
 }
 
 func TestReadLine_OneLineBasic(t *testing.T) {
-	// mock stding
+	// Mock Stdin.
 	input, _ := os.ReadFile("testdata/oneline.log")
 	mock.Stdin(input)
 	defer func(v *os.File) { os.Stdin = v }(os.Stdin)
 
-	// prepare data
+	// Prepare data.
 	data := []mockedStdinExpect{
 		{nil, 214},
 	}
 
-	// do the actual test
+	// Run tests.
 	pipe := New()
 	if pipe.IsPiped() != true {
 		t.Fatalf("data not from pipe")
@@ -40,12 +38,12 @@ func TestReadLine_OneLineBasic(t *testing.T) {
 }
 
 func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
-	// mock stding
+	// Mock stdin.
 	input, _ := os.ReadFile("testdata/twolinespluseof.log")
 	mock.Stdin(input)
 	defer func(v *os.File) { os.Stdin = v }(os.Stdin)
 
-	// prepare data
+	// Prepare data.
 	data := []mockedStdinExpect{
 		{nil, 224},
 		{nil, 166},
@@ -53,7 +51,7 @@ func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 		{io.EOF, 0},
 	}
 
-	// run tests
+	// Run tests.
 	pipe := New()
 	if pipe.IsPiped() != true {
 		t.Fatalf("data not from pipe")

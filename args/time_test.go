@@ -70,20 +70,20 @@ func TestTrstringerGosystemdtime(t *testing.T) {
 }
 
 func TestAraddonDateparse(t *testing.T) {
-	// test random timestamp format
+	// Test random timestamp format.
 	tm, _ := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.UTC)
 	testStamp(t, "2023", tm)
 	testStamp(t, "1st Jan 2023", tm)
 	testStamp(t, "jan 1 2023", tm)
 	testStamp(t, "2023-01-01", tm)
 
-	// test NGINX format
+	// Test NGINX format.
 	tm, _ = time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.UTC)
 	testStamp(t, "01/Jan/2023", tm)
 	testStamp(t, "01/Jan/2023:00:00:00", tm)
 	testStamp(t, "01/Jan/2023:00:00:00 +0000", tm)
 
-	// test NGINX format in UTC
+	// Test NGINX format in UTC.
 	tm, _ = time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.UTC)
 	testStamp(t, "01/Jan/2023:00:00:00 +0000", tm)
 }

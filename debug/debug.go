@@ -16,13 +16,13 @@ const VVV = int(3)
 var verbosity = OFF
 
 func Init() {
-	// set verbosity from environment variable
+	// Set verbosity from the environment variable.
 	env, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
 	if env == OFF || env == V || env == VV || env == VVV {
 		setVerbosity(env)
 	}
 
-	// override value from command line flag if set
+	// Override value from command line flag if set.
 	arg := args.Get()
 	if arg.V {
 		setVerbosity(V)
