@@ -1,0 +1,16 @@
+#!/bin/bash
+
+ver="$1"
+if [[ -z "$1" ]]; then
+    echo "Error: needs an version argument"
+    exit 1
+fi
+
+echo "List nxparse@$ver"
+GOPROXY=proxy.golang.org go list -m "gitlab.com/gnufred/nxparse@$ver"
+
+echo "Get nxparse@$ver"
+GOPROXY=https://proxy.golang.org GO120MODULE=on go get "gitlab.com/gnufred/nxparse@$ver"
+
+echo "Done!"
+echo "Visit: https://pkg.go.dev/gitlab.com/gnufred/nxparse@$ver"
