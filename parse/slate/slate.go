@@ -31,23 +31,23 @@ func ParseNginx(nx nginx.Entry) Log {
 		Agent:   nx.Http["user_agent"],
 	}
 
-	// assigned the parsed time
-	// given we'll have TimeLocal most of the time, we test it first
+	// Assigned the parsed time.
+	// Given we'll have TimeLocal most of the time, we test it first.
 	if !nx.TimeLocal.IsZero() {
 		ls.Time = nx.TimeLocal
 	} else if !nx.TimeIso8601.IsZero() {
 		ls.Time = nx.TimeIso8601
 	}
 
-	// assign bytes set
-	// here, we want BytesSent, if available, otherwise BodyBytesSent
+	// Assign bytes set.
+	// Here, we want BytesSent, if available, otherwise BodyBytesSent.
 	if nx.BytesSent > 0 {
 		ls.Sent = nx.BytesSent
 	} else {
 		ls.Sent = nx.BodyBytesSent
 	}
 
-	//splint NGINX request into 4 different parts
+	// Splint NGINX request into 4 different parts.
 	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
 	return ls
 }

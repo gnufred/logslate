@@ -15,7 +15,7 @@ type testData struct {
 	expect Parsed
 }
 
-// Must fail given there's no data in os.Stdin
+// Must fail given there's no data in os.Stdin.
 func TestNoData(t *testing.T) {
 	a := args.Get()
 	_, err := ParseStdin(a)
@@ -24,7 +24,7 @@ func TestNoData(t *testing.T) {
 	}
 }
 
-// Must fail given the database file already exists
+// Must fail given the database file already exists.
 func TestDbExists(t *testing.T) {
 	input, _ := os.ReadFile("testdata/3ok3broken.log")
 	mock.Stdin(input)
@@ -87,28 +87,28 @@ func TestTimeArgs(t *testing.T) {
 	a := args.Get()
 	a.LogFrmt = nginx.Combined
 
-	// empty values should return all results
+	// Empty values should return all results.
 	a.SetSinceUntil("", "")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{50, 0, 0}},
 		})
 
-	// should not return anything
+	// Should not return anything.
 	a.SetSinceUntil("2000-01-01 00:00", "2000-01-01 00:01")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{0, 50, 0}},
 		})
 
-	// should return all lines, first and last should match
+	// Should return all lines, first and last should match.
 	a.SetSinceUntil("07/Apr/2023:13:40:26 +0000", "14/Apr/2023:09:40:59 +0000")
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/googlebot.log", Parsed{50, 0, 0}},
 		})
 
-	// should return all lines, but the first and last
+	// Should return all lines, but the first and last.
 	a.SetSinceUntil("07/Apr/2023:13:40:27 +0000", "14/Apr/2023:09:40:58 +0000")
 	testInputDataLoop(t, a,
 		[]testData{

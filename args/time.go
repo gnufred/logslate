@@ -10,25 +10,25 @@ import (
 )
 
 func parseTimestamp(timestamp string, unset time.Time) time.Time {
-	// return default time.Time if string is empty
+	// Return default value if no timestamp is specified.
 	if timestamp == "" {
 		return unset
 	}
 
-	// try and understand english
+	// Return time based on known English words.
 	wordedTime, err := sysdt.Worded(timestamp)
 	if err == nil {
 		return wordedTime
 	}
 
-	// return time.Time parsed from systemd.time format
+	// Return time parsed from systemd format.
 	now := time.Now()
 	adjustedTime, err := sysdt.Adjust(timestamp, now)
 	if err == nil {
 		return adjustedTime
 	}
 
-	// return time.Time parsed from unknown layout
+	// Return time parse from an unknown layout.
 	parsedTime, err := dateparse.ParseLocal(timestamp)
 	if err != nil {
 		log.Fatalf("parsing %s error %s", timestamp, err)
