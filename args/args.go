@@ -11,15 +11,13 @@ import (
 
 type Args struct {
 	Help      bool
-	V         bool
-	Vv        bool
-	Vvv       bool
-	Db        string
+	Debug     int
 	CpuProf   string
 	MemProf   string
-	LogFrmt   string
 	since     string
 	until     string
+	Db        string
+	LogFrmt   string
 	startTime time.Time
 	endTime   time.Time
 }
@@ -40,10 +38,18 @@ func validate() {
 		os.Exit(2)
 	}
 
+	// User asked for help.
 	if args.Help {
 		showHelpAndExit()
 	}
-	// NArg is the number of arguments remaining after flags have been processed.
+
+	// --debug argument is invalid.
+	if args.Debug < 0 || args.Debug > 3 {
+		fmt.Printf("Error: debug args must be -v or --debug=[1,3]\n\n")
+		showHelpAndExit()
+	}
+
+	// There are extra unknown arguments or params.
 	if narg := pflag.NArg(); narg != 0 {
 		fmt.Printf("Error: unknown argument(s) found\n\n")
 		showHelpAndExit()
@@ -51,56 +57,63 @@ func validate() {
 }
 
 func parse() {
+	// Get the current pflag SetFlag
 	flags := pflag.CommandLine
+	flags.SortFlags = false
+	hideFlags := true
 
-	// help flag
+	// Help flags.
 	helpFlag := flags.BoolP("help", "h", false, "Show help message")
+	if hideFlags {
+		flags.MarkHidden("help")
+	}
 
-	// debug flags
-	vFlag := flags.BoolP("v", "", false, "Debug: verbose")
-	vvFlag := flags.BoolP("vv", "", false, "Debug: very verbose")
-	vvvFlag := flags.BoolP("vvv", "", false, "Debug: very very verbose")
+	// Debug flags.
+	flags.CountP("debug", "v", "Debug: verbosity")
+	if hideFlags {
+		flags.MarkHidden("debug")
+	}
 
-	// pprof flags
+	// pprof profiling flags.
 	cpuprofFlag := flags.StringP("profcpu", "", "", "Profile CPU usage")
+	if hideFlags {
+		flags.MarkHidden("profcpu")
+	}
 	flags.Lookup("profcpu").NoOptDefVal = "cpu.prof"
 	memprofFlag := flags.StringP("profmem", "", "", "Profile memory usage")
+	if hideFlags {
+		flags.MarkHidden("profmem")
+	}
 	flags.Lookup("profmem").NoOptDefVal = "mem.prof"
 
-	// db flags
-	dbFlag := flags.StringP("db", "d", "", "SQLite3 DB file path")
-
-	// time flags
+	// Time flags.
 	sinceFlag := flags.StringP("since", "s", "", "Parse entries since specified date")
 	untilFlag := flags.StringP("until", "u", "", "Parse entries until specified date")
 
-	// NGINX `log_format` flags
+	// Database flags.
+	dbFlag := flags.StringP("db", "d", "", "SQLite3 DB file path")
+
+	// NGINX `log_format` flags.
 	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive")
 
-	flags.SortFlags = false
-	flags.MarkHidden("help")
-	flags.MarkHidden("v")
-	flags.MarkHidden("vv")
-	flags.MarkHidden("vvv")
-	flags.MarkHidden("profcpu")
-	flags.MarkHidden("profmem")
-
-	// process CLIS flags
+	// Parse and save CLI args.
+	args = Args{}
 	pflag.Parse()
 
-	// return structured arguments
-	args = Args{
-		Help:    bool(*helpFlag),
-		V:       bool(*vFlag),
-		Vv:      bool(*vvFlag),
-		Vvv:     bool(*vvvFlag),
-		CpuProf: string(*cpuprofFlag),
-		MemProf: string(*memprofFlag),
-		Db:      string(*dbFlag),
-		LogFrmt: string(*logfrmtFlag),
-	}
+	args.Help = bool(*helpFlag)
+
+	debugCnt, _ := flags.GetCount("debug")
+	args.Debug = debugCnt
+
+	args.CpuProf = string(*cpuprofFlag)
+
+	args.MemProf = string(*memprofFlag)
 
 	args.SetSinceUntil(string(*sinceFlag), string(*untilFlag))
+
+	args.Db = string(*dbFlag)
+
+	args.LogFrmt = string(*logfrmtFlag)
 }
 
 func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) {

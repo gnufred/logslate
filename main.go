@@ -31,6 +31,9 @@ func Banner() {
 
 func ParseStdin() {
 	a := args.Get()
+	debug.Log(debug.VV, "start time", a.StartTime())
+	debug.Log(debug.VV, "end time", a.EndTime())
+
 	par, err := rootcmd.ParseStdin(a)
 	if err != nil {
 		log.Fatal(err)
