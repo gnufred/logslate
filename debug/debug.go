@@ -2,18 +2,24 @@ package debug
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
 	"gitlab.com/gnufred/logslate/args"
 )
 
+// Verbosity level constants.
 const OFF = int(0)
 const V = int(1)
 const VV = int(2)
 const VVV = int(3)
 
+// Verbosity level. Change with setVerbosity().
 var verbosity = OFF
+
+// stderr output logger.
+var stderr = log.New(os.Stderr, "", 0)
 
 func Init() {
 	// Set verbosity from the environment variable.
@@ -24,13 +30,12 @@ func Init() {
 
 	// Override value from command line flag if set.
 	arg := args.Get()
-	if arg.V {
+	switch arg.Debug {
+	case 1:
 		setVerbosity(V)
-	}
-	if arg.Vv {
+	case 2:
 		setVerbosity(VV)
-	}
-	if arg.Vvv {
+	case 3:
 		setVerbosity(VVV)
 	}
 }
@@ -43,7 +48,7 @@ func Log(msgverb int, name string, msg interface{}) error {
 	}
 
 	if msgverb <= verb {
-		fmt.Printf("(debug%d)|%s| %v\n", msgverb, name, msg)
+		stderr.Printf("v%d|%s| %v\n", msgverb, name, msg)
 		return nil
 	}
 

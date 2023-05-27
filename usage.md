@@ -116,12 +116,12 @@ List all request from an IP, order by URL path and query string
 select ip, path, query from logs where ip = '208.115.199.20' order by path, query;
 ```
 
-## Debug
+## Debuging
 
-Activate debug output with `--v, --vv, --vvv` or environment variable `export LS_DEBUG=[0,1,2,3]`.
+Activate debug output with `-v[vv]`, `--debug=[1,3]`, or environment variable `export LS_DEBUG=[0,1,2,3]`.
 
-Debug mode has 4 levels: OFF (0), V (1), VV (2), VVV (3).
+Debug output to `stderr` meaning you can redirect it like so `cat access.log | logslate -v 2> debug.log`
 
 ## Profiling
 
-You can enable `runtime/pprof` CPU and heap profiling with `--cpuprof cpu.prof` and `--memprof mem.prof`.
+You can enable `runtime/pprof` CPU and memory profiling with `--cpuprof` and `--memprof`.

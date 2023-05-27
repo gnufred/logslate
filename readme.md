@@ -28,7 +28,7 @@ Install with `curl`, `brew`, or manual downloads.
 See **[the comprehensive usage guide](usage.md)** for detailed use cases.
 
 ```
-cat access.log | logslate --v[vv]
+cat access.log | logslate
 -d, --db ${path}/parsed-log.ldb
 -s, --since "timestamp"
 -u, --until "timestamp"

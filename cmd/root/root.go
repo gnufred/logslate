@@ -32,9 +32,6 @@ var (
 )
 
 func ParseStdin(a args.Args) (Parsed, error) {
-	cpuf := prof.StartCpuProfile(a)
-	defer prof.StopCpuProfile(a, cpuf)
-
 	pi := pipe.New()
 	par := Parsed{0, 0, 0}
 
@@ -45,9 +42,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	if a.LogFrmt == "" {
 		return par, ErrNoFormat
 	}
-
-	debug.Log(debug.V, "start time", a.StartTime())
-	debug.Log(debug.V, "end time", a.EndTime())
 
 	d := db.Singleton()
 	if a.Db != "" {
@@ -65,20 +59,13 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}(d)
 	}
 
-	bar := progbar.NewOptions(-1,
-		progbar.OptionSetDescription("parsing"),
-		progbar.OptionSetWriter(os.Stderr),
-		progbar.OptionShowBytes(true),
-		progbar.OptionSetWidth(10),
-		progbar.OptionThrottle(166*time.Millisecond),
-		progbar.OptionShowCount(),
-		progbar.OptionOnCompletion(func() {
-			fmt.Fprint(os.Stderr, "\n")
-		}),
-		progbar.OptionSpinnerType(14),
-		progbar.OptionSetRenderBlankState(true),
-	)
+	bar := createBar()
 
+	// Start CPU profiling if argument is set.
+	cpuf := prof.StartCpuProfile(a)
+	defer prof.StopCpuProfile(a, cpuf)
+
+	// Parser loop.
 	for {
 		line, byteCnt, err := pi.ReadLine()
 		bar.Add(byteCnt)
@@ -99,6 +86,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		nx, err := nginx.Parse(a.LogFrmt, line)
 		if err != nil {
 			par.Err++
+			debug.Log(debug.V, "parseError", line)
 			continue
 		}
 
@@ -121,11 +109,34 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		par.Ok++
 	}
+
 	// Need to print a return character after the last progress bar terminal update.
 	fmt.Print("\n")
 
+	// Stop CPU profiling.
+	prof.StopCpuProfile(a, cpuf)
+
+	// Write memory heap if argument is set.
 	prof.MemProfile(a)
+
 	return par, nil
+}
+
+func createBar() *progbar.ProgressBar {
+	bar := progbar.NewOptions(-1,
+		progbar.OptionSetDescription("parsing"),
+		progbar.OptionSetWriter(os.Stdout),
+		progbar.OptionShowBytes(true),
+		progbar.OptionSetWidth(10),
+		progbar.OptionThrottle(166*time.Millisecond),
+		progbar.OptionShowCount(),
+		progbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stdout, "\n")
+		}),
+		progbar.OptionSpinnerType(14),
+		progbar.OptionSetRenderBlankState(true),
+	)
+	return bar
 }
 
 func timeMatch(ts time.Time, since bool, until bool, start time.Time, end time.Time) bool {
