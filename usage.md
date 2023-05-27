@@ -118,7 +118,7 @@ select ip, path, query from logs where ip = '208.115.199.20' order by path, quer
 
 ## Debuging
 
-Activate debug output with `-v[vv]`, `--debug=[1,3]`, or environment variable `export LS_DEBUG=[0,1,2,3]`.
+Activate debug output with `-v[vv]`, `--debug=[1-3]`, or environment variable `export LS_DEBUG=[0-3]`.
 
 Debug output to `stderr` meaning you can redirect it like so `cat access.log | logslate -v 2> debug.log`
 
