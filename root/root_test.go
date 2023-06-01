@@ -20,7 +20,7 @@ func TestNoData(t *testing.T) {
 	a := args.Get()
 	_, err := ParseStdin(a)
 	if !errors.Is(err, ErrNoInputData) {
-		t.Fatalf("Did not get the expected error")
+		t.Errorf("Did not get the expected error")
 	}
 }
 
@@ -37,7 +37,7 @@ func TestDbExists(t *testing.T) {
 	a.Db = dbPath
 	_, err := ParseStdin(a)
 	if errors.Is(err, ErrDbCreateFail) {
-		t.Fatalf("Did not get the expected error")
+		t.Errorf("Did not get the expected error")
 	}
 }
 
@@ -45,7 +45,7 @@ func TestNoFormat(t *testing.T) {
 	a := args.Get()
 	_, err := ParseStdin(a)
 	if !errors.Is(err, ErrNoFormat) {
-		t.Fatalf("Did not get the expected error")
+		t.Errorf("Did not get the expected error")
 	}
 }
 
@@ -140,22 +140,22 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 
 	got, err := ParseStdin(a)
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 
 	if expect.Ok != got.Ok {
-		t.Fatalf("ok: expect %d, got %d", expect.Ok, got.Ok)
+		t.Errorf("ok: expect %d, got %d", expect.Ok, got.Ok)
 	}
 
 	if expect.Skip != got.Skip {
-		t.Fatalf("skip: expect %d, got %d", expect.Skip, got.Skip)
+		t.Errorf("skip: expect %d, got %d", expect.Skip, got.Skip)
 	}
 
 	if expect.Err != got.Err {
-		t.Fatalf("err: expect %d, got %d", expect.Err, got.Err)
+		t.Errorf("err: expect %d, got %d", expect.Err, got.Err)
 	}
 
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 }
