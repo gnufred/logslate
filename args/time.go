@@ -9,6 +9,13 @@ import (
 	"github.com/araddon/dateparse"
 )
 
+func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) {
+	a.since = sincestamp
+	a.until = untilstamp
+	a.startTime = parseTimestamp(sincestamp, time.Time{})
+	a.endTime = parseTimestamp(untilstamp, time.Now())
+}
+
 func parseTimestamp(timestamp string, unset time.Time) time.Time {
 	// Return default value if no timestamp is specified.
 	if timestamp == "" {

@@ -11,6 +11,7 @@ import (
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
 	"gitlab.com/gnufred/logslate/pipe"
+	"gitlab.com/gnufred/logslate/report"
 	"gitlab.com/gnufred/logslate/testing/prof"
 	"gitlab.com/gnufred/logslate/translate"
 
@@ -19,9 +20,9 @@ import (
 )
 
 type Parsed struct {
-	Ok   int
-	Skip int
-	Err  int
+	Ok   uint
+	Skip uint
+	Err  uint
 }
 
 var (
@@ -61,13 +62,18 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	bar := createBar()
 
+	// Reporting starts here
+	runStartedAt := time.Now()
+
 	// Start CPU profiling if argument is set.
 	cpuf := prof.StartCpuProfile(a)
 	defer prof.StopCpuProfile(a, cpuf)
 
 	// Parser loop.
+	var bytesTotal uint
 	for {
 		line, byteCnt, err := pi.ReadLine()
+		bytesTotal = bytesTotal + uint(byteCnt)
 		bar.Add(byteCnt)
 
 		if err == io.EOF {
@@ -113,11 +119,35 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Need to print a return character after the last progress bar terminal update.
 	fmt.Print("\n")
 
+	// Print parsed line data.
+	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
+
 	// Stop CPU profiling.
 	prof.StopCpuProfile(a, cpuf)
 
 	// Write memory heap if argument is set.
 	prof.MemProfile(a)
+
+	// Reporting stops here.
+	runEndedAt := time.Now()
+
+	// Aggregate report data.
+	rep := report.New()
+	rep.Path = a.ReportPath
+	rep.Frmt = a.ReportFrmt
+	rep.Run.Start = runStartedAt
+	rep.Run.End = runEndedAt
+	rep.Size.Byte = bytesTotal
+	rep.Line.Ok = par.Ok
+	rep.Line.Skip = par.Skip
+	rep.Line.Error = par.Err
+	rep.Time.Since = a.Since()
+	rep.Time.Until = a.Until()
+	rep.Time.Start = a.StartTime()
+	rep.Time.End = a.EndTime()
+	rep.Db.Path = a.Db
+	// Print report.
+	rep.Print()
 
 	return par, nil
 }

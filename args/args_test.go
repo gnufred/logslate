@@ -52,3 +52,21 @@ func TestDefaultArgs(t *testing.T) {
 		t.Error("endTime flag is time.Time{}")
 	}
 }
+
+func TestParseReportPath(t *testing.T) {
+	// Test .json report format.
+	frmt := parseReportPath("/user/run/1000/example.com/report.json")
+	if frmt != "json" {
+		t.Errorf("unexpected format %s", frmt)
+	}
+	// Test .txt report format.
+	frmt = parseReportPath("/user/run/1000/example.com/report.txt")
+	if frmt != "text" {
+		t.Errorf("unexpected format %s", frmt)
+	}
+	// Test unknown report format.
+	frmt = parseReportPath("/user/run/1000/example.com/report.csv")
+	if frmt != "" {
+		t.Errorf("unexpected format %s", frmt)
+	}
+}
