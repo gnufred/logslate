@@ -3,4 +3,4 @@ bin/
 logs/
 *.db
 *.prof
-*.log
+./*.log

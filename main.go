@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"gitlab.com/gnufred/logslate/args"
-	rootcmd "gitlab.com/gnufred/logslate/cmd/root"
 	"gitlab.com/gnufred/logslate/debug"
+	"gitlab.com/gnufred/logslate/root"
 )
 
 var Version = "dev"
@@ -15,7 +15,7 @@ var Version = "dev"
 func main() {
 	Init()
 	Banner()
-	ParseStdin()
+	Run()
 }
 
 func Init() {
@@ -29,12 +29,12 @@ func Banner() {
 	fmt.Printf("Logslate %s @ https://gitlab.com/gnufred/logslate\n", Version)
 }
 
-func ParseStdin() {
+func Run() {
 	a := args.Get()
 	debug.Log(debug.VV, "start time", a.StartTime())
 	debug.Log(debug.VV, "end time", a.EndTime())
 
-	par, err := rootcmd.ParseStdin(a)
+	par, err := root.ParseStdin(a)
 	if err != nil {
 		log.Fatal(err)
 	}
