@@ -3,6 +3,7 @@ package args
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/pflag"
@@ -10,16 +11,21 @@ import (
 )
 
 type Args struct {
-	Help      bool
-	Debug     int
-	CpuProf   string
-	MemProf   string
-	since     string
-	until     string
-	Db        string
-	LogFrmt   string
-	startTime time.Time
-	endTime   time.Time
+	Help       bool
+	Debug      int
+	CpuProf    string
+	MemProf    string
+	Db         string
+	LogFrmt    string
+	ReportPath string
+	ReportFrmt string
+
+	// Time arguments are managed in time.go
+	// Set all 4 time vars .SetSinceUntil()
+	since     string    // Geter .Since()
+	until     string    // Geter .Until()
+	startTime time.Time // Geter .StartTime()
+	endTime   time.Time // Geter .EndTime()
 }
 
 var args = Args{}
@@ -54,6 +60,14 @@ func validate() {
 		fmt.Printf("Error: unknown argument(s) found\n\n")
 		showHelpAndExit()
 	}
+
+	// Report format is invalid.
+	if args.ReportPath != "" {
+		if f := args.ReportFrmt; f != "json" && f != "text" {
+			fmt.Printf("Error: --format value must end with .json or .txt\n\n")
+			showHelpAndExit()
+		}
+	}
 }
 
 func parse() {
@@ -63,7 +77,7 @@ func parse() {
 	hideFlags := true
 
 	// Help flags.
-	helpFlag := flags.BoolP("help", "h", false, "Show help message")
+	helpFlag := flags.BoolP("help", "h", false, "Show help message.")
 	if hideFlags {
 		flags.MarkHidden("help")
 	}
@@ -75,26 +89,29 @@ func parse() {
 	}
 
 	// pprof profiling flags.
-	cpuprofFlag := flags.StringP("profcpu", "", "", "Profile CPU usage")
+	cpuprofFlag := flags.StringP("profcpu", "", "", "Profile CPU usage.")
 	if hideFlags {
 		flags.MarkHidden("profcpu")
 	}
 	flags.Lookup("profcpu").NoOptDefVal = "cpu.prof"
-	memprofFlag := flags.StringP("profmem", "", "", "Profile memory usage")
+	memprofFlag := flags.StringP("profmem", "", "", "Profile memory usage.")
 	if hideFlags {
 		flags.MarkHidden("profmem")
 	}
 	flags.Lookup("profmem").NoOptDefVal = "mem.prof"
 
 	// Time flags.
-	sinceFlag := flags.StringP("since", "s", "", "Parse entries since specified date")
-	untilFlag := flags.StringP("until", "u", "", "Parse entries until specified date")
+	sinceFlag := flags.StringP("since", "s", "", "Parse entries since specified date.")
+	untilFlag := flags.StringP("until", "u", "", "Parse entries until specified date.")
 
 	// Database flags.
-	dbFlag := flags.StringP("db", "d", "", "SQLite3 DB file path")
+	dbFlag := flags.StringP("db", "d", "", "SQLite3 DB file path.")
 
 	// NGINX `log_format` flags.
-	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive")
+	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive.")
+
+	// Report flags.
+	reportFlag := flags.StringP("report", "r", "", "Report file path. Must end with .txt or .json.")
 
 	// Parse and save CLI args.
 	args = Args{}
@@ -114,14 +131,12 @@ func parse() {
 	args.Db = string(*dbFlag)
 
 	args.LogFrmt = string(*logfrmtFlag)
+
+	args.ReportPath = string(*reportFlag)
+
+	args.ReportFrmt = parseReportPath(string(*reportFlag))
 }
 
-func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) {
-	a.since = sincestamp
-	a.until = untilstamp
-	a.startTime = parseTimestamp(sincestamp, time.Time{})
-	a.endTime = parseTimestamp(untilstamp, time.Now())
-}
 func Get() Args {
 	return args
 }
@@ -140,4 +155,18 @@ func (a *Args) StartTime() time.Time {
 
 func (a *Args) EndTime() time.Time {
 	return a.endTime
+}
+
+// parseReportPath check the path file extension to determine if it's
+// in a supported format. Supported formats are "txt", and "json".
+func parseReportPath(path string) string {
+	lpath := strings.ToLower(path)
+	if path == "screen" {
+		return "text"
+	} else if strings.HasSuffix(lpath, ".txt") {
+		return "text"
+	} else if strings.HasSuffix(lpath, ".json") {
+		return "json"
+	}
+	return ""
 }

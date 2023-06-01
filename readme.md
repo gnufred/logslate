@@ -33,6 +33,7 @@ cat access.log | logslate
 -s, --since "timestamp"
 -u, --until "timestamp"
 -f, --log_format "NGINX log_format string"
+-r, --report "file.[txt,json]|screen"
 ```
 
 ## Detection goal

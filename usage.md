@@ -32,11 +32,17 @@ For **Windows** and other uses cases, head to the [release page](https://gitlab.
 
 Logslate accept input **only from stdin**. You have to feed it with pipes. 
 
-The simpliest case is to parse one file `cat access.log | logslate --db log.db`, but you can parse multiple files `cat *.log | logslate --db all.db`. If your files are Gziped `zcat access*.log.gz | logslate --db all.db`.
+The simplest case is to parse one file `cat access.log | logslate --db log.db`, but you can parse multiple files `cat *.log | logslate --db all.db`. If your files are Gziped `zcat access*.log.gz | logslate --db all.db`.
 
-If you have logs in multiple location you can `find /var/log/sites/ -type f -name 'access.log' | xargs cat | logslate --db all.db`.
+If you have logs in multiple locations you can `find /var/log/sites/ -type f -name 'access.log' | xargs cat | logslate --db all.db`.
 
 You can also, get logs directly from your server `ssh webserver 'find /var/log/sites/ -type f -name 'access.log' | xargs cat' | logslate --db all.db`.
+
+## Create a report
+
+There's no report by default. That being said, in most cases, you'll want to use `--report screen` to print the report on the screen.
+
+If the run fires automatically then you can write the report to disk with `--report /var/log/logslate/report.txt`. If you want to get a JSON formatted report instead use `--report /var/log/logslate/report.json`.
 
 ## NGINX `log_format`
 
@@ -76,9 +82,9 @@ The **three** main ways you'll use this is:
 * with systemd.time ` --since '2 days ago' --until '1 day ago'`.
 * from a cronjob `--since '-24 hours'`.
 
-You can also use those english words: `now`, `today`, `yesterday`.
+You can also use those English words: `now`, `today`, `yesterday`.
 
-If you need **specific timezones**, use the calculated value `+XXXX` or short codes. For example `2006-01-02 15:04:05 MST`, `2006-01-02 UTC`, and `2006-01-02 -0700`.
+If you need **specific timezones**, use the calculated value `+XXXX` or shortcodes. For example `2006-01-02 15:04:05 MST`, `2006-01-02 UTC`, and `2006-01-02 -0700`.
 
 ## Parsing errors
 
@@ -110,7 +116,7 @@ List and count top 10 IPs
 select count(ip), ip from logs group by ip order by count(ip) desc limit 10;
 ```
 
-List all request from an IP, order by URL path and query string
+List all requests from an IP, order by URL path and query string
 
 ```
 select ip, path, query from logs where ip = '208.115.199.20' order by path, query;

@@ -34,9 +34,8 @@ func Run() {
 	debug.Log(debug.VV, "start time", a.StartTime())
 	debug.Log(debug.VV, "end time", a.EndTime())
 
-	par, err := root.ParseStdin(a)
+	_, err := root.ParseStdin(a)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
 }
