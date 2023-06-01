@@ -1,4 +1,4 @@
-package rootcmd
+package root
 
 import (
 	"errors"
