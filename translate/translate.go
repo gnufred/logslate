@@ -1,4 +1,4 @@
-package slate
+package translate
 
 import (
 	"net"
@@ -22,7 +22,7 @@ type Log struct {
 	Agent   string
 }
 
-func ParseNginx(nx nginx.Entry) Log {
+func Nginx(nx nginx.Entry) Log {
 	ls := Log{
 		Ip:      nx.RemoteAddr,
 		User:    nx.RemoteUser,

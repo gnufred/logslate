@@ -10,9 +10,9 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
-	"gitlab.com/gnufred/logslate/parse/slate"
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/testing/prof"
+	"gitlab.com/gnufred/logslate/translate"
 
 	progbar "github.com/schollz/progressbar/v3"
 	nginx "gitlab.com/gnufred/nxparse"
@@ -90,7 +90,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			continue
 		}
 
-		ls := slate.ParseNginx(nx)
+		ls := translate.Nginx(nx)
 
 		if !timeMatch(ls.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++

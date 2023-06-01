@@ -1,4 +1,4 @@
-package slate
+package translate
 
 import (
 	"net"
@@ -8,7 +8,7 @@ import (
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
-func TestParseNginxCombined(t *testing.T) {
+func TestNginxCombined(t *testing.T) {
 	lineCombined := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
 
 	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "05/Jan/2023:07:07:54 +0000")
@@ -30,11 +30,11 @@ func TestParseNginxCombined(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Parse() error %s", err)
 	}
-	got := ParseNginx(ngxLog)
+	got := Nginx(ngxLog)
 	compareStruct(t, got, exp)
 }
 
-func TestParseNginxIso8601(t *testing.T) {
+func TestNginxIso8601(t *testing.T) {
 
 	frmtCombIso8601 := "$remote_addr - $remote_user [$time_iso8601] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\""
 	lineCombIso8601 := "82.100.10.100 - - [2023-05-15T09:25:22+00:00] \"POST /locator/index/ HTTP/1.1\" 302 31 \"https://www.example.com/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\""
@@ -58,7 +58,7 @@ func TestParseNginxIso8601(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Parse() error %s", err)
 	}
-	got := ParseNginx(ngxLog)
+	got := Nginx(ngxLog)
 	compareStruct(t, got, exp)
 }
 
