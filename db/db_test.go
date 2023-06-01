@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/gnufred/logslate/parse/slate"
+	"gitlab.com/gnufred/logslate/translate"
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
@@ -38,7 +38,7 @@ func TestInsertLog(t *testing.T) {
 		if err != nil {
 			t.Fatalf("nginx.Parsed() failed: %s", err)
 		}
-		sl := slate.ParseNginx(nx)
+		sl := translate.Nginx(nx)
 		err = db.InsertLog(sl)
 		if err != nil {
 			t.Fatalf("InsertLog() failed: %s", err)
@@ -85,7 +85,7 @@ func benchDbInsert(b *testing.B, rows int, prepare []int, pragmas []string) {
 			db := Singleton()
 			lineCombined := "216.245.221.84 - - [27/Apr/2023:09:49:32 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://example.com/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\""
 			nx, _ := nginx.Parse(nginx.Combined, lineCombined)
-			sl := slate.ParseNginx(nx)
+			sl := translate.Nginx(nx)
 
 			// benchmark loop
 			for i := 0; i < b.N; i++ {

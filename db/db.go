@@ -6,7 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"gitlab.com/gnufred/logslate/parse/slate"
+	"gitlab.com/gnufred/logslate/translate"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -155,7 +155,7 @@ func (d *Dber) Commit() error {
 	return d.tx.Commit()
 }
 
-func (d *Dber) InsertLog(e slate.Log) error {
+func (d *Dber) InsertLog(e translate.Log) error {
 	if !d.open {
 		return fmt.Errorf("database closed")
 	}
