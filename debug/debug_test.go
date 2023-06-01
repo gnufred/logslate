@@ -18,11 +18,11 @@ func TestValidVerbosityLevels(t *testing.T) {
 func testValidVerbosity(t *testing.T, wantverb int) {
 	err := setVerbosity(wantverb)
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 	verb := GetVerbosity()
 	if verb != wantverb {
-		t.Fatalf("GetVerbosity() got %d, expected %d", verb, wantverb)
+		t.Errorf("GetVerbosity() got %d, expected %d", verb, wantverb)
 	}
 
 }
@@ -36,7 +36,7 @@ func testInvalidVerbosity(t *testing.T, wantverb int) {
 	err := setVerbosity(wantverb)
 	exp := "invalid debug verb"
 	if !strings.Contains(err.Error(), exp) {
-		t.Fatalf("did not get expected error: %s", err)
+		t.Errorf("did not get expected error: %s", err)
 	}
 
 }
@@ -46,7 +46,7 @@ func TestDebugDisabled(t *testing.T) {
 	err := Log(V, "log_name: test", "log_message: test")
 	exp := "debug output disabled"
 	if !strings.Contains(err.Error(), exp) {
-		t.Fatalf("did not get expected error: %s", err)
+		t.Errorf("did not get expected error: %s", err)
 	}
 }
 
@@ -56,11 +56,11 @@ func TestVerbFailures(t *testing.T) {
 
 	err := Log(VV, "log_name: test", "log_message: test")
 	if !strings.Contains(err.Error(), exp) {
-		t.Fatalf("did not get expected error: %s", err)
+		t.Errorf("did not get expected error: %s", err)
 	}
 
 	err = Log(VVV, "log_name: test", "log_message: test")
 	if !strings.Contains(err.Error(), exp) {
-		t.Fatalf("did not get expected error: %s", err)
+		t.Errorf("did not get expected error: %s", err)
 	}
 }

@@ -12,10 +12,10 @@ func TestWorded(t *testing.T) {
 			got = got.Truncate(time.Second)
 		}
 		if err != nil {
-			t.Fatalf("got %v, exp %v", got, exp)
+			t.Errorf("got %v, exp %v", got, exp)
 		}
 		if !got.Equal(exp) {
-			t.Fatalf("got %v, exp %v", got, exp)
+			t.Errorf("got %v, exp %v", got, exp)
 		}
 	}
 
@@ -29,10 +29,10 @@ func TestAdjust(t *testing.T) {
 	testAdjust := func(t *testing.T, ts string, ti time.Time, exp time.Time) {
 		got, err := Adjust(ts, ti)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 		if got != exp {
-			t.Fatalf("got %v, exp %v", got, exp)
+			t.Errorf("got %v, exp %v", got, exp)
 		}
 	}
 
@@ -80,7 +80,7 @@ func TestUnitParsingValue(t *testing.T) {
 	testParse := func(t *testing.T, u string, exp time.Duration) {
 		got, err := unitToDuration(u)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 
 		if got == exp {
@@ -145,7 +145,7 @@ func TestUnitParsingSuccess(t *testing.T) {
 		if (err == nil) == exp {
 			t.Logf("good input %s: exp %t", u, exp)
 		} else {
-			t.Fatalf("bad input %s: err %v', exp %t", u, err, exp)
+			t.Errorf("bad input %s: err %v', exp %t", u, err, exp)
 		}
 	}
 
@@ -158,10 +158,10 @@ func TestToDuration(t *testing.T) {
 	testDuration := func(t *testing.T, ts string, exp time.Duration) {
 		got, err := parseDuration(ts)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 		if got != exp {
-			t.Fatalf("got %v, exp %v", got, exp)
+			t.Errorf("got %v, exp %v", got, exp)
 		}
 	}
 

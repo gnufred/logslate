@@ -23,7 +23,7 @@ func TestCreate(t *testing.T) {
 func TestInsertLog(t *testing.T) {
 	file, err := os.Open("testdata/ahrefs.log")
 	if err != nil {
-		t.Fatalf("Opening test data file failed: %s", err)
+		t.Errorf("Opening test data file failed: %s", err)
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -36,12 +36,12 @@ func TestInsertLog(t *testing.T) {
 	for scanner.Scan() {
 		nx, _ := nginx.Parse(nginx.Combined, scanner.Text())
 		if err != nil {
-			t.Fatalf("nginx.Parsed() failed: %s", err)
+			t.Errorf("nginx.Parsed() failed: %s", err)
 		}
 		sl := translate.Nginx(nx)
 		err = db.InsertLog(sl)
 		if err != nil {
-			t.Fatalf("InsertLog() failed: %s", err)
+			t.Errorf("InsertLog() failed: %s", err)
 		}
 	}
 }

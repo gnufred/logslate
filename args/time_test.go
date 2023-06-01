@@ -34,7 +34,7 @@ func TestTranslatedTimeYesterday(t *testing.T) {
 
 func testTime(t *testing.T, got time.Time, expected time.Time) {
 	if !got.Equal(expected) {
-		t.Fatalf("parseTimestamp() error: got %v, expected %v", got, expected)
+		t.Errorf("parseTimestamp() error: got %v, expected %v", got, expected)
 	}
 }
 
@@ -42,7 +42,7 @@ func TestTrstringerGosystemdtime(t *testing.T) {
 	testSDT := func(t *testing.T, timestamp string, expected time.Time) {
 		got := parseTimestamp(timestamp, time.Time{}).Truncate(time.Minute)
 		if !got.Equal(expected) {
-			t.Fatalf("parseTimestamp() error: got %v, expected %v", got, expected)
+			t.Errorf("parseTimestamp() error: got %v, expected %v", got, expected)
 		}
 	}
 
@@ -91,6 +91,6 @@ func TestAraddonDateparse(t *testing.T) {
 func testStamp(t *testing.T, timestamp string, expected time.Time) {
 	got := parseTimestamp(timestamp, time.Time{})
 	if !got.Equal(expected) {
-		t.Fatalf("parseTimestamp() error: got %v, expected %v", got, expected)
+		t.Errorf("parseTimestamp() error: got %v, expected %v", got, expected)
 	}
 }

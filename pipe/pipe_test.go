@@ -31,7 +31,7 @@ func TestReadLine_OneLineBasic(t *testing.T) {
 	// Run tests.
 	pipe := New()
 	if pipe.IsPiped() != true {
-		t.Fatalf("data not from pipe")
+		t.Errorf("data not from pipe")
 	}
 	//checkBytes(t, pipe, 215)
 	checkData(t, pipe, data)
@@ -54,7 +54,7 @@ func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 	// Run tests.
 	pipe := New()
 	if pipe.IsPiped() != true {
-		t.Fatalf("data not from pipe")
+		t.Errorf("data not from pipe")
 	}
 	checkData(t, pipe, data)
 }
@@ -70,12 +70,12 @@ func checkData(t *testing.T, pipe *Piper, data []mockedStdinExpect) {
 func checkLine(t *testing.T, got string, expected int) {
 	gotLen := len(got)
 	if gotLen != expected {
-		t.Fatalf("Got %d text, expeced %d", gotLen, expected)
+		t.Errorf("Got %d text, expeced %d", gotLen, expected)
 	}
 }
 
 func checkError(t *testing.T, got error, expected error) {
 	if got != expected {
-		t.Fatalf("Got error %s, expected error %s", got, expected)
+		t.Errorf("Got error %s, expected error %s", got, expected)
 	}
 }

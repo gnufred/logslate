@@ -28,7 +28,7 @@ func TestNginxCombined(t *testing.T) {
 
 	ngxLog, err := nginx.Parse(nginx.Combined, lineCombined)
 	if err != nil {
-		t.Fatalf("Parse() error %s", err)
+		t.Errorf("Parse() error %s", err)
 	}
 	got := Nginx(ngxLog)
 	compareStruct(t, got, exp)
@@ -56,7 +56,7 @@ func TestNginxIso8601(t *testing.T) {
 
 	ngxLog, err := nginx.Parse(frmtCombIso8601, lineCombIso8601)
 	if err != nil {
-		t.Fatalf("Parse() error %s", err)
+		t.Errorf("Parse() error %s", err)
 	}
 	got := Nginx(ngxLog)
 	compareStruct(t, got, exp)
@@ -78,6 +78,6 @@ func compareStruct(t *testing.T, got, exp Log) {
 
 func checkMatch(t *testing.T, got, exp interface{}) {
 	if got != exp {
-		t.Fatalf("wrong value assigned to entry: got %v, exp %v", got, exp)
+		t.Errorf("wrong value assigned to entry: got %v, exp %v", got, exp)
 	}
 }
