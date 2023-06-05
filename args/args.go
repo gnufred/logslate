@@ -37,6 +37,10 @@ func Init() {
 	}
 }
 
+func Get() Args {
+	return args
+}
+
 func validate() {
 	showHelpAndExit := func() {
 		fmt.Printf("Usage:\n")
@@ -135,26 +139,6 @@ func parse() {
 	args.ReportPath = string(*reportFlag)
 
 	args.ReportFrmt = parseReportPath(string(*reportFlag))
-}
-
-func Get() Args {
-	return args
-}
-
-func (a *Args) Since() string {
-	return a.since
-}
-
-func (a *Args) Until() string {
-	return a.until
-}
-
-func (a *Args) StartTime() time.Time {
-	return a.startTime
-}
-
-func (a *Args) EndTime() time.Time {
-	return a.endTime
 }
 
 // parseReportPath check the path file extension to determine if it's
