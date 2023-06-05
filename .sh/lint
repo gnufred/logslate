@@ -1,5 +1,0 @@
-#!/bin/bash
-
-root_dir=$(git rev-parse --show-toplevel)
-cd $root_dir
-. .gitlab/lint
