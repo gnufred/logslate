@@ -9,6 +9,22 @@ import (
 	"github.com/araddon/dateparse"
 )
 
+func (a *Args) Since() string {
+	return a.since
+}
+
+func (a *Args) Until() string {
+	return a.until
+}
+
+func (a *Args) StartTime() time.Time {
+	return a.startTime
+}
+
+func (a *Args) EndTime() time.Time {
+	return a.endTime
+}
+
 func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) {
 	a.since = sincestamp
 	a.until = untilstamp
