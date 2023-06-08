@@ -10,6 +10,7 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
+	"gitlab.com/gnufred/logslate/detect"
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/report"
 	"gitlab.com/gnufred/logslate/testing/prof"
@@ -23,6 +24,7 @@ type Parsed struct {
 	Ok   uint
 	Skip uint
 	Err  uint
+	Atk  uint
 }
 
 var (
@@ -34,7 +36,7 @@ var (
 
 func ParseStdin(a args.Args) (Parsed, error) {
 	pi := pipe.New()
-	par := Parsed{0, 0, 0}
+	par := Parsed{}
 
 	if !pi.IsPiped() {
 		return par, ErrNoInputData
@@ -69,8 +71,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	cpuf := prof.StartCpuProfile(a)
 	defer prof.StopCpuProfile(a, cpuf)
 
-	// Parser loop.
+	// Initialize parser loop variables.
 	var bytesTotal uint
+	atkTypes := make(map[byte]uint)
+	atkrs := make(map[string]uint)
+
+	// Parser loop.
 	for {
 		line, byteCnt, err := pi.ReadLine()
 		bytesTotal = bytesTotal + uint(byteCnt)
@@ -113,6 +119,26 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
+		if ls.Score != 0 {
+			debug.Log(debug.VVV, "flagged", ls.AtkName+" | "+ls.Path+ls.Query)
+
+			// Compile attack type data.
+			switch ls.AtkId {
+			case detect.Gen:
+				atkTypes[detect.Gen]++
+			case detect.SQL:
+				atkTypes[detect.SQL]++
+			case detect.CMD:
+				atkTypes[detect.CMD]++
+			case detect.Dir:
+				atkTypes[detect.Dir]++
+			case detect.XSS:
+				atkTypes[detect.XSS]++
+			}
+			atkrs[ls.Ip.String()]++
+			par.Atk++
+		}
+
 		par.Ok++
 	}
 
@@ -121,6 +147,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Print parsed line data.
 	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
+	fmt.Printf("Detected: attacks [%d]\n", par.Atk)
 
 	// Stop CPU profiling.
 	prof.StopCpuProfile(a, cpuf)
@@ -146,6 +173,21 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	rep.Time.Start = a.StartTime()
 	rep.Time.End = a.EndTime()
 	rep.Db.Path = a.Db
+
+	rep.AtkTy = report.AtkTypes{
+		Gen: atkTypes[detect.Gen],
+		SQL: atkTypes[detect.SQL],
+		CMD: atkTypes[detect.CMD],
+		Dir: atkTypes[detect.Dir],
+		XSS: atkTypes[detect.XSS],
+	}
+
+	for ip, cnt := range atkrs {
+		rep.Atkr[ip] = report.Atkrs{
+			Cnt: cnt,
+		}
+	}
+
 	// Print report.
 	rep.Print()
 

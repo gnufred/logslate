@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"gitlab.com/gnufred/logslate/detect"
+
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
@@ -20,8 +22,12 @@ type Log struct {
 	Sent    int
 	Referer string
 	Agent   string
+	Score   uint32 // uint/uint64 is too big for SQLite3
+	AtkId   byte
+	AtkName string
 }
 
+// Nginx translate an nxparse.Entry to the format `logslate` wants.
 func Nginx(nx nginx.Entry) Log {
 	ls := Log{
 		Ip:      nx.RemoteAddr,
@@ -49,6 +55,14 @@ func Nginx(nx nginx.Entry) Log {
 
 	// Splint NGINX request into 4 different parts.
 	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
+
+	// Get attack detection results.
+	score, attack := detect.Attacks(ls.Path, ls.Query)
+	ls.Score = score
+	ls.AtkId = attack
+	ls.AtkName = detect.AttackTypeString(attack)
+
+	// Done.
 	return ls
 }
 

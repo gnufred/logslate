@@ -18,3 +18,11 @@ Path: {{.Db.Path}}{{end}}
 === [[ Report ]] ===
 Path: {{.Path}} 
 Format: {{.Frmt}}
+=== [[ Attacks ]] ===
+Unknown:    {{.AtkTy.Gen}}
+SQL inject: {{.AtkTy.SQL}}
+CMD inject: {{.AtkTy.CMD}}
+Dir trav:   {{.AtkTy.Dir}}
+Cross site: {{.AtkTy.XSS}}
+=== [[Attackers]] ==={{range $ip, $data := .Atkr}}
+{{$ip}}: {{$data.Cnt}}{{end}}

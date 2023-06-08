@@ -10,15 +10,19 @@ type Report struct {
 	Frmt string `json:"format"`
 
 	// Report aggregated data.
-	Run  Runtimes `json:"runtimes"`
-	Line Lines    `json:"parsed"`
-	Size Sizes    `json:"size"`
-	Time Times    `json:"time_args"`
-	Db   Dbs      `json:"database"`
+	Run   Runtimes         `json:"runtimes"`
+	Line  Lines            `json:"parsed"`
+	Size  Sizes            `json:"size"`
+	Time  Times            `json:"time_args"`
+	Db    Dbs              `json:"database"`
+	AtkTy AtkTypes         `json:"attack_types"`
+	Atkr  map[string]Atkrs `json:"attackers"`
 }
 
 func New() *Report {
-	return &Report{}
+	rep := Report{}
+	rep.Atkr = make(map[string]Atkrs)
+	return &rep
 }
 
 // Performance data.
@@ -88,4 +92,18 @@ type Times struct {
 // Database data.
 type Dbs struct {
 	Path string `json:"path"`
+}
+
+// Attack data.
+type AtkTypes struct {
+	Gen uint `json:"gen"`
+	SQL uint `json:"sql"`
+	CMD uint `json:"cmd"`
+	Dir uint `json:"dir"`
+	XSS uint `json:"xss"`
+}
+
+// Attackers data.
+type Atkrs struct {
+	Cnt uint `json:"count"`
 }

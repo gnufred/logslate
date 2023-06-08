@@ -89,7 +89,9 @@ func (d *Dber) createTables() error {
         "status" integer,
         "sent" integer,
         "referer" string,
-        "agent" string
+        "agent" string,
+		"score" integer,
+		"attack" string
 	);`
 
 	st, err := d.db.Prepare(sql)
@@ -159,7 +161,7 @@ func (d *Dber) InsertLog(e translate.Log) error {
 	if !d.open {
 		return fmt.Errorf("database closed")
 	}
-	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+	sql := `INSERT INTO logs (ip,user,time,method,path,query,proto,status,sent,referer,agent,score,attack) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
 	st, err := d.tx.Prepare(sql)
 	if err != nil {
 		return err
@@ -176,6 +178,8 @@ func (d *Dber) InsertLog(e translate.Log) error {
 		e.Sent,
 		e.Referer,
 		e.Agent,
+		e.Score,
+		e.AtkName,
 	)
 	if err != nil {
 		return err
