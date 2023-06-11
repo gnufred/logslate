@@ -1,16 +1,16 @@
 #!/bin/bash
 
 echo "Uploading Linux package."
-curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${LINUX_AMD64_BINARY} "${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}"
-curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${LINUX_AMD64_BINARY} "${PACKAGE_REGISTRY_LATEST}/${LINUX_AMD64_BINARY}"
+curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ".bin/${LINUX_AMD64_BINARY}" "${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}"
+curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ".bin/${LINUX_AMD64_BINARY}" "${PACKAGE_REGISTRY_LATEST}/${LINUX_AMD64_BINARY}"
 echo ""
 
 echo "Uploading MacOS package."
-curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${DARWIN_AMD64_BINARY} "${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}"
-curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${DARWIN_AMD64_BINARY} "${PACKAGE_REGISTRY_LATEST}/${DARWIN_AMD64_BINARY}"
+curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ".bin/${DARWIN_AMD64_BINARY}" "${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}"
+curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ".bin/${DARWIN_AMD64_BINARY}" "${PACKAGE_REGISTRY_LATEST}/${DARWIN_AMD64_BINARY}"
 echo ""
 
 echo "Uploading Windows package."
-curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${WINDOWS_AMD64_BINARY} "${PACKAGE_REGISTRY_CURRENT}/${WINDOWS_AMD64_BINARY}"
-curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${WINDOWS_AMD64_BINARY} "${PACKAGE_REGISTRY_LATEST}/${WINDOWS_AMD64_BINARY}"
+curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ".bin/${WINDOWS_AMD64_BINARY}" "${PACKAGE_REGISTRY_CURRENT}/${WINDOWS_AMD64_BINARY}"
+curl -s --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ".bin/${WINDOWS_AMD64_BINARY}" "${PACKAGE_REGISTRY_LATEST}/${WINDOWS_AMD64_BINARY}"
 echo ""

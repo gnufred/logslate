@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Need to figure out how to push a new commit from the CI to push the new release to the current release branch
+# How to push a new commit from the CI to push the new release to the current release branch
 # https://stackoverflow.com/questions/51716044/how-do-i-push-to-a-repo-from-within-a-gitlab-ci-pipeline
+
+# Also, this needs to run in the same CI that created the binaries, given it's using them to generate sha256sum
 
 #####################
 echo "Installing jq."
@@ -16,13 +18,10 @@ echo "Preparing brew release variables."
 BREW_RELEASE_VERSION=$CI_COMMIT_TAG
 echo "release: ${BREW_RELEASE_VERSION}"
 
-GITLAB_PACKAGE_ID=$(curl -s -H "PRIVATE-TOKEN: ${CI_BREW_TOKEN}" "${PACKAGE_API_URL}" | jq ".[] | select(.version==\"${BREW_RELEASE_VERSION}\")" | jq .id)
-echo "package id: $GITLAB_PACKAGE_ID"
-
-BREW_SHA256_PACKAGE_LINUX=$(curl -s -H "PRIVATE-TOKEN: ${CI_BREW_TOKEN}" "${PACKAGE_API_URL}/${GITLAB_PACKAGE_ID}/package_files" | jq ".[] | select(.file_name==\"${LINUX_AMD64_BINARY}\")" | jq -r .file_sha256)
+BREW_SHA256_PACKAGE_LINUX=$(sha256sum -z ".bin/${LINUX_AMD64_BINARY}" | cut -d' ' -f1)
 echo "${LINUX_AMD64_BINARY} sha256: $BREW_SHA256_PACKAGE_LINUX"
 
-BREW_SHA256_PACKAGE_DARWIN=$(curl -s -H "PRIVATE-TOKEN: ${CI_BREW_TOKEN}" "${PACKAGE_API_URL}/${GITLAB_PACKAGE_ID}/package_files" | jq ".[] | select(.file_name==\"${DARWIN_AMD64_BINARY}\")" | jq -r .file_sha256)
+BREW_SHA256_PACKAGE_DARWIN=$(sha256sum -z ".bin/${DARWIN_AMD64_BINARY}" | cut -d' ' -f1)
 echo "${DARWIN_AMD64_BINARY} sha256: $BREW_SHA256_PACKAGE_DARWIN"
 
 
