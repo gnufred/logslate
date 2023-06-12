@@ -13,9 +13,3 @@ mkdir -p .bench
 
 # run package benchmark
 TZ=Etc/UTC go test "./$pkg/..." -bench package -bench=. | tee -a $log
-
-# handle errors
-extst=${PIPESTATUS[0]}
-if [[ "$extst" -ne "0" ]]; then
-	rm -r $log
-fi

@@ -73,7 +73,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Initialize parser loop variables.
 	var bytesTotal uint
-	atkTypes := make(map[byte]uint)
+	var atkGen, atkSQL, atkCMD, atkDir, atkXSS uint
 	atkrs := make(map[string]uint)
 
 	// Parser loop.
@@ -125,15 +125,15 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			// Compile attack type data.
 			switch ls.AtkId {
 			case detect.Gen:
-				atkTypes[detect.Gen]++
+				atkGen++
 			case detect.SQL:
-				atkTypes[detect.SQL]++
+				atkSQL++
 			case detect.CMD:
-				atkTypes[detect.CMD]++
+				atkCMD++
 			case detect.Dir:
-				atkTypes[detect.Dir]++
+				atkDir++
 			case detect.XSS:
-				atkTypes[detect.XSS]++
+				atkXSS++
 			}
 			atkrs[ls.Ip.String()]++
 			par.Atk++
@@ -177,11 +177,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Db.Path = a.Db
 
 		rep.AtkTy = report.AtkTypes{
-			Gen: atkTypes[detect.Gen],
-			SQL: atkTypes[detect.SQL],
-			CMD: atkTypes[detect.CMD],
-			Dir: atkTypes[detect.Dir],
-			XSS: atkTypes[detect.XSS],
+			Gen: atkGen,
+			SQL: atkSQL,
+			CMD: atkCMD,
+			Dir: atkDir,
+			XSS: atkXSS,
 		}
 
 		for ip, cnt := range atkrs {

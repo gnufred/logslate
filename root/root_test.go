@@ -168,8 +168,22 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 	if expect.Atk != got.Atk {
 		t.Errorf("atk: expect %d, got %d", expect.Atk, got.Atk)
 	}
+}
 
+func BenchmarkAttackDetections(b *testing.B) {
+	a := args.Get()
+	a.LogFrmt = nginx.Combined
+	for i := 0; i < b.N; i++ {
+		benchInputData(b, a, "testdata/attacks10.log")
+	}
+}
+
+func benchInputData(b *testing.B, a args.Args, file string) {
+	input, _ := os.ReadFile(file)
+	mock.Stdin(input)
+
+	_, err := ParseStdin(a)
 	if err != nil {
-		t.Error(err)
+		b.Error(err)
 	}
 }
