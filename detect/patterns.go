@@ -30,14 +30,12 @@ type ptrn struct {
 // that remains to be benchmarked properly.
 var attackPts = []ptrn{
 	// Common attacks patterns.
-	{Name: "(", Type: Gen, Score: 3},
-	{Name: ")", Type: Gen, Score: 3},
-	{Name: "'", Type: Gen, Score: 4},
+	{Name: ",,", Type: Gen, Score: 4},
 	{Name: "\x22", Type: Gen, Score: 5},
 	{Name: "\x22()", Type: Gen, Score: 10},
-	{Name: "%22", Type: Gen, Score: 5},
-	{Name: "%29", Type: Gen, Score: 5},
 	// SQL injection attacks.
+	{Name: "'", Type: Gen, Score: 4},
+	{Name: "1=1", Type: Gen, Score: 4},
 	{Name: "%20and", Type: SQL, Score: 5},
 	{Name: "%20and", Type: SQL, Score: 5},
 	{Name: "%20or", Type: SQL, Score: 5},
@@ -56,6 +54,7 @@ var attackPts = []ptrn{
 	{Name: "select", Type: SQL, Score: 2},
 	// Directory traversal attacks.
 	{Name: "./", Type: Dir, Score: 5},
+	{Name: ".%2f", Type: Dir, Score: 5},
 	{Name: ".0x5c", Type: Dir, Score: 5},
 	{Name: ".%5c", Type: Dir, Score: 5},
 	{Name: ".%252f", Type: Dir, Score: 5},
@@ -66,15 +65,21 @@ var attackPts = []ptrn{
 	{Name: ".0x5c", Type: Dir, Score: 5},
 	{Name: "%2e%2e%5c", Type: Dir, Score: 5},
 	{Name: "etc/", Type: Dir, Score: 2},
+	{Name: "etc%2f", Type: Dir, Score: 5},
 	{Name: "%2fetc", Type: Dir, Score: 5},
 	{Name: "%2fstatic", Type: Dir, Score: 5},
 	{Name: "%2fweb-inf", Type: Dir, Score: 5},
-	{Name: ".ini", Type: Dir, Score: 5},
+	{Name: "c:%", Type: Dir, Score: 5},
+	{Name: "windows", Type: Dir, Score: 2},
+	{Name: ".ini", Type: Dir, Score: 2},
 	{Name: "passwd", Type: Dir, Score: 5},
 	{Name: "etc/passwd", Type: Dir, Score: 10},
 	// Command injection attacks.
 	{Name: "concat", Type: CMD, Score: 5},
-	{Name: "socket", Type: CMD, Score: 5},
+	{Name: "socket.", Type: CMD, Score: 5},
+	{Name: "socket\\", Type: CMD, Score: 5},
+	{Name: "socket'", Type: CMD, Score: 5},
+	{Name: "socket%", Type: CMD, Score: 5},
 	{Name: "nslookup", Type: CMD, Score: 5},
 	{Name: "gethostbyname", Type: CMD, Score: 5},
 	{Name: "echo", Type: CMD, Score: 5},
@@ -96,9 +101,10 @@ var attackPts = []ptrn{
 	{Name: "script%", Type: XSS, Score: 5},
 	{Name: "script=", Type: XSS, Score: 5},
 	{Name: "script>", Type: XSS, Score: 5},
-	{Name: "src=", Type: XSS, Score: 5},
-	{Name: "assert", Type: XSS, Score: 5},
-	{Name: "replace", Type: XSS, Score: 10},
+	{Name: "replace", Type: XSS, Score: 2},
+	{Name: "replace;", Type: XSS, Score: 10},
+	{Name: "replace(", Type: XSS, Score: 10},
+	{Name: "replace\\", Type: XSS, Score: 10},
 	{Name: "iframe", Type: XSS, Score: 10},
 }
 

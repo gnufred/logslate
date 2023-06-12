@@ -75,7 +75,7 @@ func TestAttackDetections(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/attacks10.log", Parsed{20, 0, 0, 9}},
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 7}},
 		},
 	)
 }
