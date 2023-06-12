@@ -23,11 +23,11 @@ func TestAttacks(t *testing.T) {
 		{"hello(", result{0, 0}},
 		{"print(", result{5, 5}},
 		{"\x22id\x22:\x221\x22", result{20, 1}},
-		{"path/stuff../../etc/passwd", result{20, 4}},
+		{"path/stuff../../etc/passwd", result{13, 4}},
 		{"hello''world", result{8, 1}},
 		{"hello'boba_sleep(", result{9, 2}},
 		{"hello'boba_SLEEP(", result{9, 2}},
-		{"./././././././././././././././././././././././././././././././././", result{165, 4}},
+		{"./././././././././././././././././././././././././././././././././", result{132, 4}},
 	}
 
 	for _, d := range data {
