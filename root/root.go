@@ -64,7 +64,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	bar := createBar()
 
-	// Reporting starts here
+	// Reporting data starts here.
 	runStartedAt := time.Now()
 
 	// Start CPU profiling if argument is set.
@@ -155,41 +155,44 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Write memory heap if argument is set.
 	prof.MemProfile(a)
 
-	// Reporting stops here.
+	// Reporting data stops here.
 	runEndedAt := time.Now()
 
-	// Aggregate report data.
-	rep := report.New()
-	rep.Path = a.ReportPath
-	rep.Frmt = a.ReportFrmt
-	rep.Run.Start = runStartedAt
-	rep.Run.End = runEndedAt
-	rep.Size.Byte = bytesTotal
-	rep.Line.Ok = par.Ok
-	rep.Line.Skip = par.Skip
-	rep.Line.Error = par.Err
-	rep.Time.Since = a.Since()
-	rep.Time.Until = a.Until()
-	rep.Time.Start = a.StartTime()
-	rep.Time.End = a.EndTime()
-	rep.Db.Path = a.Db
+	// Process report data if requested.
+	if a.ReportPath != "" {
+		// Aggregate report data.
+		rep := report.New()
+		rep.Path = a.ReportPath
+		rep.Frmt = a.ReportFrmt
+		rep.Run.Start = runStartedAt
+		rep.Run.End = runEndedAt
+		rep.Size.Byte = bytesTotal
+		rep.Line.Ok = par.Ok
+		rep.Line.Skip = par.Skip
+		rep.Line.Error = par.Err
+		rep.Time.Since = a.Since()
+		rep.Time.Until = a.Until()
+		rep.Time.Start = a.StartTime()
+		rep.Time.End = a.EndTime()
+		rep.Db.Path = a.Db
 
-	rep.AtkTy = report.AtkTypes{
-		Gen: atkTypes[detect.Gen],
-		SQL: atkTypes[detect.SQL],
-		CMD: atkTypes[detect.CMD],
-		Dir: atkTypes[detect.Dir],
-		XSS: atkTypes[detect.XSS],
-	}
-
-	for ip, cnt := range atkrs {
-		rep.Atkr[ip] = report.Atkrs{
-			Cnt: cnt,
+		rep.AtkTy = report.AtkTypes{
+			Gen: atkTypes[detect.Gen],
+			SQL: atkTypes[detect.SQL],
+			CMD: atkTypes[detect.CMD],
+			Dir: atkTypes[detect.Dir],
+			XSS: atkTypes[detect.XSS],
 		}
-	}
 
-	// Print report.
-	rep.Print()
+		for ip, cnt := range atkrs {
+			rep.Atkr[ip] = report.Atkrs{
+				Cnt: cnt,
+			}
+		}
+
+		// Print report.
+		rep.Print()
+	}
 
 	return par, nil
 }
