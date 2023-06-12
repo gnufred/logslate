@@ -11,12 +11,9 @@ var Threshold = uint32(5)
 // Attacks search for attack patterns in the URL query string and URL path.
 func Attacks(path, query string) (uint32, byte) {
 
-	to, ty := searchAttackPts(attackAC, attackPts, query)
-	if to >= Threshold {
-		return to, ty
-	}
-
-	to, ty = searchAttackPts(attackAC, attackPts, path)
+	// Important: It's faster to scan longer strings than searching twice.
+	// See https://gitlab.com/gnufred/logslate/-/issues/71 for details.
+	to, ty := searchAttackPts(attackAC, attackPts, path+query)
 	if to >= Threshold {
 		return to, ty
 	}
