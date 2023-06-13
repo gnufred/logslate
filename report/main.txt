@@ -19,7 +19,7 @@ Path: {{.Db.Path}}{{end}}
 Path: {{.Path}} 
 Format: {{.Frmt}}
 === [[ Attacks ]] ===
-Unknown:    {{.AtkTy.Gen}}
+Unknown:    {{.AtkTy.Unk}}
 SQL inject: {{.AtkTy.SQL}}
 CMD inject: {{.AtkTy.CMD}}
 Dir trav:   {{.AtkTy.Dir}}

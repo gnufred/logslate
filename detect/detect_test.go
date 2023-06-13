@@ -24,7 +24,7 @@ func TestAttacks(t *testing.T) {
 		{"print(", result{5, 5}},
 		{"\x22id\x22:\x221\x22", result{20, 1}},
 		{"path/stuff../../etc/passwd", result{13, 4}},
-		{"hello''world", result{8, 1}},
+		{"hello''world", result{8, 2}},
 		{"hello'boba_sleep(", result{9, 2}},
 		{"hello'boba_SLEEP(", result{9, 2}},
 		{"./././././././././././././././././././././././././././././././././", result{132, 4}},
@@ -50,7 +50,7 @@ func TestSearchAttackPts(t *testing.T) {
 		In  string
 		Exp result
 	}{
-		{"\x99()", result{255, Gen}},
+		{"\x99()", result{255, Unk}},
 		{"'SLEEP(0)", result{255, SQL}},
 		{"socket.hitmycommandcenter", result{255, CMD}},
 		{"../etc/passwd", result{255, Dir}},

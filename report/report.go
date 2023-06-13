@@ -96,7 +96,7 @@ type Dbs struct {
 
 // Attack data.
 type AtkTypes struct {
-	Gen uint `json:"gen"`
+	Unk uint `json:"gen"`
 	SQL uint `json:"sql"`
 	CMD uint `json:"cmd"`
 	Dir uint `json:"dir"`

@@ -3,11 +3,11 @@ package detect
 import "testing"
 
 var testPts = []ptrn{
-	{Name: "x", Type: Gen, Score: 1},
-	{Name: "xy", Type: Gen, Score: 2},
-	{Name: "xyz", Type: Gen, Score: 3},
+	{Name: "x", Type: Unk, Score: 1},
+	{Name: "xy", Type: Unk, Score: 2},
+	{Name: "xyz", Type: Unk, Score: 3},
 
-	{Name: "\x99()", Type: Gen, Score: 255},
+	{Name: "\x99()", Type: Unk, Score: 255},
 	{Name: "'SLEEP(0)", Type: SQL, Score: 255},
 	{Name: "socket.hitmycommandcenter", Type: CMD, Score: 255},
 	{Name: "../etc/passwd", Type: Dir, Score: 255},
@@ -27,7 +27,7 @@ func TestAttackTypeString(t *testing.T) {
 		Exp string
 	}{
 		{0, ""},
-		{Gen, "generic"},
+		{Unk, "generic"},
 		{SQL, "sql_injection"},
 		{CMD, "command_injection"},
 		{Dir, "directory_traversal"},
