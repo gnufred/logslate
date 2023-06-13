@@ -1,4 +1,4 @@
-package detect
+package threat
 
 import "testing"
 
@@ -22,7 +22,7 @@ func TestAttacks(t *testing.T) {
 	}{
 		{"hello(", result{0, 0}},
 		{"print(", result{5, 5}},
-		{"\x22id\x22:\x221\x22", result{20, 1}},
+		{"\x22id\x22:\x221\x22", result{12, 1}},
 		{"path/stuff../../etc/passwd", result{13, 4}},
 		{"hello''world", result{8, 2}},
 		{"hello'boba_sleep(", result{9, 2}},

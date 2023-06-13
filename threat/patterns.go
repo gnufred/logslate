@@ -1,4 +1,4 @@
-package detect
+package threat
 
 // Attack types.
 // Useful resource https://owasp.org/www-community/attacks/

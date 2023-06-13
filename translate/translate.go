@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.com/gnufred/logslate/detect"
+	"gitlab.com/gnufred/logslate/threat"
 
 	nginx "gitlab.com/gnufred/nxparse"
 )
@@ -57,10 +57,10 @@ func Nginx(nx nginx.Entry) Log {
 	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
 
 	// Get attack detection results.
-	score, attack := detect.Attacks(ls.Path, ls.Query)
+	score, attack := threat.Attacks(ls.Path, ls.Query)
 	ls.Score = score
 	ls.AtkId = attack
-	ls.AtkName = detect.AttackTypeString(attack)
+	ls.AtkName = threat.AttackTypeString(attack)
 
 	// Done.
 	return ls

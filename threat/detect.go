@@ -1,4 +1,4 @@
-package detect
+package threat
 
 import (
 	ac "github.com/petar-dambovaliev/aho-corasick"

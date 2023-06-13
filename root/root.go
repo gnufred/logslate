@@ -10,10 +10,10 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
-	"gitlab.com/gnufred/logslate/detect"
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/report"
 	"gitlab.com/gnufred/logslate/testing/prof"
+	"gitlab.com/gnufred/logslate/threat"
 	"gitlab.com/gnufred/logslate/translate"
 
 	progbar "github.com/schollz/progressbar/v3"
@@ -73,7 +73,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Initialize parser loop variables.
 	var bytesTotal uint
-	atkTypes := make(map[byte]uint, detect.XSS)
+	atkTypes := make(map[byte]uint, threat.XSS)
 	attackers := make(map[string]uint)
 
 	// Parser loop.
@@ -138,7 +138,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Print parsed line data.
 	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
-	fmt.Printf("Detected: attacks [%d]\n", par.Atk)
+	fmt.Printf("Threats: attack [%d]\n", par.Atk)
 
 	// Stop CPU profiling.
 	prof.StopCpuProfile(a, cpuf)
@@ -168,11 +168,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Db.Path = a.Db
 
 		rep.AtkTy = report.AtkTypes{
-			Unk: atkTypes[detect.Unk],
-			SQL: atkTypes[detect.SQL],
-			CMD: atkTypes[detect.CMD],
-			Dir: atkTypes[detect.Dir],
-			XSS: atkTypes[detect.XSS],
+			Unk: atkTypes[threat.Unk],
+			SQL: atkTypes[threat.SQL],
+			CMD: atkTypes[threat.CMD],
+			Dir: atkTypes[threat.Dir],
+			XSS: atkTypes[threat.XSS],
 		}
 
 		for ip, cnt := range attackers {
