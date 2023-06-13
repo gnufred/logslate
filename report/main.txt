@@ -19,10 +19,11 @@ Path: {{.Db.Path}}{{end}}
 Path: {{.Path}} 
 Format: {{.Frmt}}
 === [[ Attacks ]] ===
-Unknown:    {{.AtkTy.Unk}}
-SQL inject: {{.AtkTy.SQL}}
-CMD inject: {{.AtkTy.CMD}}
-Dir trav:   {{.AtkTy.Dir}}
-Cross site: {{.AtkTy.XSS}}
+Total:      {{.AddCommas .AtkTy.Total}}
+Unknown:    {{.AddCommas .AtkTy.Unk}}
+SQL inject: {{.AddCommas .AtkTy.SQL}}
+CMD inject: {{.AddCommas .AtkTy.CMD}}
+Dir trav:   {{.AddCommas .AtkTy.Dir}}
+Cross site: {{.AddCommas .AtkTy.XSS}}
 === [[Attackers]] ==={{range $ip, $data := .Atkr}}
 {{$ip}}: {{$data.Cnt}}{{end}}

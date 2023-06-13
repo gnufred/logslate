@@ -103,6 +103,10 @@ type AtkTypes struct {
 	XSS uint `json:"xss"`
 }
 
+func (a *AtkTypes) Total() uint {
+	return a.Unk + a.SQL + a.CMD + a.Dir + a.XSS
+}
+
 // Attackers data.
 type Atkrs struct {
 	Cnt uint `json:"count"`

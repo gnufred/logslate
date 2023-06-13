@@ -73,8 +73,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Initialize parser loop variables.
 	var bytesTotal uint
-	var atkUnk, atkSQL, atkCMD, atkDir, atkXSS uint
-	atkrs := make(map[string]uint)
+	atkTypes := make(map[byte]uint, detect.XSS)
+	attackers := make(map[string]uint)
 
 	// Parser loop.
 	for {
@@ -123,19 +123,10 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			debug.Log(debug.VVV, "flagged", ls.AtkName+" | "+ls.Path+ls.Query)
 
 			// Compile attack type data.
-			switch ls.AtkId {
-			case detect.Unk:
-				atkUnk++
-			case detect.SQL:
-				atkSQL++
-			case detect.CMD:
-				atkCMD++
-			case detect.Dir:
-				atkDir++
-			case detect.XSS:
-				atkXSS++
+			if a.ReportPath != "" {
+				atkTypes[ls.AtkId]++
+				attackers[ls.Ip.String()]++
 			}
-			atkrs[ls.Ip.String()]++
 			par.Atk++
 		}
 
@@ -177,14 +168,14 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Db.Path = a.Db
 
 		rep.AtkTy = report.AtkTypes{
-			Unk: atkUnk,
-			SQL: atkSQL,
-			CMD: atkCMD,
-			Dir: atkDir,
-			XSS: atkXSS,
+			Unk: atkTypes[detect.Unk],
+			SQL: atkTypes[detect.SQL],
+			CMD: atkTypes[detect.CMD],
+			Dir: atkTypes[detect.Dir],
+			XSS: atkTypes[detect.XSS],
 		}
 
-		for ip, cnt := range atkrs {
+		for ip, cnt := range attackers {
 			rep.Atkr[ip] = report.Atkrs{
 				Cnt: cnt,
 			}

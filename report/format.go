@@ -8,13 +8,20 @@ import (
 	"time"
 )
 
-// HumanTime format a time.Time to a human readlable string
+// Prct output a human readable percentage.
+func (r *Report) Prct(divident, divisor uint) string {
+	prc := float64(divident) / float64(divisor)
+	rounded := math.Ceil(prc*100) / 100
+	return fmt.Sprintf("%.2f", rounded) + "%"
+}
+
+// HumanTime format a time.Time to a human readlable string.
 func (r *Report) HumanTime(tm time.Time) string {
 	layout := "2006-01-02 15:04:05 MST"
 	return tm.Format(layout)
 }
 
-// HumanDuration format a time.Duration to a human readable string
+// HumanDuration format a time.Duration to a human readable string.
 func (r *Report) HumanDuration(d time.Duration) string {
 	ds := fmt.Sprint(d)
 	if strings.HasSuffix(ds, "ms") {
@@ -36,7 +43,7 @@ func (r *Report) HumanDuration(d time.Duration) string {
 	return ds
 }
 
-// BytesToMB convert a Bytes number into MB
+// BytesToMB convert a Bytes number into MB.
 func (r *Report) BytesToMB(bytes uint) float64 {
 	bts := float64(bytes)
 	ratioMB := float64(1048576)
