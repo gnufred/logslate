@@ -10,7 +10,7 @@ If you need a GoLang package to parse NGINX access.log, use [gnufred/nxparse](ht
 
 ### In development
 
-Current version is **v0**. See the [development roadmap](roadmap.md) for the current status and installation instructions.
+See the [development roadmap](roadmap.md) for the current status.
 
 ### License
 
