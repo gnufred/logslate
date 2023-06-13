@@ -42,7 +42,7 @@ var attackPts = []ptrn{
 
 	// Generic select.
 	// "select+" can be in legit URLs.
-	{Name: "select+", Type: SQL, Score: 3}, // All
+	{Name: "select+", Type: SQL, Score: 2}, // All
 	{Name: "select ", Type: SQL, Score: 5}, // All
 	{Name: "select(", Type: SQL, Score: 5}, // All
 	{Name: "select%", Type: SQL, Score: 5}, // All
@@ -92,7 +92,7 @@ var attackPts = []ptrn{
 	{Name: "'and", Type: SQL, Score: 5},
 	{Name: "%20and%", Type: SQL, Score: 5},
 	{Name: "'or", Type: SQL, Score: 5},
-	{Name: "or%", Type: SQL, Score: 5},
+	{Name: "%20or%", Type: SQL, Score: 5},
 	{Name: "'xor", Type: SQL, Score: 5},
 	{Name: "xor\\", Type: SQL, Score: 5},
 
