@@ -10,7 +10,8 @@ import (
 var testAC *ac.AhoCorasick
 
 func init() {
-	testAC = newAhoCorasickBuilder(testPts)
+	bStr := attackBuilderString(testPatterns)
+	testAC = newAhoCorasickBuilder(bStr, attackOpts)
 }
 
 func TestNewAhoCorasickBuilder(t *testing.T) {

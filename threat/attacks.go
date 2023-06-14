@@ -1,10 +1,9 @@
 package threat
 
-// Attack types.
-// Useful resource https://owasp.org/www-community/attacks/
 // I use bytes over strings because I want to use the smallest possible values.
 const (
-	Unk = byte(1) // SQL injection
+	// Attack types.
+	Unk = byte(1) // Unknown or uncategorized
 	SQL = byte(2) // SQL injection
 	CMD = byte(3) // Command injection
 	Dir = byte(4) // Directory traversal
@@ -26,7 +25,7 @@ type ptrn struct {
 // Attack patterns.
 // TODO: In theory, it will be more performant to use a slice over a map, but
 // that remains to be benchmarked properly.
-var attackPts = []ptrn{
+var attackPatterns = []ptrn{
 
 	// !!! Unknown attacks patterns !!! //
 	// Patterns I've seen mixed in with other attacks.
@@ -185,10 +184,9 @@ var attackPts = []ptrn{
 	{Name: "script>", Type: XSS, Score: 5},
 }
 
-// AttackTypeString translate the attack type byte to a string to make
-// the result human readable.
-func AttackTypeString(attack byte) string {
-	switch attack {
+// String translate an attack type byte to a human readable string
+func String(threatType byte) string {
+	switch threatType {
 	case Unk:
 		return "generic"
 	case SQL:

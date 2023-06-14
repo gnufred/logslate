@@ -3,3 +3,4 @@
 .dbs/
 .atks/
 .bench/
+*.db

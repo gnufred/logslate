@@ -15,13 +15,16 @@ type Report struct {
 	Size  Sizes            `json:"size"`
 	Time  Times            `json:"time_args"`
 	Db    Dbs              `json:"database"`
+	Thrt  Thrts            `json:"threats"`
 	AtkTy AtkTypes         `json:"attack_types"`
 	Atkr  map[string]Atkrs `json:"attackers"`
+	Bot   map[string]Bots  `json:"bots"`
 }
 
 func New() *Report {
 	rep := Report{}
 	rep.Atkr = make(map[string]Atkrs)
+	rep.Bot = make(map[string]Bots)
 	return &rep
 }
 
@@ -94,6 +97,17 @@ type Dbs struct {
 	Path string `json:"path"`
 }
 
+// Threat counts.
+type Thrts struct {
+	Atks Cnt `json:"attacks"`
+	Bots Cnt `json:"bots"`
+}
+
+type Cnt struct {
+	Its  uint    `json:"count"`
+	Prct float64 `json:"percent"`
+}
+
 // Attack data.
 type AtkTypes struct {
 	Unk uint `json:"gen"`
@@ -109,5 +123,10 @@ func (a *AtkTypes) Total() uint {
 
 // Attackers data.
 type Atkrs struct {
+	Cnt uint `json:"count"`
+}
+
+// Bots data.
+type Bots struct {
 	Cnt uint `json:"count"`
 }

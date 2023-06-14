@@ -9,10 +9,10 @@ import (
 )
 
 // Prct output a human readable percentage.
-func (r *Report) Prct(divident, divisor uint) string {
+func (r *Report) Prct(divident, divisor uint) float64 {
 	prc := float64(divident) / float64(divisor)
 	rounded := math.Ceil(prc*100) / 100
-	return fmt.Sprintf("%.2f", rounded) + "%"
+	return rounded
 }
 
 // HumanTime format a time.Time to a human readlable string.
