@@ -1,103 +1,44 @@
 # Development roadmap
 
-## v0.X - prototype
+## v0.2
 
-### v0.1 (done)
+Bot and crawler detection.
 
-Analyze parsed data and anontate entries with aditionnal information that matches the first detected items.
-Report detection in format: json, json.gz, csv, echo.
+## v0.3
 
-Attack detection:
-* SQL injection
-* Command injection
-* Directory traversal
+Ads and marketing campaign detection.
 
-Detection method:
-* Fake user agent
-* URL pattern
+## v0.4
 
-### v0.2
+Review if we need more than: dir traversal, sql injection, command injection, XSS.
 
-Bot and crawler detection:
-* [Search] Google indexer
-* [Search] Bing indexer
-* [Search] Yandex indexer
-* [Marketing] Semrush bot
-* [Marketing] Moz.com SEO crawler
-* [Marketing] "Caliperbot/1.0" http://www.conductor.com/caliperbot
-* [Marketing] "Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)" https://ahrefs.com/robot/
+## v0.5
 
-Detection method:
-* User agent pattern
-* Known IP verification
+IP analysis:
 
-### v0.3
+* identify IP from CDNs
+* analyse IP ranges
+* gather more intel about threat IPs
 
-Ad detection:
-* Google AdWords campaign
-* Facebook ad campaign
+## v0.6
 
-### v0.4
+User agent intel:
 
-Report format:
-* postfix
-* sendmail
+Review what's useful to gather about user agent, like fake agents, and so on.
 
-### v0.5
+## v0.7
 
-Bot and crawler detection:
-* Screaming Frog SEO spider
-* Top 20 search indexers
+PHP app/framework exploit:
 
-### v0.6
+* v0.9.0: Magento (specifically MageCart attacks)
+* v0.9.1: WordPress
+* v0.9.2: Drupal
+* v0.9.3: Symfony
 
-Attack detection:
-* Top 10 attack methods
+## v0.8
 
-### v0.7
-
-Ad campaign detection:
-* Top 20 ad vendor
-
-### v0.8
-
-Exploit detection:
-* Magecart CVEs (for Magento CMS)
+GraphQL endpoint attack detection based on Cloudflare's post: https://blog.cloudflare.com/protecting-graphql-apis-from-malicious-queries/
 
 ### v0.9
 
-Exploit detection: WordPress related CVEs
-* [EvalPHP](https://blog.sucuri.net/2023/04/massive-abuse-of-abandoned-evalphp-wordpress-plugin.html)
-
-### v0.10
-
-Exploit detection:
-* Drupal related CVEs
-
-### v0.11
-
-Exploit detection:
-* Symfony
-
-### v0.12
-
 Add support for Apache access.log files
-
-### v0.13
-
-Split the debug/ package to it's own repository and name it something else to avoid conflics with runtime/debug. The goal here is to reuse with with the upcoming parser/nginx rewrite, and on my jobs projects.
-
-The API should be massively simple and manage everything almost everything on it's own. As in, it needs to store all it's runtime setting at package level and share those transparently accross API calls.
-
-Public API should be like:
-
-```
-SetWriter(*io.Writer) error // configure the output stream
-SetVerbosity(verb int) error // set verbosity levels [0-3], error on anything else
-GetVerbosity() int // return current verbosity
-Log(verb int, name string, msg interface{}) error // output msg to io.Writer
-```
-
-### v0.15 and beyond
-
-Further updates will add small sub features, improvements, and bug fixes in order to move to official v1.0.0 release
