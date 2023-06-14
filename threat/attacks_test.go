@@ -2,7 +2,7 @@ package threat
 
 import "testing"
 
-var testPts = []ptrn{
+var testPatterns = []ptrn{
 	{Name: "x", Type: Unk, Score: 1},
 	{Name: "xy", Type: Unk, Score: 2},
 	{Name: "xyz", Type: Unk, Score: 3},
@@ -16,7 +16,7 @@ var testPts = []ptrn{
 
 func TestAttackTypeString(t *testing.T) {
 	testMatch := func(t *testing.T, in byte, exp string) {
-		got := AttackTypeString(in)
+		got := String(in)
 		if got != exp {
 			t.Errorf("attack type string doesn't match, got %s, exp %s", got, exp)
 		}

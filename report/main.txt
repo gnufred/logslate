@@ -18,6 +18,9 @@ Path: {{.Db.Path}}{{end}}
 === [[ Report ]] ===
 Path: {{.Path}} 
 Format: {{.Frmt}}
+=== [[ Threats ]] ===
+Attacks: {{.Thrt.Atks.Prct}}%  {{.AddCommas .Thrt.Atks.Its}}
+Bots:    {{.Thrt.Bots.Prct}}%  {{.AddCommas .Thrt.Bots.Its}}
 === [[ Attacks ]] ===
 Total:      {{.AddCommas .AtkTy.Total}}
 Unknown:    {{.AddCommas .AtkTy.Unk}}
@@ -27,3 +30,5 @@ Dir trav:   {{.AddCommas .AtkTy.Dir}}
 Cross site: {{.AddCommas .AtkTy.XSS}}
 === [[Attackers]] ==={{range $ip, $data := .Atkr}}
 {{$ip}}: {{$data.Cnt}}{{end}}
+=== [[Bots]] ==={{range $name, $data := .Bot}}
+{{$name}}: {{$data.Cnt}}{{end}}

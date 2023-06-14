@@ -30,7 +30,10 @@ func TestNginxCombined(t *testing.T) {
 	if err != nil {
 		t.Errorf("Parse() error %s", err)
 	}
-	got := Nginx(ngxLog)
+	got, err := Nginx(ngxLog)
+	if err != nil {
+		t.Error(err)
+	}
 	compareStruct(t, got, exp)
 }
 
@@ -58,7 +61,10 @@ func TestNginxIso8601(t *testing.T) {
 	if err != nil {
 		t.Errorf("Parse() error %s", err)
 	}
-	got := Nginx(ngxLog)
+	got, err := Nginx(ngxLog)
+	if err != nil {
+		t.Error(err)
+	}
 	compareStruct(t, got, exp)
 }
 

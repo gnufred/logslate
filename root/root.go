@@ -25,6 +25,7 @@ type Parsed struct {
 	Skip uint
 	Err  uint
 	Atk  uint
+	Bot  uint
 }
 
 var (
@@ -75,6 +76,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	var bytesTotal uint
 	atkTypes := make(map[byte]uint, threat.XSS)
 	attackers := make(map[string]uint)
+	bots := make(map[string]uint)
 
 	// Parser loop.
 	for {
@@ -98,11 +100,17 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		nx, err := nginx.Parse(a.LogFrmt, line)
 		if err != nil {
 			par.Err++
-			debug.Log(debug.V, "parseError", line)
+			debug.Log(debug.VVV, "parseError", line)
 			continue
 		}
 
-		ls := translate.Nginx(nx)
+		ls, err := translate.Nginx(nx)
+		if err != nil {
+			par.Err++
+			debug.Log(debug.VVV, "translateError", err)
+			// For now there's a single error that can bubble up and we can safely
+			// ignore it. Counting and logging is fine for now.
+		}
 
 		if !timeMatch(ls.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
@@ -119,15 +127,22 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		if ls.Score != 0 {
-			debug.Log(debug.VVV, "flagged", ls.AtkName+" | "+ls.Path+ls.Query)
+		if ls.Attack.Score != 0 {
+			debug.Log(debug.VVV, "flagged", ls.Attack.Name+" | "+ls.Path+ls.Query)
 
 			// Compile attack type data.
 			if a.ReportPath != "" {
-				atkTypes[ls.AtkId]++
+				atkTypes[ls.Attack.Id]++
 				attackers[ls.Ip.String()]++
 			}
 			par.Atk++
+		}
+
+		if ls.Bot != "" {
+			if a.ReportPath != "" {
+				bots[ls.Bot]++
+			}
+			par.Bot++
 		}
 
 		par.Ok++
@@ -138,7 +153,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Print parsed line data.
 	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
-	fmt.Printf("Threats: attack [%d]\n", par.Atk)
+	fmt.Printf("Threats: attack [%d], bots [%d]\n", par.Atk, par.Bot)
 
 	// Stop CPU profiling.
 	prof.StopCpuProfile(a, cpuf)
@@ -167,6 +182,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Time.End = a.EndTime()
 		rep.Db.Path = a.Db
 
+		rep.Thrt.Atks.Its = par.Atk
+		rep.Thrt.Atks.Prct = rep.Prct(par.Atk, par.Ok)
+		rep.Thrt.Bots.Its = par.Bot
+		rep.Thrt.Bots.Prct = rep.Prct(par.Bot, par.Ok)
+
 		rep.AtkTy = report.AtkTypes{
 			Unk: atkTypes[threat.Unk],
 			SQL: atkTypes[threat.SQL],
@@ -177,6 +197,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		for ip, cnt := range attackers {
 			rep.Atkr[ip] = report.Atkrs{
+				Cnt: cnt,
+			}
+		}
+
+		for name, cnt := range bots {
+			rep.Bot[name] = report.Bots{
 				Cnt: cnt,
 			}
 		}

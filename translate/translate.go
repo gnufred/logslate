@@ -22,13 +22,12 @@ type Log struct {
 	Sent    int
 	Referer string
 	Agent   string
-	Score   uint32 // uint/uint64 is too big for SQLite3
-	AtkId   byte
-	AtkName string
+	Attack  threat.Attack
+	Bot     string
 }
 
 // Nginx translate an nxparse.Entry to the format `logslate` wants.
-func Nginx(nx nginx.Entry) Log {
+func Nginx(nx nginx.Entry) (Log, error) {
 	ls := Log{
 		Ip:      nx.RemoteAddr,
 		User:    nx.RemoteUser,
@@ -57,13 +56,14 @@ func Nginx(nx nginx.Entry) Log {
 	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
 
 	// Get attack detection results.
-	score, attack := threat.Attacks(ls.Path, ls.Query)
-	ls.Score = score
-	ls.AtkId = attack
-	ls.AtkName = threat.AttackTypeString(attack)
+	thr, err := threat.Detect(ls.Path, ls.Query, ls.Agent)
+	ls.Attack.Id = thr.Attack.Id
+	ls.Attack.Name = thr.Attack.Name
+	ls.Attack.Score = thr.Attack.Score
+	ls.Bot = thr.Bot
 
 	// Done.
-	return ls
+	return ls, err
 }
 
 func splitNginxPathQuery(pq string) (string, string) {
