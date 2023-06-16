@@ -19,8 +19,12 @@ Path: {{.Db.Path}}{{end}}
 Path: {{.Path}} 
 Format: {{.Frmt}}
 === [[ Threats ]] ===
-Attacks: {{.Thrt.Atks.Prct}}%  {{.AddCommas .Thrt.Atks.Its}}
-Bots:    {{.Thrt.Bots.Prct}}%  {{.AddCommas .Thrt.Bots.Its}}
+Attacks:
+  * {{.AddCommas .Thrt.Atks.Its}}
+  * {{.Thrt.Atks.Prct}} %
+Bots:
+  * {{.AddCommas .Thrt.Bots.Its}}
+  * {{.Thrt.Bots.Prct}} %
 === [[ Attacks ]] ===
 Total:      {{.AddCommas .AtkTy.Total}}
 Unknown:    {{.AddCommas .AtkTy.Unk}}
@@ -28,7 +32,7 @@ SQL inject: {{.AddCommas .AtkTy.SQL}}
 CMD inject: {{.AddCommas .AtkTy.CMD}}
 Dir trav:   {{.AddCommas .AtkTy.Dir}}
 Cross site: {{.AddCommas .AtkTy.XSS}}
-=== [[Attackers]] ==={{range $ip, $data := .Atkr}}
+=== [[ Attackers ]] ==={{range $ip, $data := .Atkr}}
 {{$ip}}: {{$data.Cnt}}{{end}}
-=== [[Bots]] ==={{range $name, $data := .Bot}}
+=== [[ Bots ]] ==={{range $name, $data := .Bot}}
 {{$name}}: {{$data.Cnt}}{{end}}
