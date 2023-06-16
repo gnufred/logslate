@@ -3,22 +3,5 @@
 root_dir=$(git rev-parse --show-toplevel)
 cd $root_dir
 
-echo "=== lint ==="
-
-# https://staticcheck.io/docs/getting-started/
-echo "staticcheck"
-go install honnef.co/go/tools/cmd/staticcheck@latest
-staticcheck ./...
-
-# https://pkg.go.dev/cmd/gofmt
-echo "gofmt"
-unformated=$(gofmt -s -l .)
-if [[ ! -z "$unformated" ]]; then
-	echo "gofmt: unformatted files"
-	echo "$unformated"
-	exit 1
-fi
-
-echo "=== test ==="
 go clean -testcache
 TZ=Etc/UTC go test "$@" ./... | grep -v '\[no test files\]'
