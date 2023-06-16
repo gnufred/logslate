@@ -98,8 +98,10 @@ var attackPatterns = []ptrn{
 
 	// !!! Directory traversal attacks !!! //
 	// https://portswigger.net/web-security/file-path-traversal
-	{Name: "%252e", Type: Dir, Score: 4},
-	{Name: "%252f", Type: Dir, Score: 4},
+	// Sometime used legitimatly.
+	{Name: "%252e", Type: Dir, Score: 2},
+	// Sometime used legitimatly.
+	{Name: "%252f", Type: Dir, Score: 2},
 	{Name: "%2e%2f", Type: Dir, Score: 4},
 	{Name: "%2e%5c", Type: Dir, Score: 4},
 	{Name: ".%10c", Type: Dir, Score: 4},
@@ -124,7 +126,7 @@ var attackPatterns = []ptrn{
 
 	// !!! OS command injection attacks !!! //
 	// https://portswigger.net/web-security/os-command-injection
-	// "contact" can also be SQL injection but I've seen it mostly.
+	// "contact" can also be SQL injection but I've seen it mostly
 	// with other OS command injection attack.
 	{Name: "concat(", Type: CMD, Score: 5},
 	{Name: "concat%", Type: CMD, Score: 5},
@@ -132,7 +134,8 @@ var attackPatterns = []ptrn{
 	{Name: "chr%", Type: CMD, Score: 5},
 	{Name: "hex(", Type: CMD, Score: 5},
 	{Name: "hex%", Type: CMD, Score: 5},
-	{Name: "echo", Type: CMD, Score: 5},
+	// TODO: Review how this is actually used. To many false positives.
+	{Name: "echo", Type: CMD, Score: 2},
 	{Name: "gethostbyname", Type: CMD, Score: 5},
 	{Name: "ipconfig", Type: CMD, Score: 5},
 	{Name: "netstat", Type: CMD, Score: 5},
@@ -154,7 +157,8 @@ var attackPatterns = []ptrn{
 	{Name: "alert(", Type: XSS, Score: 5},
 	{Name: "assert%", Type: XSS, Score: 5},
 	{Name: "assert(", Type: XSS, Score: 5},
-	{Name: "log%", Type: XSS, Score: 2},
+	// "log" hits "blog", "catalog" and such other words.
+	{Name: "log%28", Type: XSS, Score: 1},
 	{Name: "log(", Type: XSS, Score: 5},
 	{Name: "md5%", Type: XSS, Score: 2},
 	{Name: "md5(", Type: XSS, Score: 5},
