@@ -30,7 +30,7 @@ var attackPatterns = []ptrn{
 	// !!! Unknown attacks patterns !!! //
 	// Patterns I've seen mixed in with other attacks.
 	{Name: "%40%40", Type: Unk, Score: 2},
-	{Name: ",,", Type: Unk, Score: 4},
+	{Name: ",,", Type: Unk, Score: 2},
 	{Name: "(((", Type: Unk, Score: 5},
 	{Name: ")))", Type: Unk, Score: 5},
 	// "\x22" is all over the place but it's never alone.
@@ -61,8 +61,10 @@ var attackPatterns = []ptrn{
 	{Name: "receive_message", Type: CMD, Score: 5}, // Oracle
 	// Variants: waitfor( waitfor% waitfor+
 	{Name: "waitfor", Type: SQL, Score: 5}, // Microsoft
-	// Variants: delay( delay% delay+
-	{Name: "delay", Type: SQL, Score: 5},    // Microsoft
+	// "delay" hits to many false positives.
+	{Name: "delay%", Type: SQL, Score: 5},   // Microsoft
+	{Name: "delay(", Type: SQL, Score: 5},   // Microsoft
+	{Name: "delay+", Type: SQL, Score: 5},   // Microsoft
 	{Name: "pg_sleep", Type: SQL, Score: 5}, // PSQL
 	// Can't use "sleep|benchmark" alone. In many legit URLs.
 	{Name: "sleep(", Type: SQL, Score: 5},     // PSQL, MySQL
@@ -89,10 +91,7 @@ var attackPatterns = []ptrn{
 	{Name: "1=0", Type: SQL, Score: 5},
 	{Name: "1=1", Type: SQL, Score: 5},
 	{Name: "'and", Type: SQL, Score: 5},
-	// This "%20and%" pattern is in way to many legit URLs.
-	{Name: "%20and%", Type: SQL, Score: 1},
 	{Name: "'or", Type: SQL, Score: 5},
-	{Name: "%20or%", Type: SQL, Score: 5},
 	{Name: "'xor", Type: SQL, Score: 5},
 	{Name: "xor\\", Type: SQL, Score: 5},
 
@@ -100,8 +99,8 @@ var attackPatterns = []ptrn{
 	// https://portswigger.net/web-security/file-path-traversal
 	// Sometime used legitimatly.
 	{Name: "%252e", Type: Dir, Score: 2},
-	// Sometime used legitimatly.
-	{Name: "%252f", Type: Dir, Score: 2},
+	// Too many legit uses.
+	// {Name: "%252f", Type: Dir, Score: 1},
 	{Name: "%2e%2f", Type: Dir, Score: 4},
 	{Name: "%2e%5c", Type: Dir, Score: 4},
 	{Name: ".%10c", Type: Dir, Score: 4},
@@ -141,12 +140,12 @@ var attackPatterns = []ptrn{
 	{Name: "netstat", Type: CMD, Score: 5},
 	{Name: "nslookup", Type: CMD, Score: 5},
 	{Name: "ps -", Type: CMD, Score: 5},
-	{Name: "ps%20", Type: CMD, Score: 5},
+	{Name: "ps%20%2D", Type: CMD, Score: 5},
 	{Name: "tasklist", Type: CMD, Score: 2},
 	{Name: "uname", Type: CMD, Score: 5},
 	{Name: "whoami", Type: CMD, Score: 5},
 	// "socket" is a legit word by it's never alone.
-	{Name: "socket", Type: CMD, Score: 2},
+	{Name: "socket", Type: CMD, Score: 1},
 
 	// !!! Cross site scripting attacks !!! //
 	// https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
@@ -179,7 +178,7 @@ var attackPatterns = []ptrn{
 	// HTML, JS tag injection.
 	{Name: "<!--", Type: XSS, Score: 5},
 	{Name: "esi:include", Type: XSS, Score: 5},
-	{Name: "iframe%", Type: XSS, Score: 5},
+	{Name: "iframe%", Type: XSS, Score: 2},
 	{Name: "iframe_", Type: XSS, Score: 5},
 	{Name: "iframe_src", Type: XSS, Score: 5},
 	{Name: "injected_by", Type: XSS, Score: 5},

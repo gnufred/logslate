@@ -77,9 +77,13 @@ var botPatterns = []string{
 	"Baiduspider-video",
 
 	// http://www.bing.com/bingbot.htm
-	"adidxbot",
+	"AdIdxBot",
+	"BingPreview",
+	"Bingbot",
+	"MicrosoftPreview/", // https://aka.ms/MicrosoftPreview
+	"adidxbot/",
 	"bingbot/",
-	"msnbot",
+	"msnbot/",
 
 	// Other search engine indexers.
 	"DuckDuckBot",             // https://duckduckgo.com/duckduckbot
@@ -130,8 +134,8 @@ var botPatterns = []string{
 	"SiteAuditBot",              // https://www.semrush.com/bot/
 	"SplitSignalBot",            // https://www.semrush.com/bot/
 	"magpie-crawler",            // http://www.brandwatch.net
-	"rogerbot",                  // https: //moz.com/help/moz-procedures/crawlers/rogerbot
-	"serpstatbot",               // https://serpstatbot.com
+	"rogerbot/",                 // https: //moz.com/help/moz-procedures/crawlers/rogerbot
+	"serpstatbot/",              // https://serpstatbot.com
 	// https://dynamics.microsoft.com/en-us/business-central/overview/
 	"Microsoft Dynamics 365 Business Central",
 
@@ -144,7 +148,6 @@ var botPatterns = []string{
 	"GoogleDocs",       // http://docs.google.com
 	"GoogleImageProxy", // https://www.scientiamobile.com/what-is-google-image-proxy/
 	"Microsoft Office",
-	"MicrosoftPreview", // https://aka.ms/MicrosoftPreview
 	"SkypeUriPreview",
 	"Slackbot-LinkExpanding",   // https://api.slack.com/robots
 	"Snap URL Preview Service", // https://developers.snap.com/robots
