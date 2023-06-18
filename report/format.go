@@ -10,8 +10,11 @@ import (
 
 // Prct output a human readable percentage.
 func (r *Report) Prct(divident, divisor uint) float64 {
-	prc := float64(divident) / float64(divisor)
-	rounded := math.Ceil(prc*1000) / 1000
+	if divident == 0 || divisor == 0 {
+		return 0
+	}
+	prc := float64(divident) / float64(divisor) * 100
+	rounded := math.Round(prc*10) / 10
 	return rounded
 }
 

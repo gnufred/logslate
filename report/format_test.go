@@ -5,6 +5,34 @@ import (
 	"time"
 )
 
+func TestPrct(t *testing.T) {
+	test := func(t *testing.T, divident, divisor uint, exp float64) {
+		r := New()
+		got := r.Prct(divident, divisor)
+		if got != exp {
+			t.Errorf("percentage doesn't match, got %f, exp %f", got, exp)
+		}
+	}
+
+	data := []struct {
+		Divident uint
+		Divisor  uint
+		Exp      float64
+	}{
+		{0, 999, 0},
+		{999, 0, 0},
+		{1, 100, 1},
+		{10, 100, 10},
+		{50, 100, 50},
+		{1, 2, 50},
+		{550, 17144, 3.2},
+	}
+
+	for _, d := range data {
+		test(t, d.Divident, d.Divisor, d.Exp)
+	}
+}
+
 func TestHumanTime(t *testing.T) {
 	testTD := func(t *testing.T, tm time.Time, exp string) {
 		r := New()
