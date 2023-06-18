@@ -5,18 +5,22 @@ package threat
 var botPatterns = []string{
 
 	// !!! Search engine indexers !!! //
-	// Indexer are not consider a threat by themselves. That being said, when multiples
-	// crawls a site simultenaously, they usually bring it down. This happens quite often
-	// which make them a very real threat.
+	// Indexer are not consider a threat by themselves. That being said, when
+	// multiples crawls a site simultenaously, they usually bring it down. This
+	// happens quite often which make them a very real threat.
 
-	// https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers
+	// http://www.google.com/bot.html
+	// http://www.google.com/adsbot.html
 	"APIs-Google",
 	"AdsBot-Google",
 	"AdsBot-Google-Mobile",
 	"FeedFetcher-Google",
+	"Google-AdWords",
 	"Google-InspectionTool",
 	"Google-Read-Aloud",
+	"Google-Safety",
 	"Google-Site-Verification",
+	"GoogleAssociationService", // https://support.google.com/webmasters/answer/9419894
 	"GoogleOther",
 	"GoogleProducer",
 	"Googlebot",
@@ -62,17 +66,17 @@ var botPatterns = []string{
 	"YandexVideoParser",
 	"YandexWebmaste",
 
-	// https://help-baidu-com.translate.goog/question?prod_id=99&class=476&id=2996&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp
+	// http://www.baidu.com/search/spider.html
 	"Baiduspider",
-	"Baiduspider-image",
-	"Baiduspider-video",
-	"Baiduspider-news",
-	"Baiduspider-favo",
-	"Baiduspider-cpro",
 	"Baiduspider-ads",
+	"Baiduspider-cpro",
+	"Baiduspider-favo",
+	"Baiduspider-image",
+	"Baiduspider-news",
+	"Baiduspider-render",
+	"Baiduspider-video",
 
 	// http://www.bing.com/bingbot.htm
-	"MicrosoftPreview",
 	"adidxbot",
 	"bingbot/",
 	"msnbot",
@@ -80,24 +84,41 @@ var botPatterns = []string{
 	// Other search engine indexers.
 	"DuckDuckBot",             // https://duckduckgo.com/duckduckbot
 	"DuckDuckGo-Favicons-Bot", // https://duckduckgo.com/duckduckbot
+	"FemtosearchBot",          // http://femtosearch.com
+	"MegaIndex.ru",            // http://megaindex.com/crawler
 	"PetalBot",                // https://webmaster.petalsearch.com/site/petalbot
-	"SeznamBot",               // https://napoveda-seznam-cz.translate.goog/cz/seznamcz-web-search/?_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp
+	"Pinterestbot",            // http://www.pinterest.com/bot.html
 	"SeekportBot",             // https://bot.seekport.com
+	"SeekportBot",             // https://bot.seekport.com
+	"SeznamBot",               // https://napoveda-seznam-cz.translate.goog/cz/seznamcz-web-search/?_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp
+	"Yeti",                    // https://naver.me/spd
+	"YisouSpider",
 
 	// !!! Marketing bots !!! //
-	// While most do not intend to be harmful, they can be too aggresive, badly configured,
-	// crawl a site even if it's timing out. Some are just generally badly used and most
-	// often than not harmful.
+	// While most do not intend to be harmful, they can be too aggresive, badly
+	// configured, crawl a site even if it's timing out. Some are just generally
+	// badly used and most often than not harmful.
+	"AddSearchBot",              // http://www.addsearch.com/bot/
 	"AhrefsBot",                 // http://ahrefs.com/robot/
+	"AhrefsSiteAudit",           // http://ahrefs.com/robot/site-audit
 	"AwarioBot",                 // https://awario.com/bots.html
 	"AwarioRssBot",              // https://awario.com/bots.html
 	"AwarioSmartBot",            // https://awario.com/bots.html
+	"BLEXBot",                   // http://webmeup-crawler.com/
 	"Barkrowler",                // https://babbar.tech/crawler
+	"BrightEdge Crawler",        // https://www.brightedge.com/products/s3/contentiq
 	"Buck/",                     // https://app.hypefactors.com/media-monitoring/about.html
 	"Bytespider",                // https://zhanzhang.toutiao.com/
 	"Caliperbot",                // http://www.conductor.com/caliperbot
+	"DataForSeoBot",             // https://dataforseo.com/dataforseo-bot
+	"DomainStatsBot",            // https://domainstats.com/pages/our-bot
 	"DotBot",                    // https://opensiteexplorer.org/dotbot
 	"HubSpot Crawler",           // https://www.hubspot.com
+	"Klaviyo",                   // https://www.klaviyo.com/
+	"Konduto",                   // http://www.konduto.com
+	"MJ12bot",                   // http://mj12bot.com/
+	"MailChimp",                 // https://mailchimp.com/
+	"Productsup",                // http://productsup.io
 	"Screaming Frog SEO Spider", // https://www.screamingfrog.co.uk/seo-spider/
 	"SemrushBot",                // https://www.semrush.com/bot/
 	"SemrushBot-BA",             // https://www.semrush.com/bot/
@@ -105,27 +126,87 @@ var botPatterns = []string{
 	"SemrushBot-CT",             // https://www.semrush.com/bot/
 	"SemrushBot-SI",             // https://www.semrush.com/bot/
 	"SemrushBot-SWA",            // https://www.semrush.com/bot/
+	"SiteAuditBot",              // http://www.semrush.com/bot.html
 	"SiteAuditBot",              // https://www.semrush.com/bot/
 	"SplitSignalBot",            // https://www.semrush.com/bot/
+	"magpie-crawler",            // http://www.brandwatch.net
+	"rogerbot",                  // https: //moz.com/help/moz-procedures/crawlers/rogerbot
+	"serpstatbot",               // https://serpstatbot.com
+	// https://dynamics.microsoft.com/en-us/business-central/overview/
+	"Microsoft Dynamics 365 Business Central",
 
-	// !!! Content preview bots !!! //
-	// Content preview bots shoud not be a threat, therefor won't be listed. They visit a
-	// page when user share links, usually to show content summary, and check for malware.
-	// Also, they usually cache results, therefor will usually not cause any issues.
+	// !!! Content preview/fetchers bots !!! //
+	// Content previewers shoud not be a threat, They visit a page when user share
+	// links, usually to show content summary, and check for malware. Also, they
+	// usually cache results, therefor will usually not cause any issues.
+	// There are some very weird edge cases where they can be harmful, so it's
+	// important to detect them.
+	"GoogleDocs",       // http://docs.google.com
+	"GoogleImageProxy", // https://www.scientiamobile.com/what-is-google-image-proxy/
+	"Microsoft Office",
+	"MicrosoftPreview", // https://aka.ms/MicrosoftPreview
+	"SkypeUriPreview",
+	"Slackbot-LinkExpanding",   // https://api.slack.com/robots
+	"Snap URL Preview Service", // https://developers.snap.com/robots
+	"SnapchatAds",              // https://businesshelp.snapchat.com/s/article/adsbot-crawler
+	"TelegramBot",              // https://core.telegram.org/bots
+	"UniversalFeedParser",      // https://code.google.com/p/feedparser/
+	"WhatsApp",
+	"bitlybot",            // http://bit.ly/
+	"facebookexternalhit", // http://www.facebook.com/externalhit_uatext.php
+
+	// !!! Availability monitoring bots !!! //
+	// Those bots are the actual opposite of a threat. They check that resources are
+	// available. They usually send a request at most every one minute.
+	// On endpoint with lower traffic, it can happen that a very high percentage
+	// of calls are health checks, which is useful to become aware of, but is usually
+	// not a threat.
+	"Amazon-Route53-Health-Check-Service", // https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-types.html
+	"Better Uptime",                       // https://docs.digitalocean.com/products/marketplace/catalog/better-uptime/
+	"Cloudflare-Healthchecks",             // https://www.cloudflare.com/
+	"Elastic-Heartbeat",
+	"EyeMonIT Uptime",
+	"GoogleStackdriverMonitoring-UptimeChecks", // https://cloud.google.com/monitoring
+	"HetrixTools Uptime",                       // https://hetrixtools.com/uptime-monitor/
+	"Mozilla/DnsHealthCheckBot",                // https://support.mozilla.org/en-US/kb/firefox-dns-over-https
+	"NodePing",                                 // https://nodeping.com/
+	"Overtir-iWeb-Monitoring",                  // https://www.site24x7.com/
+	"Pingdom.com",                              // http://www.pingdom.com/
+	"Rightpoint Monitoring",                    // https://www.rightpoint.com/
+	"SISTRIX Optimizer",                        // https://www.sistrix.com/faq/uptime
+	"UptimeRobot",                              // http://www.uptimerobot.com/
+	"Varnish/fastly",
+	"WebyMon uptime", // https://www.webymon.com/index.html
+	// Uptime-Kuma self hosted and open source.
+	// I'm highlighting it because it's the only self managed open tool I've seen
+	// in use so far.
+	"Uptime-Kuma", // https://github.com/louislam/uptime-kuma
+
+	// !!! Security scanner bots !!! //
+	"Detectify", // https://detectify.com/bot/6c07c4e2-94e5-4719-8f74-57df06c6d54d
+	"EdgeScan",  // https://www.edgescan.com/
 
 	// !!! Other bots !!! //
 	// This section include anything that's not in another category and can be a threat.
 	// Reasons will widly vary based on the specific bot.
+	"Algolia Crawler",     // https://www.algolia.com/doc/tools/crawler/getting-started/overview/
+	"Alumio",              // https://www.alumio.com/
+	"Barkrowler",          // https://babbar.tech/crawler
 	"CCBot",               // https://commoncrawl.org/faq/
-	"EdgeScan",            // https://www.edgescan.com/
+	"Celigo",              // https://www.celigo.com/
+	"Devart ADO.NET",      // https://www.devart.com/dotconnect/
+	"FeedBurner",          // http://www.FeedBurner.com
+	"Feedonomics",         // https://feedonomics.com/
+	"Google-Apps-Script",  // https://script.google.com
+	"Google-Firebase",     // https://firebase.google.com/
 	"Grammarly",           // https://www.grammarly.com/plagiarism-checker
 	"InternetMeasurement", // https://internet-measurement.com/
-	"Scrapy",              // https://scrapy.org
-	"paloaltonetworks",    // https://www.paloaltonetworks.com/
-
-	// Microsoft non indexer bots.
-	"Microsoft Office Protocol Discovery", // https://learn.microsoft.com/en-us/openspecs/sharepoint_protocols/ms-ofba/868d129f-f1b5-46bc-9385-4af58610dbbe
-	// ^^ The protocol discovery bot can be quite aggressive.
+	"Linespider",          // https://lin.ee/4dwXkTH
 	"Microsoft Data Access Internet Publishing Provider DAV",
-	"Microsoft Office Word 2014",
+	"Microsoft-WebDAV-MiniRedir",
+	"NostoCrawlerBot", // http://my.nosto.com/
+	"RyteBota",        // https://bot.ryte.com/
+	"Scrapy",          // https://scrapy.org
+	"azure-logic-apps",
+	"paloaltonetworks", // https://www.paloaltonetworks.com/
 }
