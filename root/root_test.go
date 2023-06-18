@@ -65,7 +65,7 @@ func TestBrokenLogs(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 0}},
+			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 3}},
 		},
 	)
 }
@@ -87,7 +87,7 @@ func TestDatabase(t *testing.T) {
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 20}},
-			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 0}},
+			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 3}},
 			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 50}},
 		},
 	)
