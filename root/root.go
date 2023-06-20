@@ -89,7 +89,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}
 
 		if err != nil {
-			return par, fmt.Errorf("%s: %w", err, ErrReadPipe)
+			return par, fmt.Errorf("%s: %w", ErrReadPipe, err)
 		}
 
 		if line == "" {

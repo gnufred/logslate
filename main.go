@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -35,6 +37,10 @@ func Run() {
 	debug.Log(debug.VV, "end time", a.EndTime())
 
 	_, err := root.ParseStdin(a)
+	if errors.Is(err, bufio.ErrTooLong) {
+		print("\n")
+		panic("input data might be corrupted or invalid")
+	}
 	if err != nil {
 		log.Fatal(err)
 	}

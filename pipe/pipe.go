@@ -35,11 +35,14 @@ func (p *Piper) IsPiped() bool {
 }
 
 func (p *Piper) ReadLine() (string, int, error) {
+
 	if scanned := p.scanner.Scan(); scanned {
 		line := p.scanner.Text()
-		byteCnt := utf8.RuneCountInString(line) + 2 /* +2 because of "\n" */
+		// We need to add +2 to account for "\n" end line characters
+		byteCnt := utf8.RuneCountInString(line) + 2
 		return line, byteCnt, nil
 	} else {
+		// Error handling.
 		if err := p.scanner.Err(); err == nil {
 			// if Scan() is false and Err() is nil, we reached io.EOF
 			return "", 0, io.EOF
