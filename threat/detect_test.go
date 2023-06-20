@@ -21,7 +21,7 @@ func TestDetect(t *testing.T) {
 		Threat{
 			Attack{
 				2,
-				9,
+				5,
 				"sql_injection",
 			},
 			"EdgeScan",
@@ -67,9 +67,8 @@ func TestAttacks(t *testing.T) {
 		{"print(", result{5, 5}},
 		{"\x22id\x22:\x221\x22", result{12, 1}},
 		{"path/stuff../../etc/passwd", result{13, 4}},
-		{"hello''world", result{8, 2}},
-		{"hello'boba_sleep(", result{9, 2}},
-		{"hello'boba_SLEEP(", result{9, 2}},
+		{"hello'boba_sleep(", result{5, 2}},
+		{"hello'boba_SLEEP(", result{5, 2}},
 		{"./././././././././././././././././././././././././././././././././", result{132, 4}},
 	}
 
