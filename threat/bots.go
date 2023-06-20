@@ -198,7 +198,7 @@ var botPatterns = []string{
 	"CCBot",               // https://commoncrawl.org/faq/
 	"Celigo",              // https://www.celigo.com/
 	"Devart ADO.NET",      // https://www.devart.com/dotconnect/
-	"FeedBurner",          // http://www.FeedBurner.com
+	"FeedBurner/",         // http://www.FeedBurner.com
 	"Feedonomics",         // https://feedonomics.com/
 	"Google-Apps-Script",  // https://script.google.com
 	"Google-Firebase",     // https://firebase.google.com/

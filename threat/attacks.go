@@ -41,10 +41,10 @@ var attackPatterns = []ptrn{
 
 	// Generic select.
 	// "select+" can be in legit URLs.
-	{Name: "select+", Type: SQL, Score: 2}, // All
-	{Name: "select ", Type: SQL, Score: 5}, // All
-	{Name: "select(", Type: SQL, Score: 5}, // All
-	{Name: "select%", Type: SQL, Score: 5}, // All
+	{Name: "select+", Type: SQL, Score: 2},
+	{Name: "select ", Type: SQL, Score: 5},
+	{Name: "select(", Type: SQL, Score: 5},
+	{Name: "select%", Type: SQL, Score: 5},
 
 	// String concatenation.
 	{Name: "'|", Type: SQL, Score: 5}, // Oracle, PSQL
@@ -68,8 +68,8 @@ var attackPatterns = []ptrn{
 	{Name: "pg_sleep", Type: SQL, Score: 5}, // PSQL
 	// Can't use "sleep|benchmark" alone. In many legit URLs.
 	{Name: "sleep(", Type: SQL, Score: 5},     // PSQL, MySQL
-	{Name: "sleep%", Type: SQL, Score: 5},     // PSQL, MySQL
-	{Name: "sleep+", Type: SQL, Score: 5},     // PSQL, MySQL
+	{Name: "sleep%", Type: SQL, Score: 2},     // PSQL, MySQL
+	{Name: "sleep+", Type: SQL, Score: 2},     // PSQL, MySQL
 	{Name: "benchmark(", Type: SQL, Score: 5}, // MySQL
 	{Name: "benchmark%", Type: SQL, Score: 5}, // MySQL
 	{Name: "benchmark+", Type: SQL, Score: 5}, // MySQL
@@ -78,18 +78,18 @@ var attackPatterns = []ptrn{
 	{Name: "extractvalue", Type: SQL, Score: 5},     // Oracle
 	{Name: "get_host_address", Type: SQL, Score: 5}, // Oracle
 	{Name: "exec master", Type: SQL, Score: 5},      // Microsoft
-	{Name: "load_file", Type: SQL, Score: 5},        // PSQL
+	{Name: "load_file(", Type: SQL, Score: 5},       // PSQL
+	{Name: "load_file%28", Type: SQL, Score: 5},     // PSQL
 
 	// Uncategorized.
-	{Name: "'", Type: SQL, Score: 4},
 	{Name: "'=", Type: SQL, Score: 5},
 	{Name: "!='", Type: SQL, Score: 5},
 	{Name: "!%2b!", Type: SQL, Score: 5},
 	{Name: "%21+%21", Type: SQL, Score: 5},
 	{Name: "'%", Type: SQL, Score: 5},
-	{Name: "!((", Type: SQL, Score: 5},
-	{Name: "1=0", Type: SQL, Score: 5},
-	{Name: "1=1", Type: SQL, Score: 5},
+	{Name: "!((", Type: SQL, Score: 4},
+	{Name: "'1=0", Type: SQL, Score: 5},
+	{Name: "'1=1", Type: SQL, Score: 5},
 	{Name: "'and", Type: SQL, Score: 5},
 	{Name: "'or", Type: SQL, Score: 5},
 	{Name: "'xor", Type: SQL, Score: 5},
@@ -121,7 +121,7 @@ var attackPatterns = []ptrn{
 	{Name: "etc/passwd", Type: Dir, Score: 5},
 	{Name: "passwd", Type: Dir, Score: 3},
 	{Name: "web-inf", Type: Dir, Score: 5},
-	{Name: "windows", Type: Dir, Score: 2},
+	{Name: "windows", Type: Dir, Score: 1},
 
 	// !!! OS command injection attacks !!! //
 	// https://portswigger.net/web-security/os-command-injection
@@ -132,7 +132,7 @@ var attackPatterns = []ptrn{
 	{Name: "chr(", Type: CMD, Score: 5},
 	{Name: "chr%", Type: CMD, Score: 5},
 	{Name: "hex(", Type: CMD, Score: 5},
-	{Name: "hex%", Type: CMD, Score: 5},
+	{Name: "hex%", Type: CMD, Score: 3},
 	// TODO: Review how this is actually used. To many false positives.
 	{Name: "echo", Type: CMD, Score: 2},
 	{Name: "gethostbyname", Type: CMD, Score: 5},
@@ -179,7 +179,7 @@ var attackPatterns = []ptrn{
 	{Name: "<!--", Type: XSS, Score: 5},
 	{Name: "esi:include", Type: XSS, Score: 5},
 	{Name: "iframe%", Type: XSS, Score: 2},
-	{Name: "iframe_", Type: XSS, Score: 5},
+	{Name: "iframe_", Type: XSS, Score: 2},
 	{Name: "iframe_src", Type: XSS, Score: 5},
 	{Name: "injected_by", Type: XSS, Score: 5},
 	{Name: "script%", Type: XSS, Score: 5},
