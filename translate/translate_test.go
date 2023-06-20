@@ -2,6 +2,7 @@ package translate
 
 import (
 	"net"
+	"strings"
 	"testing"
 	"time"
 
@@ -66,6 +67,18 @@ func TestNginxIso8601(t *testing.T) {
 		t.Error(err)
 	}
 	compareStruct(t, got, exp)
+}
+
+// https://gitlab.com/gnufred/logslate/-/issues/92
+func TestIssue92Fix(t *testing.T) {
+	type request struct{ Method, Path, Query, Proto string }
+
+	crashString := "GET /rest/V1/directory/countries?_=16869P/1.1"
+	_, err := splitNginxRequest(crashString)
+	if !strings.Contains(err.Error(), "malformed NGINX request") {
+		t.Errorf("did not get expected error, got %s", err)
+	}
+
 }
 
 func compareStruct(t *testing.T, got, exp Log) {

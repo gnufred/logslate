@@ -1,6 +1,7 @@
 package translate
 
 import (
+	"fmt"
 	"net"
 	"strings"
 	"time"
@@ -24,6 +25,13 @@ type Log struct {
 	Agent   string
 	Attack  threat.Attack
 	Bot     string
+}
+
+type request struct {
+	Method string
+	Path   string
+	Query  string
+	Proto  string
 }
 
 // Nginx translate an nxparse.Entry to the format `logslate` wants.
@@ -53,7 +61,14 @@ func Nginx(nx nginx.Entry) (Log, error) {
 	}
 
 	// Splint NGINX request into 4 different parts.
-	ls.Method, ls.Path, ls.Query, ls.Proto = splitNginxRequest(nx.Request)
+	rq, err := splitNginxRequest(nx.Request)
+	if err != nil {
+		return Log{}, err
+	}
+	ls.Method = rq.Method
+	ls.Path = rq.Path
+	ls.Query = rq.Query
+	ls.Proto = rq.Proto
 
 	// Get attack detection results.
 	thr, err := threat.Detect(ls.Path, ls.Query, ls.Agent)
@@ -74,8 +89,14 @@ func splitNginxPathQuery(pq string) (string, string) {
 	return s[0], s[1]
 }
 
-func splitNginxRequest(req string) (string, string, string, string) {
+// splitNginxRequest parse an NGINX log_format $request string.
+// The string is composed of for elements from the said request:
+// method, path, query, and protocol.
+func splitNginxRequest(req string) (request, error) {
 	s := strings.Split(req, " ")
-	p, q := splitNginxPathQuery(s[1])
-	return s[0], p, q, s[2]
+	if len(s) < 3 {
+		return request{}, fmt.Errorf("malformed NGINX request string: %s", req)
+	}
+	path, query := splitNginxPathQuery(s[1])
+	return request{s[0], path, query, s[2]}, nil
 }
