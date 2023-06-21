@@ -127,7 +127,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		if ls.Attack.Score != 0 {
+		if ls.Attack.Score > 0 {
 			debug.Log(debug.VVV, "flagged", ls.Attack.Name+" | "+ls.Path+ls.Query)
 
 			// Compile attack type data.

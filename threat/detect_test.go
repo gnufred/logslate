@@ -64,7 +64,7 @@ func TestAttacks(t *testing.T) {
 		Exp result
 	}{
 		{"hello(", result{0, 0}},
-		{"print(", result{5, 5}},
+		{"write(", result{5, 5}},
 		{"\x22id\x22:\x221\x22", result{12, 1}},
 		{"path/stuff../../etc/passwd", result{13, 4}},
 		{"hello'boba_sleep(", result{5, 2}},
@@ -79,9 +79,9 @@ func TestAttacks(t *testing.T) {
 
 func TestSearchAttackPts(t *testing.T) {
 	testMatch := func(t *testing.T, hay string, exp result) {
-		typ, tot := attackAhoSearch(testAC, testPatterns, hay)
-		if typ != exp.Ty {
-			t.Errorf("type doesn't match, got %d, exp %d", typ, exp.Ty)
+		attack, tot := attackAhoSearch(testAC, testPatterns, hay)
+		if attack.Type != exp.Ty {
+			t.Errorf("type doesn't match, got %d, exp %d", attack.Type, exp.Ty)
 		}
 		if tot != exp.To {
 			t.Errorf("total doesn't match, got %d, exp %d", tot, exp.To)
