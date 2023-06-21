@@ -41,16 +41,17 @@ func Detect(path, query, agent string) (Threat, error) {
 func attackScan(path, query string) (byte, uint32) {
 	// Important: It's faster to scan longer strings than searching twice.
 	// See https://gitlab.com/gnufred/logslate/-/issues/71 for details.
-	atype, total := attackAhoSearch(attackAC, attackPatterns, path+query)
+	attack, total := attackAhoSearch(attackAC, attackPatterns, path+query)
 	if total >= Threshold {
-		return atype, total
+		debug.Log(debug.VVV, "high_score", attack)
+		return attack.Type, total
 	}
 
 	return 0, 0
 }
 
 // attackAhoSearch searches for attack patterns.
-func attackAhoSearch(AC *ac.AhoCorasick, pts []ptrn, haystack string) (byte, uint32) {
+func attackAhoSearch(AC *ac.AhoCorasick, pts []ptrn, haystack string) (ptrn, uint32) {
 	var total uint32
 	highScore := ptrn{}
 
@@ -67,12 +68,7 @@ func attackAhoSearch(AC *ac.AhoCorasick, pts []ptrn, haystack string) (byte, uin
 		total += uint32(found.Score)
 	}
 
-	// Debug outpt
-	if total >= Threshold {
-		debug.Log(debug.VVV, "high_score", highScore)
-	}
-
-	return highScore.Type, total
+	return highScore, total
 }
 
 // botScan for bot patterns in the user agent string.
