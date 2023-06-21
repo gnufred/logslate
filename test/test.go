@@ -1,31 +1,42 @@
+// A test helper package.
+// All functions in this package sould only be used in _test.go files.
+// panic() is used to handle unexpected failure because it need to panic
+// the test run.
 package test
 
 import (
-	"log"
+	"fmt"
 	"os"
 )
 
-var stdout = os.Stdout
+var defaultStdout *os.File
+
+func init() {
+	defaultStdout = os.Stdout
+}
 
 func DisableOutput() {
-	stdout = os.Stdout
-	os.Stdout, _ = os.Open(os.DevNull)
+	devnull, err := os.Open(os.DevNull)
+	os.Stdout = devnull
+	if err != nil {
+		panic("cannot disable output")
+	}
 }
 
 func EnableOutput() {
-	os.Stdout = stdout
+	os.Stdout = defaultStdout
 }
 
 func MockStdin(input []byte) {
 	r, w, err := os.Pipe()
 	if err != nil {
-		log.Fatalf("Mocking Stdin failed: %s", err)
+		panic(fmt.Sprintf("mocking Stdin failed: %s", err))
 	}
 
 	_, err = w.Write(input)
 	defer w.Close()
 	if err != nil {
-		log.Fatalf("Error while mocking Stdin")
+		panic("Error while mocking Stdin")
 	}
 
 	// restore stdin

@@ -5,6 +5,16 @@ import (
 	"time"
 )
 
+func TestNew(t *testing.T) {
+	got := New()
+	if got == nil {
+		t.Error("returned nil")
+	}
+	if got.Path != "" || got.Frmt != "" {
+		t.Error("path and frmt should be empty")
+	}
+}
+
 func TestLinesTotal(t *testing.T) {
 	l := Lines{Ok: 1, Skip: 1, Error: 1}
 	got := l.Total()
@@ -54,5 +64,14 @@ func TestAllPerSecValid(t *testing.T) {
 	exp = uint(5)
 	if got := r.LinesPerSec(); got != exp {
 		t.Errorf("lines per sec doesn't match, exp %d, got %d", exp, got)
+	}
+}
+
+func TestAttackTotal(t *testing.T) {
+	at := AtkTypes{1, 1, 1, 1, 1}
+	got := at.Total()
+	exp := uint(5)
+	if got != exp {
+		t.Errorf("total doesn't match, got %d, exp %d", got, exp)
 	}
 }

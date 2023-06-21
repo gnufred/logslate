@@ -5,8 +5,15 @@ import (
 	"testing"
 )
 
+func TestInit(t *testing.T) {
+	Init()
+}
+
 // It's currently not possible to test that Log() output works as expected.
-// Everything else is fine.
+func TestLog(t *testing.T) {
+	setVerbosity(VVV)
+	Log(VVV, "testing", "test debug message")
+}
 
 func TestValidVerbosityLevels(t *testing.T) {
 	testValidVerbosity(t, OFF)

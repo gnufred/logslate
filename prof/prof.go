@@ -1,7 +1,6 @@
 package prof
 
 import (
-	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
@@ -9,20 +8,21 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 )
 
-func StartCpuProfile(a args.Args) *os.File {
+func StartCpuProfile(a args.Args) (*os.File, error) {
 	if a.CpuProf == "" {
-		return nil
+		return nil, nil
 	}
 
 	cpuf, err := os.Create(a.CpuProf)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	if err := pprof.StartCPUProfile(cpuf); err != nil {
-		log.Fatal(err)
+	err = pprof.StartCPUProfile(cpuf)
+	if err != nil {
+		return nil, err
 	}
 
-	return cpuf
+	return cpuf, nil
 }
 
 func StopCpuProfile(a args.Args, cpuf *os.File) {
@@ -33,18 +33,20 @@ func StopCpuProfile(a args.Args, cpuf *os.File) {
 	cpuf.Close()
 }
 
-func MemProfile(a args.Args) {
+func MemProfile(a args.Args) error {
 	if a.MemProf == "" {
-		return
+		return nil
 	}
 
 	memf, err := os.Create(a.MemProf)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer memf.Close()
 	runtime.GC()
-	if err := pprof.WriteHeapProfile(memf); err != nil {
-		log.Fatal(err)
+	err = pprof.WriteHeapProfile(memf)
+	if err != nil {
+		return err
 	}
+	return nil
 }

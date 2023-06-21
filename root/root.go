@@ -70,7 +70,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	runStartedAt := time.Now()
 
 	// Start CPU profiling if argument is set.
-	cpuf := prof.StartCpuProfile(a)
+	cpuf, err := prof.StartCpuProfile(a)
+	if err != nil {
+		return par, err
+	}
+	// The defer stop profiling in case the function exit before the profiling
+	// stops when specifically requested.
 	defer prof.StopCpuProfile(a, cpuf)
 
 	// Initialize parser loop variables.
@@ -164,7 +169,10 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	prof.StopCpuProfile(a, cpuf)
 
 	// Write memory heap if argument is set.
-	prof.MemProfile(a)
+	err = prof.MemProfile(a)
+	if err != nil {
+		return par, err
+	}
 
 	// Reporting data stops here.
 	runEndedAt := time.Now()

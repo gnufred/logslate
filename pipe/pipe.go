@@ -17,17 +17,6 @@ func New() *Piper {
 	}
 }
 
-func (p *Piper) BytesLen() (uint64, error) {
-	// This works, but os.Stdin file pointer moves forward
-	// and doesn't reset, so I can't read the content after.
-	var cnt uint64
-	p.scanner.Split(bufio.ScanRunes)
-	for p.scanner.Scan() {
-		cnt++
-	}
-	return cnt, nil
-}
-
 // Source: https://stackoverflow.com/a/26567513/6900541
 func (p *Piper) IsPiped() bool {
 	stat, _ := os.Stdin.Stat()
