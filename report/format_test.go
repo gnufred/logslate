@@ -7,8 +7,7 @@ import (
 
 func TestPrct(t *testing.T) {
 	test := func(t *testing.T, divident, divisor uint, exp float64) {
-		r := New()
-		got := r.Prct(divident, divisor)
+		got := Prct(divident, divisor)
 		if got != exp {
 			t.Errorf("percentage doesn't match, got %f, exp %f", got, exp)
 		}
@@ -35,8 +34,7 @@ func TestPrct(t *testing.T) {
 
 func TestHumanTime(t *testing.T) {
 	testTD := func(t *testing.T, tm time.Time, exp string) {
-		r := New()
-		if got := r.HumanTime(tm); got != exp {
+		if got := HumanTime(tm); got != exp {
 			t.Errorf("human time didn't match, got %s, exp %s", got, exp)
 		}
 	}
@@ -57,8 +55,7 @@ func TestHumanTime(t *testing.T) {
 
 func TestHumanDuration(t *testing.T) {
 	testHD := func(t *testing.T, d time.Duration, exp string) {
-		r := New()
-		if got := r.HumanDuration(d); got != exp {
+		if got := HumanDuration(d); got != exp {
 			t.Errorf("human duration didn't match, got %s, exp %s", got, exp)
 		}
 	}
@@ -82,8 +79,7 @@ func TestHumanDuration(t *testing.T) {
 
 func TestBytesToMB(t *testing.T) {
 	testBTM := func(t *testing.T, b uint, m float64) {
-		r := New()
-		if got := r.BytesToMB(b); got != m {
+		if got := BytesToMB(b); got != m {
 			t.Errorf("bytes to MB didn't match, got %f, exp %f", got, m)
 		}
 	}
@@ -104,8 +100,7 @@ func TestBytesToMB(t *testing.T) {
 
 func TestAddCommas(t *testing.T) {
 	testCommas := func(t *testing.T, n uint, exp string) {
-		r := New()
-		if got := r.AddCommas(n); got != exp {
+		if got := AddCommas(n); got != exp {
 			t.Errorf("add commas didn't match, got %s, exp %s", got, exp)
 		}
 	}

@@ -52,7 +52,14 @@ func printText(r *Report) {
 
 func createTextOutput(r *Report) (bytes.Buffer, error) {
 	var out bytes.Buffer
-	tmpl, err := template.New("report").Parse(mainTemplate)
+	tmpl := template.New("report")
+	tmpl.Funcs(template.FuncMap{
+		"HumanTime":     HumanTime,
+		"HumanDuration": HumanDuration,
+		"AddCommas":     AddCommas,
+		"BytesToMB":     BytesToMB,
+	})
+	_, err := tmpl.Parse(mainTemplate)
 	if err != nil {
 		return out, err
 	}

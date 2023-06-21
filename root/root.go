@@ -188,9 +188,9 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Db.Path = a.Db
 
 		rep.Thrt.Atks.Its = par.Atk
-		rep.Thrt.Atks.Prct = rep.Prct(par.Atk, par.Ok)
+		rep.Thrt.Atks.Prct = report.Prct(par.Atk, par.Ok)
 		rep.Thrt.Bots.Its = par.Bot
-		rep.Thrt.Bots.Prct = rep.Prct(par.Bot, par.Ok)
+		rep.Thrt.Bots.Prct = report.Prct(par.Bot, par.Ok)
 
 		rep.AtkTy = report.AtkTypes{
 			Unk: atkTypes[threat.Unk],
