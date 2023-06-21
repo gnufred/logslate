@@ -23,8 +23,8 @@ type ptrn struct {
 }
 
 // Attack patterns.
-// TODO: In theory, it will be more performant to use a slice over a map, but
-// that remains to be benchmarked properly.
+// Patterns that are commented with Score: 0, have to many false positive to be
+// useful. I'm keeping them commented to avoid putting them back in the future.
 var attackPatterns = []ptrn{
 
 	// !!! Unknown attacks patterns !!! //
@@ -36,10 +36,8 @@ var attackPatterns = []ptrn{
 	{Name: ")))", Type: Unk, Score: 5},
 	{Name: "}}", Type: Unk, Score: 4},
 	{Name: "{{", Type: Unk, Score: 4},
-	// "'+" found in XSS, SQL, legit URLs.
-	{Name: "'+", Type: SQL, Score: 2},
-	// "\x22" is all over the place but it's never alone.
-	{Name: "\x22", Type: Unk, Score: 3},
+	{Name: "'+", Type: SQL, Score: 2},   // In XSS, SQL, and legit URLs.
+	{Name: "\x22", Type: Unk, Score: 3}, // All over the place and never alone.
 
 	// !!! SQL injection attacks !!! //
 	// https://portswigger.net/web-security/sql-injection/cheat-sheet
@@ -47,41 +45,41 @@ var attackPatterns = []ptrn{
 	// Generic select.
 	// "select%" is all over the place in GraphQL queries.
 	// {Name: "select%", Type: SQL, Score: 0},
-	// "select+" can be in legit URLs.
-	{Name: "select+", Type: SQL, Score: 2},
+	{Name: "select+", Type: SQL, Score: 2}, // Some legit hits.
 	{Name: "select ", Type: SQL, Score: 5},
 	{Name: "select(", Type: SQL, Score: 5},
 
 	// Substring.
-	{Name: "substr(", Type: SQL, Score: 5},    // Oracle
-	{Name: "substr%", Type: SQL, Score: 5},    // Oracle
-	{Name: "substring(", Type: SQL, Score: 5}, // Microsoft, PSQL, MySQL
-	{Name: "substring%", Type: SQL, Score: 5}, // Microsoft, PSQL, MySQL
+	{Name: "substr(", Type: SQL, Score: 5},
+	{Name: "substr%", Type: SQL, Score: 5},
+	{Name: "substring(", Type: SQL, Score: 5},
+	{Name: "substring%", Type: SQL, Score: 5},
 
 	// Time delays.
-	{Name: "receive_message", Type: CMD, Score: 5}, // Oracle
-	{Name: "waitfor%", Type: SQL, Score: 5},        // Microsoft
-	{Name: "waitfor(", Type: SQL, Score: 5},        // Microsoft
-	{Name: "waitfor+", Type: SQL, Score: 5},        // Microsoft
-	// "delay" hits to many false positives, some variant as well.
-	{Name: "delay+", Type: SQL, Score: 2},   // Microsoft
-	{Name: "delay%", Type: SQL, Score: 4},   // Microsoft
-	{Name: "delay(", Type: SQL, Score: 5},   // Microsoft
-	{Name: "pg_sleep", Type: SQL, Score: 5}, // PSQL
-	// Can't use "sleep|benchmark" alone. In many legit URLs.
-	{Name: "sleep%", Type: SQL, Score: 2},     // PSQL, MySQL
-	{Name: "sleep+", Type: SQL, Score: 2},     // PSQL, MySQL
-	{Name: "sleep(", Type: SQL, Score: 5},     // PSQL, MySQL
-	{Name: "benchmark(", Type: SQL, Score: 5}, // MySQL
-	{Name: "benchmark%", Type: SQL, Score: 5}, // MySQL
-	{Name: "benchmark+", Type: SQL, Score: 5}, // MySQL
+	{Name: "receive_message", Type: CMD, Score: 5},
+	{Name: "waitfor%", Type: SQL, Score: 5},
+	{Name: "waitfor(", Type: SQL, Score: 5},
+	{Name: "waitfor+", Type: SQL, Score: 5},
+	// {Name: "delay", Type: SQL, Score: 0},
+	{Name: "delay+", Type: SQL, Score: 2},
+	{Name: "delay%", Type: SQL, Score: 4},
+	{Name: "delay(", Type: SQL, Score: 5},
+	{Name: "pg_sleep", Type: SQL, Score: 5},
+	// {Name: "sleep", Type: SQL, Score: 0},
+	{Name: "sleep%", Type: SQL, Score: 2},
+	{Name: "sleep+", Type: SQL, Score: 2},
+	{Name: "sleep(", Type: SQL, Score: 5},
+	// {Name: "benchmark", Type: SQL, Score: 0},
+	{Name: "benchmark(", Type: SQL, Score: 5},
+	{Name: "benchmark%", Type: SQL, Score: 5},
+	{Name: "benchmark+", Type: SQL, Score: 5},
 
 	// DNS lookup.
-	{Name: "extractvalue", Type: SQL, Score: 5},     // Oracle
-	{Name: "get_host_address", Type: SQL, Score: 5}, // Oracle
-	{Name: "exec master", Type: SQL, Score: 5},      // Microsoft
-	{Name: "load_file(", Type: SQL, Score: 5},       // PSQL
-	{Name: "load_file%28", Type: SQL, Score: 5},     // PSQL
+	{Name: "extractvalue", Type: SQL, Score: 5},
+	{Name: "get_host_address", Type: SQL, Score: 5},
+	{Name: "exec master", Type: SQL, Score: 5},
+	{Name: "load_file(", Type: SQL, Score: 5},
+	{Name: "load_file%28", Type: SQL, Score: 5},
 
 	// Uncategorized.
 	{Name: "--+", Type: SQL, Score: 5},
@@ -116,10 +114,8 @@ var attackPatterns = []ptrn{
 
 	// !!! Directory traversal attacks !!! //
 	// https://portswigger.net/web-security/file-path-traversal
-	// Sometime used legitimatly.
-	{Name: "%252e", Type: Dir, Score: 2},
-	// Too many legit uses.
-	// {Name: "%252f", Type: Dir, Score: 1},
+	{Name: "%252e", Type: Dir, Score: 2}, // Some legit hits.
+	// {Name: "%252f", Type: Dir, Score: 0},
 	{Name: "%2e%2f", Type: Dir, Score: 4},
 	{Name: "%2e%5c", Type: Dir, Score: 4},
 	{Name: ".%10c", Type: Dir, Score: 4},
@@ -130,10 +126,9 @@ var attackPatterns = []ptrn{
 	{Name: ".%c0%af", Type: Dir, Score: 4},
 	{Name: ".%c1%9c", Type: Dir, Score: 4},
 	{Name: ".%ef%bc%8f", Type: Dir, Score: 4},
-	{Name: "./", Type: Dir, Score: 4},
+	{Name: "./", Type: Dir, Score: 2},
 	{Name: ".0x5c", Type: Dir, Score: 4},
-	{Name: ".0x5c", Type: Dir, Score: 4},
-	{Name: "\x5c", Type: Dir, Score: 4},
+	// {Name: "\x5c", Type: Dir, Score: 0},
 	{Name: ".ini", Type: Dir, Score: 2},
 	{Name: "win.ini", Type: Dir, Score: 5},
 	{Name: "webadmin.ini", Type: Dir, Score: 5},
@@ -149,15 +144,12 @@ var attackPatterns = []ptrn{
 
 	// !!! OS command injection attacks !!! //
 	// https://portswigger.net/web-security/os-command-injection
-	// "contact" can also be SQL injection but I've seen it mostly
-	// with other OS command injection attack.
-	{Name: "concat(", Type: CMD, Score: 5},
+	{Name: "concat(", Type: CMD, Score: 5}, // In SQL injec but mostly in OS inject.
 	{Name: "concat%", Type: CMD, Score: 5},
 	{Name: "chr(", Type: CMD, Score: 5},
-	{Name: "chr%", Type: CMD, Score: 5},
+	{Name: "chr%", Type: CMD, Score: 2}, // Can match German "spiegelschr".
 	{Name: "hex(", Type: CMD, Score: 5},
-	// "echo" in legit URLs, but most often in injection attacks.
-	{Name: "echo", Type: CMD, Score: 1},
+	{Name: "echo", Type: CMD, Score: 1}, // In legit URLs and attacks.
 	{Name: "gethostbyname", Type: CMD, Score: 5},
 	{Name: "ipconfig", Type: CMD, Score: 5},
 	{Name: "netstat", Type: CMD, Score: 5},
@@ -168,36 +160,31 @@ var attackPatterns = []ptrn{
 	// "uname" matches lots of words.
 	{Name: "uname", Type: CMD, Score: 1},
 	{Name: "whoami", Type: CMD, Score: 5},
-	// "socket" is a legit word but it's never alone.
-	{Name: "socket", Type: CMD, Score: 1},
+	{Name: "socket", Type: CMD, Score: 1}, // Legit word. In attacks, with other triggers.
 
 	// !!! Cross site scripting attacks !!! //
 	// https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
 	// Wasn't nearly as complete as what I've seen. Added my observations.
 
 	// JS and browser function injections.
-	// "alert%" can be in legit URLs.
-	{Name: "alert%", Type: XSS, Score: 2},
+	{Name: "alert%", Type: XSS, Score: 2}, // In legit URLs.
 	{Name: "alert(", Type: XSS, Score: 5},
 	{Name: "assert%", Type: XSS, Score: 5},
 	{Name: "assert(", Type: XSS, Score: 5},
-	// "log" hits "blog", "catalog" and such other words.
+	// {Name: "log", Type: XSS, Score: 0}, // Hits "blog", "catalog", and such.
 	{Name: "log%28", Type: XSS, Score: 1},
 	{Name: "log(", Type: XSS, Score: 5},
 	{Name: "md5%", Type: XSS, Score: 2},
 	{Name: "md5(", Type: XSS, Score: 5},
 	{Name: "print%", Type: XSS, Score: 2},
 	{Name: "print'", Type: XSS, Score: 5},
-	// "print(" can sometime be legit.
-	{Name: "print(", Type: XSS, Score: 4},
+	{Name: "print(", Type: XSS, Score: 4}, // Has some legit uses.
 	{Name: "replace(", Type: XSS, Score: 5},
 	{Name: "replace;", Type: XSS, Score: 5},
 	{Name: "replace\\", Type: XSS, Score: 5},
 	{Name: "sendBeacon%", Type: XSS, Score: 5},
 	{Name: "sendBeacon(", Type: XSS, Score: 5},
-	// All the following are less certains hits but can be
-	// in such attacks.
-	{Name: "write%", Type: XSS, Score: 2},
+	{Name: "write%", Type: XSS, Score: 2}, // Has legit uses.
 	{Name: "write(", Type: XSS, Score: 4},
 	{Name: "random(", Type: XSS, Score: 4},
 	{Name: "function(", Type: XSS, Score: 4},
@@ -216,11 +203,9 @@ var attackPatterns = []ptrn{
 	{Name: "script&gt", Type: XSS, Score: 5},
 	{Name: "script%3e", Type: XSS, Score: 5},
 	{Name: "script%2f%26", Type: XSS, Score: 5},
+	{Name: "%253a%252f%252flocalhost%252f", Type: XSS, Score: 5}, // Double URL encoded "://localhost/".
 	{Name: "document.domain", Type: XSS, Score: 5},
-	// From URL encoded "javascript:void(0)".
-	{Name: "void%280%29", Type: XSS, Score: 5},
-	// That's double URL encoded "://localhost/".
-	{Name: "%253a%252f%252flocalhost%252f", Type: XSS, Score: 5},
+	{Name: "void%280%29", Type: XSS, Score: 5}, // From URL encoded "javascript:void(0)".
 }
 
 // String translate an attack type byte to a human readable string
