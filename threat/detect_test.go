@@ -64,7 +64,7 @@ func TestAttacks(t *testing.T) {
 		Exp result
 	}{
 		{"hello(", result{0, 0}},
-		{"write(", result{5, 5}},
+		{"replace(", result{5, 5}},
 		{"\x22id\x22:\x221\x22", result{12, 1}},
 		{"path/stuff../../etc/passwd", result{13, 4}},
 		{"hello'boba_sleep(", result{5, 2}},
