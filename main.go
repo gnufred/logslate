@@ -37,11 +37,15 @@ func Run() {
 	debug.Log(debug.VV, "end time", a.EndTime())
 
 	_, err := root.ParseStdin(a)
-	if errors.Is(err, bufio.ErrTooLong) {
-		print("\n")
-		panic("input data might be corrupted or invalid")
-	}
 	if err != nil {
-		log.Fatal(err)
+		stderr := log.New(os.Stderr, "", 0)
+		if errors.Is(err, bufio.ErrTooLong) {
+			err = errors.New("input data might be corrupted or invalid")
+		}
+		stderr.Printf("\nfatal: %s.", err)
+		if errors.Is(err, root.ErrLimitReach) {
+			fmt.Println("--log_format is probably incorrect.")
+		}
+		os.Exit(1)
 	}
 }

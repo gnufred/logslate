@@ -41,10 +41,26 @@ func TestDbExists(t *testing.T) {
 	}
 }
 
+// Must fail given no --log_format is specified.
 func TestNoFormat(t *testing.T) {
 	a := args.Get()
 	_, err := ParseStdin(a)
 	if !errors.Is(err, ErrNoFormat) {
+		t.Errorf("Did not get the expected error")
+	}
+}
+
+// Must fail given it can't parse the input.
+func TestParseErrorLimit(t *testing.T) {
+	a := args.Get()
+	a.LogFrmt = nginx.Combined
+
+	file := "testdata/limitreach.log"
+	input, _ := os.ReadFile(file)
+	mock.Stdin(input)
+
+	_, err := ParseStdin(a)
+	if !errors.Is(err, ErrLimitReach) {
 		t.Errorf("Did not get the expected error")
 	}
 }

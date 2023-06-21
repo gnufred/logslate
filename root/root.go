@@ -33,6 +33,7 @@ var (
 	ErrNoInputData  = errors.New("no input data")
 	ErrDbCreateFail = errors.New("database creation error")
 	ErrReadPipe     = errors.New("error while reading piped io.Stdin")
+	ErrLimitReach   = errors.New("parsing error limit reached")
 )
 
 func ParseStdin(a args.Args) (Parsed, error) {
@@ -80,6 +81,10 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Parser loop.
 	for {
+		if par.Err > 100 && par.Ok < 1 {
+			return par, ErrLimitReach
+		}
+
 		line, byteCnt, err := pi.ReadLine()
 		bytesTotal = bytesTotal + uint(byteCnt)
 		bar.Add(byteCnt)
