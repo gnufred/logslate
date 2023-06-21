@@ -11,8 +11,8 @@ import (
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
 	"gitlab.com/gnufred/logslate/pipe"
+	"gitlab.com/gnufred/logslate/prof"
 	"gitlab.com/gnufred/logslate/report"
-	"gitlab.com/gnufred/logslate/testing/prof"
 	"gitlab.com/gnufred/logslate/threat"
 	"gitlab.com/gnufred/logslate/translate"
 
@@ -81,7 +81,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Parser loop.
 	for {
-		if par.Err > 100 && par.Ok < 1 {
+		if par.Ok < 1 && par.Err > 100 {
 			return par, ErrLimitReach
 		}
 

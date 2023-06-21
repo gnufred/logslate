@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"gitlab.com/gnufred/logslate/args"
-	"gitlab.com/gnufred/logslate/testing/mock"
+	"gitlab.com/gnufred/logslate/test"
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
@@ -18,7 +18,9 @@ type testData struct {
 // Must fail given there's no data in os.Stdin.
 func TestNoData(t *testing.T) {
 	a := args.Get()
+	test.DisableOutput()
 	_, err := ParseStdin(a)
+	test.EnableOutput()
 	if !errors.Is(err, ErrNoInputData) {
 		t.Errorf("Did not get the expected error")
 	}
@@ -27,7 +29,7 @@ func TestNoData(t *testing.T) {
 // Must fail given the database file already exists.
 func TestDbExists(t *testing.T) {
 	input, _ := os.ReadFile("testdata/3ok3broken.log")
-	mock.Stdin(input)
+	test.MockStdin(input)
 
 	dbPath := "testdata/exist.db"
 	os.Create(dbPath)
@@ -35,7 +37,9 @@ func TestDbExists(t *testing.T) {
 
 	a := args.Get()
 	a.Db = dbPath
+	test.DisableOutput()
 	_, err := ParseStdin(a)
+	test.EnableOutput()
 	if errors.Is(err, ErrDbCreateFail) {
 		t.Errorf("Did not get the expected error")
 	}
@@ -44,7 +48,9 @@ func TestDbExists(t *testing.T) {
 // Must fail given no --log_format is specified.
 func TestNoFormat(t *testing.T) {
 	a := args.Get()
+	test.DisableOutput()
 	_, err := ParseStdin(a)
+	test.EnableOutput()
 	if !errors.Is(err, ErrNoFormat) {
 		t.Errorf("Did not get the expected error")
 	}
@@ -59,9 +65,11 @@ func TestParseTokenTooLong(t *testing.T) {
 
 	file := "testdata/toolong.log"
 	input, _ := os.ReadFile(file)
-	mock.Stdin(input)
+	test.MockStdin(input)
 
+	test.DisableOutput()
 	_, err := ParseStdin(a)
+	test.EnableOutput()
 	if !errors.Is(err, bufio.ErrTooLong) {
 		t.Errorf("Did not get the expected error")
 	}
@@ -75,9 +83,11 @@ func TestParseErrorLimit(t *testing.T) {
 
 	file := "testdata/limitreach.log"
 	input, _ := os.ReadFile(file)
-	mock.Stdin(input)
+	test.MockStdin(input)
 
+	test.DisableOutput()
 	_, err := ParseStdin(a)
+	test.EnableOutput()
 	if !errors.Is(err, ErrLimitReach) {
 		t.Errorf("Did not get the expected error")
 	}
@@ -180,9 +190,11 @@ func testInputDataLoop(t *testing.T, a args.Args, d []testData) {
 
 func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 	input, _ := os.ReadFile(file)
-	mock.Stdin(input)
+	test.MockStdin(input)
 
+	test.DisableOutput()
 	got, err := ParseStdin(a)
+	test.EnableOutput()
 	if err != nil {
 		t.Error(err)
 	}
@@ -208,17 +220,50 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 	}
 }
 
+// === benchmarks === //
+
+// In this scenario I want to test which is faster between:
+// if par.Ok == 0
+// if par.Ok < 1
+//
+// Results varies, but usually using == is just a tiny bit slower
+func BenchmarkOkEqZero(b *testing.B) {
+	ok := 0
+	for i := 0; i < b.N; i++ {
+		if ok == 0 {
+		}
+	}
+}
+
+func BenchmarkOkSmallOne(b *testing.B) {
+	ok := 0
+	for i := 0; i < b.N; i++ {
+		if ok < 1 {
+		}
+	}
+}
+
+func BenchmarkOkGreatOne(b *testing.B) {
+	ok := 100
+	for i := 0; i < b.N; i++ {
+		if ok < 1 {
+		}
+	}
+}
+
 func BenchmarkAttackDetections(b *testing.B) {
 	a := args.Get()
 	a.LogFrmt = nginx.Combined
+	test.DisableOutput()
 	for i := 0; i < b.N; i++ {
 		benchInputData(b, a, "testdata/attacks10.log")
 	}
+	test.EnableOutput()
 }
 
 func benchInputData(b *testing.B, a args.Args, file string) {
 	input, _ := os.ReadFile(file)
-	mock.Stdin(input)
+	test.MockStdin(input)
 
 	_, err := ParseStdin(a)
 	if err != nil {

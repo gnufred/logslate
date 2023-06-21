@@ -1,11 +1,22 @@
-package mock
+package test
 
 import (
 	"log"
 	"os"
 )
 
-func Stdin(input []byte) {
+var stdout = os.Stdout
+
+func DisableOutput() {
+	stdout = os.Stdout
+	os.Stdout, _ = os.Open(os.DevNull)
+}
+
+func EnableOutput() {
+	os.Stdout = stdout
+}
+
+func MockStdin(input []byte) {
 	r, w, err := os.Pipe()
 	if err != nil {
 		log.Fatalf("Mocking Stdin failed: %s", err)

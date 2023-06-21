@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/gnufred/logslate/testing/mock"
+	"gitlab.com/gnufred/logslate/test"
 )
 
 // Tests are based on the 2nd answer from this guide:
@@ -20,7 +20,7 @@ type mockedStdinExpect struct {
 func TestReadLine_OneLineBasic(t *testing.T) {
 	// Mock Stdin.
 	input, _ := os.ReadFile("testdata/oneline.log")
-	mock.Stdin(input)
+	test.MockStdin(input)
 	defer func(v *os.File) { os.Stdin = v }(os.Stdin)
 
 	// Prepare data.
@@ -40,7 +40,7 @@ func TestReadLine_OneLineBasic(t *testing.T) {
 func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 	// Mock stdin.
 	input, _ := os.ReadFile("testdata/twolinespluseof.log")
-	mock.Stdin(input)
+	test.MockStdin(input)
 	defer func(v *os.File) { os.Stdin = v }(os.Stdin)
 
 	// Prepare data.
