@@ -152,7 +152,13 @@ func TestBotAhoSearch(t *testing.T) {
 
 // === benchmarks ===
 
+// In this scenario, I wanted to check if it was faster to use get matches by
+// slicing NGINX log line based on AhoCorasick match position or by getting the
+// information from the pattern slice variable.
+// It's faster to cut the NGINX log, but I ended up not doing that anyway.
+//
 // BenchmarkGetStringFromSublice-8   	1000000000	         0.3137 ns/op
+// BenchmarkGetStringFromSlice-8     	1000000000	         0.6072 ns/op
 func BenchmarkGetStringFromSublice(b *testing.B) {
 	got := "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
 	nul := func(s string) {}
@@ -163,7 +169,6 @@ func BenchmarkGetStringFromSublice(b *testing.B) {
 	}
 }
 
-// BenchmarkGetStringFromSlice-8     	1000000000	         0.6072 ns/op
 func BenchmarkGetStringFromSlice(b *testing.B) {
 	nul := func(s string) {}
 
