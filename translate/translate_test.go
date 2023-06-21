@@ -71,8 +71,6 @@ func TestNginxIso8601(t *testing.T) {
 
 // https://gitlab.com/gnufred/logslate/-/issues/92
 func TestIssue92Fix(t *testing.T) {
-	type request struct{ Method, Path, Query, Proto string }
-
 	crashString := "GET /rest/V1/directory/countries?_=16869P/1.1"
 	_, err := splitNginxRequest(crashString)
 	if !strings.Contains(err.Error(), "malformed NGINX request") {
