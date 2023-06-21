@@ -12,10 +12,10 @@ func Stdin(input []byte) {
 	}
 
 	_, err = w.Write(input)
+	defer w.Close()
 	if err != nil {
 		log.Fatalf("Error while mocking Stdin")
 	}
-	w.Close()
 
 	// restore stdin
 	os.Stdin = r

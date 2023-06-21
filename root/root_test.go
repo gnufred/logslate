@@ -50,6 +50,24 @@ func TestNoFormat(t *testing.T) {
 	}
 }
 
+// Must handle buffio.Scan() ErrTooLong properly.
+// TODO: https://gitlab.com/gnufred/logslate/-/issues/99
+/*
+func TestParseTokenTooLong(t *testing.T) {
+	a := args.Get()
+	a.LogFrmt = nginx.Combined
+
+	file := "testdata/toolong.log"
+	input, _ := os.ReadFile(file)
+	mock.Stdin(input)
+
+	_, err := ParseStdin(a)
+	if !errors.Is(err, bufio.ErrTooLong) {
+		t.Errorf("Did not get the expected error")
+	}
+}
+*/
+
 // Must fail given it can't parse the input.
 func TestParseErrorLimit(t *testing.T) {
 	a := args.Get()
