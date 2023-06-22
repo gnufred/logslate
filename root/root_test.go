@@ -222,35 +222,6 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 
 // === benchmarks === //
 
-// In this scenario I want to test which is faster between:
-// if par.Ok == 0
-// if par.Ok < 1
-//
-// Results varies, but usually using == is just a tiny bit slower
-func BenchmarkOkEqZero(b *testing.B) {
-	ok := 0
-	for i := 0; i < b.N; i++ {
-		if ok == 0 {
-		}
-	}
-}
-
-func BenchmarkOkSmallOne(b *testing.B) {
-	ok := 0
-	for i := 0; i < b.N; i++ {
-		if ok < 1 {
-		}
-	}
-}
-
-func BenchmarkOkGreatOne(b *testing.B) {
-	ok := 100
-	for i := 0; i < b.N; i++ {
-		if ok < 1 {
-		}
-	}
-}
-
 func BenchmarkAttackDetections(b *testing.B) {
 	a := args.Get()
 	a.LogFrmt = nginx.Combined
