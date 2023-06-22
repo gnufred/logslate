@@ -39,7 +39,6 @@ func TestNginxCombined(t *testing.T) {
 }
 
 func TestNginxIso8601(t *testing.T) {
-
 	frmtCombIso8601 := "$remote_addr - $remote_user [$time_iso8601] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\""
 	lineCombIso8601 := "82.100.10.100 - - [2023-05-15T09:25:22+00:00] \"POST /locator/index/ HTTP/1.1\" 302 31 \"https://www.example.com/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\""
 
@@ -69,14 +68,60 @@ func TestNginxIso8601(t *testing.T) {
 	compareStruct(t, got, exp)
 }
 
-// https://gitlab.com/gnufred/logslate/-/issues/92
-func TestIssue92Fix(t *testing.T) {
-	crashString := "GET /rest/V1/directory/countries?_=16869P/1.1"
-	_, err := splitNginxRequest(crashString)
-	if !strings.Contains(err.Error(), "malformed NGINX request") {
-		t.Errorf("did not get expected error, got %s", err)
+func TestBytesSent(t *testing.T) {
+	frmtBytesSent := "$remote_addr - $remote_user [$time_local] \"$request\" $status $bytes_sent \"$http_referer\" \"$http_user_agent\""
+	lineBytesSent := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 40 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
+
+	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "05/Jan/2023:07:07:54 +0000")
+	exp := Log{
+		Ip:      net.ParseIP("208.115.199.20"),
+		User:    "-",
+		Time:    timeEct,
+		Method:  "HEAD",
+		Path:    "/",
+		Query:   "monitoring=uptimerobot",
+		Proto:   "HTTP/1.1",
+		Status:  200,
+		Sent:    40,
+		Referer: "https://moovadapt.fr/?monitoring=uptimerobot",
+		Agent:   "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)",
 	}
 
+	ngxLog, err := nginx.Parse(frmtBytesSent, lineBytesSent)
+	if err != nil {
+		t.Errorf("Parse() error %s", err)
+	}
+	got, err := Nginx(ngxLog)
+	if err != nil {
+		t.Error(err)
+	}
+	compareStruct(t, got, exp)
+}
+
+func TestNginxTranslateError(t *testing.T) {
+	lineCombined := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobotTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
+	exp := Log{}
+
+	ngxLog, err := nginx.Parse(nginx.Combined, lineCombined)
+	if err != nil {
+		t.Errorf("Parse() error %s", err)
+	}
+	got, err := Nginx(ngxLog)
+	expErr := "malformed NGINX request"
+	if !strings.Contains(err.Error(), expErr) {
+		t.Errorf("did not get expected error, got %s", err)
+	}
+	compareStruct(t, got, exp)
+}
+
+// https://gitlab.com/gnufred/logslate/-/issues/92
+func TestIssue92Fix(t *testing.T) {
+	expErr := "malformed NGINX request"
+	crashString := "GET /rest/V1/directory/countries?_=16869P/1.1"
+	_, err := splitNginxRequest(crashString)
+	if !strings.Contains(err.Error(), expErr) {
+		t.Errorf("did not get expected error, got %s", err)
+	}
 }
 
 func compareStruct(t *testing.T, got, exp Log) {

@@ -1,6 +1,7 @@
 package sysdt
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -23,6 +24,14 @@ func TestWorded(t *testing.T) {
 	testWord(t, "today", time.Now().Truncate(time.Hour*24))
 	testWord(t, "yesterday", time.Now().Add(time.Hour*-24).Truncate(time.Hour*24))
 	testWord(t, "tomorrow", time.Now().Add(time.Hour*24).Truncate(time.Hour*24))
+	testInvalidWord(t, "invalid_word")
+}
+
+func testInvalidWord(t *testing.T, raw string) {
+	_, err := Worded(raw)
+	if !strings.Contains(err.Error(), "no match") {
+		t.Errorf("did not get expected error: %s", err)
+	}
 }
 
 func TestAdjust(t *testing.T) {
@@ -40,6 +49,19 @@ func TestAdjust(t *testing.T) {
 		time.Date(2023, 5, 12, 5, 0, 0, 0, time.UTC),
 		time.Date(2023, 5, 16, 7, 0, 0, 0, time.UTC),
 	)
+
+	testInvalidAdjust(t)
+}
+
+func testInvalidAdjust(t *testing.T) {
+	nilTime := time.Time{}
+	tm, err := Adjust("invalid_duration", nilTime)
+	if !strings.Contains(err.Error(), "incorrect format") {
+		t.Errorf("did not get expected error: %s", err)
+	}
+	if tm != nilTime {
+		t.Errorf("time not nil")
+	}
 }
 
 func TestUnitParsingValue(t *testing.T) {

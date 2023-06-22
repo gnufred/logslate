@@ -57,19 +57,15 @@ var BytesToMB = func(bytes uint) float64 {
 
 // AddCommas add commas to number. See this post where I took the source code:
 // https://stackoverflow.com/questions/13020308/how-to-fmt-printf-an-integer-with-thousands-comma
+// I changed it to only support uint, meaning the code handling negative numbers
+// was removed.
 var AddCommas = func(num uint) string {
 	n := int64(num)
 	in := strconv.FormatInt(n, 10)
 	numOfDigits := len(in)
-	if n < 0 {
-		numOfDigits-- // First character is the - sign (not a digit)
-	}
 	numOfCommas := (numOfDigits - 1) / 3
 
 	out := make([]byte, len(in)+numOfCommas)
-	if n < 0 {
-		in, out[0] = in[1:], '-'
-	}
 
 	for i, j, k := len(in)-1, len(out)-1, 0; ; i, j = i-1, j-1 {
 		out[j] = in[i]

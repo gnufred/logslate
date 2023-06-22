@@ -1,8 +1,8 @@
 package args
 
 import (
+	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -30,51 +30,62 @@ type Args struct {
 
 var args = Args{}
 
-func Init() {
+var ErrShowHelp = errors.New("help shown")
+
+func Init() error {
 	if !pflag.Parsed() {
-		parse()
-		validate()
+		err := parse()
+		if err != nil {
+			return err
+		}
+		err = validate()
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func Get() Args {
 	return args
 }
 
-func validate() {
-	showHelpAndExit := func() {
+func validate() error {
+	showHelp := func() error {
 		fmt.Printf("Usage:\n")
 		pflag.PrintDefaults()
-		os.Exit(2)
+		return ErrShowHelp
 	}
 
 	// User asked for help.
 	if args.Help {
-		showHelpAndExit()
+		return showHelp()
 	}
 
 	// --debug argument is invalid.
 	if args.Debug < 0 || args.Debug > 3 {
 		fmt.Printf("Error: debug args must be -v or --debug=[1,3]\n\n")
-		showHelpAndExit()
+		return showHelp()
 	}
 
 	// There are extra unknown arguments or params.
 	if narg := pflag.NArg(); narg != 0 {
 		fmt.Printf("Error: unknown argument(s) found\n\n")
-		showHelpAndExit()
+		return showHelp()
 	}
 
 	// Report format is invalid.
 	if args.ReportPath != "" {
 		if f := args.ReportFrmt; f != "json" && f != "text" {
 			fmt.Printf("Error: --format value must end with .json or .txt\n\n")
-			showHelpAndExit()
+			return showHelp()
 		}
 	}
+
+	return nil
 }
 
-func parse() {
+func parse() error {
 	// Get the current pflag SetFlag
 	flags := pflag.CommandLine
 	flags.SortFlags = false
@@ -130,7 +141,10 @@ func parse() {
 
 	args.MemProf = string(*memprofFlag)
 
-	args.SetSinceUntil(string(*sinceFlag), string(*untilFlag))
+	err := args.SetSinceUntil(string(*sinceFlag), string(*untilFlag))
+	if err != nil {
+		return err
+	}
 
 	args.Db = string(*dbFlag)
 
@@ -139,6 +153,8 @@ func parse() {
 	args.ReportPath = string(*reportFlag)
 
 	args.ReportFrmt = parseReportPath(string(*reportFlag))
+
+	return nil
 }
 
 // parseReportPath check the path file extension to determine if it's

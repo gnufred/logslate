@@ -22,21 +22,21 @@ var verbosity = OFF
 var stderr = log.New(os.Stderr, "", 0)
 
 func Init() {
-	// Set verbosity from the environment variable.
-	env, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
-	if env == OFF || env == V || env == VV || env == VVV {
-		setVerbosity(env)
+	verb := 0
+	a := args.Get()
+
+	argDebug := a.Debug
+	if argDebug > 0 {
+		verb = argDebug
 	}
 
-	// Override value from command line flag if set.
-	arg := args.Get()
-	switch arg.Debug {
-	case 1:
-		setVerbosity(V)
-	case 2:
-		setVerbosity(VV)
-	case 3:
-		setVerbosity(VVV)
+	envDebug, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
+	if envDebug > 0 {
+		verb = envDebug
+	}
+
+	if verb == V || verb == VV || verb == VVV {
+		setVerbosity(verb)
 	}
 }
 

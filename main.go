@@ -15,37 +15,64 @@ import (
 var Version = "dev"
 
 func main() {
-	Init()
 	Banner()
-	Run()
+	err := Init()
+	if err != nil {
+		status := Exit(err)
+		os.Exit(status)
+	}
+
+	err = Run()
+	status := Exit(err)
+	if status > 0 {
+		os.Exit(status)
+	}
 }
 
-func Init() {
-	args.Init()
+func Init() error {
 	debug.Init()
+
+	err := args.Init()
 	debug.Log(debug.VVV, "os.Args", os.Args)
 	debug.Log(debug.VVV, "args.Get", args.Get())
+
+	return err
 }
 
 func Banner() {
 	fmt.Printf("Logslate %s @ https://gitlab.com/gnufred/logslate\n", Version)
 }
 
-func Run() {
+func Run() error {
 	a := args.Get()
 	debug.Log(debug.VV, "start time", a.StartTime())
 	debug.Log(debug.VV, "end time", a.EndTime())
 
 	_, err := root.ParseStdin(a)
-	if err != nil {
-		stderr := log.New(os.Stderr, "", 0)
-		if errors.Is(err, bufio.ErrTooLong) {
-			err = errors.New("input data might be corrupted or invalid")
-		}
-		stderr.Printf("\nfatal: %s.", err)
-		if errors.Is(err, root.ErrLimitReach) {
-			fmt.Println("--log_format is probably incorrect.")
-		}
-		os.Exit(1)
+	return err
+}
+
+func Exit(err error) int {
+	if err == nil {
+		return 0
 	}
+
+	stderr := log.New(os.Stderr, "", 0)
+	fmtErr := "\nfatal: %s."
+
+	if errors.Is(err, bufio.ErrTooLong) {
+		err = errors.New("input data might be corrupted or invalid")
+		stderr.Printf(fmtErr, err)
+		return 2
+	}
+
+	if errors.Is(err, root.ErrLimitReach) {
+		stderr.Printf(fmtErr, err)
+		fmt.Println("--log_format is probably incorrect.")
+		return 3
+	}
+
+	stderr.Printf(fmtErr, err)
+
+	return 1
 }

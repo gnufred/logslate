@@ -1,32 +1,112 @@
 package args
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
+
+func TestSetSinceUntil(t *testing.T) {
+	validSinceUntil(t)
+	invalidSince(t)
+	invalidUntil(t)
+}
+
+func validSinceUntil(t *testing.T) {
+	sinceArg := "-24 hours ago"
+	untilArg := "now"
+
+	a := Get()
+	err := a.SetSinceUntil(sinceArg, untilArg)
+	if err != nil {
+		t.Error(err)
+	}
+
+	since := a.Since()
+	if since != sinceArg {
+		t.Errorf("since: bad value, got %s, exp %s", since, sinceArg)
+	}
+
+	until := a.Until()
+	if until != untilArg {
+		t.Errorf("until: bad value, got %s, exp %s", until, untilArg)
+	}
+
+	start := a.StartTime().Add(-24 * time.Hour).Truncate(time.Hour)
+	exp := time.Now().Truncate(time.Hour)
+	if start != exp {
+		t.Errorf("start: bad value, got %v, exp %v", start, exp)
+	}
+
+	end := a.EndTime().Truncate(time.Hour)
+	exp = time.Now().Truncate(time.Hour)
+	if end != exp {
+		t.Errorf("end: bad value, got %v, exp %v", end, exp)
+	}
+}
+
+func invalidSince(t *testing.T) {
+	sinceArg := "invalid_time_string"
+	untilArg := "now"
+
+	a := Get()
+	err := a.SetSinceUntil(sinceArg, untilArg)
+	if !strings.Contains(err.Error(), "unable to parse") {
+		t.Errorf("did not get expected error: %s", err)
+	}
+}
+
+func invalidUntil(t *testing.T) {
+	sinceArg := "now"
+	untilArg := "invalid_time_string"
+
+	a := Get()
+	err := a.SetSinceUntil(sinceArg, untilArg)
+	if !strings.Contains(err.Error(), "unable to parse") {
+		t.Errorf("did not get expected error: %s", err)
+	}
+}
 
 func TestNullTimestamp(t *testing.T) {
 	tm := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 	testStamp(t, "", tm)
 }
 
+func TestBadTimestamp(t *testing.T) {
+	_, err := parseTimestamp("invalid_time_string", time.Time{})
+	if !strings.Contains(err.Error(), "unable to parse") {
+		t.Errorf("did not get expected error: %s", err)
+	}
+}
+
 func TestTranslatedTimeNow(t *testing.T) {
-	got := parseTimestamp("now", time.Time{})
-	got = got.Truncate(time.Second)
+	tm, err := parseTimestamp("now", time.Time{})
+	if err != nil {
+		t.Error(err)
+	}
+	got := tm.Truncate(time.Second)
 	exp := time.Now()
 	exp = exp.Truncate(time.Second)
 	testTime(t, got, exp)
 }
 
 func TestTranslatedTimeToday(t *testing.T) {
-	got := parseTimestamp("today", time.Time{})
+	tm, err := parseTimestamp("today", time.Time{})
+	if err != nil {
+		t.Error(err)
+	}
+	got := tm
 	exp := time.Now()
 	exp = exp.Truncate(time.Hour * 24)
 	testTime(t, got, exp)
 }
 
 func TestTranslatedTimeYesterday(t *testing.T) {
-	got := parseTimestamp("yesterday", time.Time{})
+	tm, err := parseTimestamp("yesterday", time.Time{})
+	if err != nil {
+		t.Error(err)
+	}
+	got := tm
 	exp := time.Now()
 	exp = exp.Add(time.Hour * -24).Truncate(time.Hour * 24)
 	testTime(t, got, exp)
@@ -40,7 +120,11 @@ func testTime(t *testing.T, got time.Time, expected time.Time) {
 
 func TestTrstringerGosystemdtime(t *testing.T) {
 	testSDT := func(t *testing.T, timestamp string, expected time.Time) {
-		got := parseTimestamp(timestamp, time.Time{}).Truncate(time.Minute)
+		tm, err := parseTimestamp(timestamp, time.Time{})
+		if err != nil {
+			t.Error(err)
+		}
+		got := tm.Truncate(time.Minute)
 		if !got.Equal(expected) {
 			t.Errorf("parseTimestamp() error: got %v, expected %v", got, expected)
 		}
@@ -89,7 +173,11 @@ func TestAraddonDateparse(t *testing.T) {
 }
 
 func testStamp(t *testing.T, timestamp string, expected time.Time) {
-	got := parseTimestamp(timestamp, time.Time{})
+	tm, err := parseTimestamp(timestamp, time.Time{})
+	if err != nil {
+		t.Error(err)
+	}
+	got := tm
 	if !got.Equal(expected) {
 		t.Errorf("parseTimestamp() error: got %v, expected %v", got, expected)
 	}

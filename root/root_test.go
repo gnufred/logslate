@@ -27,21 +27,33 @@ func TestNoData(t *testing.T) {
 }
 
 // Must fail given the database file already exists.
-func TestDbExists(t *testing.T) {
-	input, _ := os.ReadFile("testdata/3ok3broken.log")
+func TestErrDbCreateFail(t *testing.T) {
+	a := args.Get()
+	a.Db = "root_test.db"
+	a.LogFrmt = nginx.Combined
+
+	_, err := os.Create(a.Db)
+	if err != nil {
+		t.Error(err)
+	}
+
+	file := "testdata/20ok.log"
+	input, err := os.ReadFile(file)
+	if err != nil {
+		t.Error(err)
+	}
 	test.MockStdin(input)
 
-	dbPath := "testdata/exist.db"
-	os.Create(dbPath)
-	defer os.Remove(dbPath)
-
-	a := args.Get()
-	a.Db = dbPath
 	test.DisableOutput()
-	_, err := ParseStdin(a)
+	_, err = ParseStdin(a)
+	if !errors.Is(err, ErrDbCreateFail) {
+		t.Errorf("did not get expected error: %s", err)
+	}
 	test.EnableOutput()
-	if errors.Is(err, ErrDbCreateFail) {
-		t.Errorf("Did not get the expected error")
+
+	err = os.Remove(a.Db)
+	if err != nil {
+		t.Error(err)
 	}
 }
 
@@ -64,7 +76,10 @@ func TestParseTokenTooLong(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 
 	file := "testdata/toolong.log"
-	input, _ := os.ReadFile(file)
+	input, err := os.ReadFile(file)
+	if err != nil {
+		t.Error(err)
+	}
 	test.MockStdin(input)
 
 	test.DisableOutput()
@@ -82,11 +97,14 @@ func TestParseErrorLimit(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 
 	file := "testdata/limitreach.log"
-	input, _ := os.ReadFile(file)
+	input, err := os.ReadFile(file)
+	if err != nil {
+		t.Error(err)
+	}
 	test.MockStdin(input)
 
 	test.DisableOutput()
-	_, err := ParseStdin(a)
+	_, err = ParseStdin(a)
 	test.EnableOutput()
 	if !errors.Is(err, ErrLimitReach) {
 		t.Errorf("Did not get the expected error")
@@ -182,6 +200,33 @@ func TestTimeArgs(t *testing.T) {
 		})
 }
 
+func TestReport(t *testing.T) {
+	a := args.Get()
+	a.ReportPath = "testdata/report.txt"
+	a.ReportFrmt = "text"
+	a.LogFrmt = nginx.Combined
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 20}},
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 20}},
+		},
+	)
+	err := os.Remove(a.ReportPath)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTranslateError(t *testing.T) {
+	a := args.Get()
+	a.LogFrmt = nginx.Combined
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/translateerror.log", Parsed{1, 0, 2, 0, 0}},
+		},
+	)
+}
+
 func testInputDataLoop(t *testing.T, a args.Args, d []testData) {
 	for _, data := range d {
 		testInputData(t, a, data.file, data.expect)
@@ -189,7 +234,10 @@ func testInputDataLoop(t *testing.T, a args.Args, d []testData) {
 }
 
 func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
-	input, _ := os.ReadFile(file)
+	input, err := os.ReadFile(file)
+	if err != nil {
+		t.Error(err)
+	}
 	test.MockStdin(input)
 
 	test.DisableOutput()

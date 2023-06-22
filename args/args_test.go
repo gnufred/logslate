@@ -5,8 +5,37 @@ import (
 	"testing"
 	"time"
 
+	"gitlab.com/gnufred/logslate/test"
 	nginx "gitlab.com/gnufred/nxparse"
 )
+
+func TestValidate(t *testing.T) {
+	test.DisableOutput()
+	validateHelp(t)
+	invalidDebugArg(t)
+	invalidReportPath(t)
+	test.EnableOutput()
+}
+
+func validateHelp(t *testing.T) {
+	args.Help = true
+	validate()
+	args.Help = false
+}
+
+func invalidDebugArg(t *testing.T) {
+	args.Debug = 999
+	validate()
+	args.Debug = 0
+}
+
+func invalidReportPath(t *testing.T) {
+	args.ReportPath = "report.invalid"
+	args.ReportFrmt = "invalid"
+	validate()
+	args.ReportPath = ""
+	args.ReportFrmt = ""
+}
 
 func TestDefaultArgs(t *testing.T) {
 	Init()
@@ -54,8 +83,13 @@ func TestDefaultArgs(t *testing.T) {
 }
 
 func TestParseReportPath(t *testing.T) {
+	// Test screen report
+	frmt := parseReportPath("screen")
+	if frmt != "text" {
+		t.Errorf("unexpected format %s", frmt)
+	}
 	// Test .json report format.
-	frmt := parseReportPath("/user/run/1000/example.com/report.json")
+	frmt = parseReportPath("/user/run/1000/example.com/report.json")
 	if frmt != "json" {
 		t.Errorf("unexpected format %s", frmt)
 	}

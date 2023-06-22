@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"gitlab.com/gnufred/logslate/translate"
@@ -11,6 +12,11 @@ import (
 )
 
 func TestCreate(t *testing.T) {
+	createDB(t)
+	recreateDB(t)
+}
+
+func createDB(t *testing.T) {
 	file := "testdata/test.db"
 	db := Singleton()
 	err := db.Create(file)
@@ -18,6 +24,15 @@ func TestCreate(t *testing.T) {
 		t.Fatalf("Create() failed: %s", err)
 	}
 	db.ApplyDefaults()
+}
+
+func recreateDB(t *testing.T) {
+	file := "testdata/test.db"
+	db := Singleton()
+	err := db.Create(file)
+	if !strings.Contains(err.Error(), "already exists") {
+		t.Errorf("unexpecte error, got %s", err)
+	}
 }
 
 func TestInsertLog(t *testing.T) {
@@ -50,18 +65,53 @@ func TestInsertLog(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
+	closeDB(t)
+	recloseDB(t)
+	closeCreateError(t)
+}
+
+func closeDB(t *testing.T) {
 	db := Singleton()
 	err := db.Close()
 	if err != nil {
-		t.Fatalf("Close() failed: %s", err)
+		t.Errorf("Close() failed: %s", err)
+	}
+}
+
+func recloseDB(t *testing.T) {
+	db := Singleton()
+	err := db.Close()
+	if err != nil {
+		t.Errorf("Close() failed: %s", err)
+	}
+}
+
+func closeCreateError(t *testing.T) {
+	db := Singleton()
+	err := db.createTables()
+	if !strings.Contains(err.Error(), "closed") {
+		t.Errorf("did not get expected error: got %s", err)
 	}
 }
 
 func TestDestroy(t *testing.T) {
+	destroyDB(t)
+	redestroyDB(t)
+}
+
+func destroyDB(t *testing.T) {
 	db := Singleton()
 	err := db.Destroy()
 	if err != nil {
-		t.Fatalf("Destroy() failed: %s", err)
+		t.Errorf("Destroy() failed: %s", err)
+	}
+}
+
+func redestroyDB(t *testing.T) {
+	db := Singleton()
+	err := db.Destroy()
+	if !strings.Contains(err.Error(), "no such file") {
+		t.Errorf("unexpedted error, got %s", err)
 	}
 }
 

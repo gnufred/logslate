@@ -41,12 +41,15 @@ func printText(r *Report) {
 	if err != nil {
 		lerr.Println(err)
 	}
+
 	if r.Path == "screen" {
 		fmt.Print(out.String())
-	} else {
-		if err := writeReport(r.Path, out.Bytes()); err != nil {
-			lerr.Println(err)
-		}
+		return
+	}
+
+	err = writeReport(r.Path, out.Bytes())
+	if err != nil {
+		lerr.Println(err)
 	}
 }
 

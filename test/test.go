@@ -10,9 +10,11 @@ import (
 )
 
 var defaultStdout *os.File
+var defaultStderr *os.File
 
 func init() {
 	defaultStdout = os.Stdout
+	defaultStderr = os.Stderr
 }
 
 func DisableOutput() {
@@ -25,6 +27,7 @@ func DisableOutput() {
 
 func EnableOutput() {
 	os.Stdout = defaultStdout
+	os.Stderr = defaultStderr
 }
 
 func MockStdin(input []byte) {

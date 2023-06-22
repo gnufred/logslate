@@ -1,6 +1,9 @@
 package threat
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 type result struct {
 	To uint32
@@ -105,6 +108,11 @@ func TestSearchAttackPts(t *testing.T) {
 }
 
 func TestBotScan(t *testing.T) {
+	validBotScans(t)
+	moreThanOneBotFound(t)
+}
+
+func validBotScans(t *testing.T) {
 	testMatch := func(t *testing.T, agent string, exp string) {
 		got, err := botScan(agent)
 		if err != nil {
@@ -119,7 +127,33 @@ func TestBotScan(t *testing.T) {
 		UA  string
 		Exp string
 	}{
+		{"Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/114.0.5735.99 Mobile/15E148 Safari/604.1", ""},
 		{"Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "Googlebot"},
+		{"FeedBurner/1.0 (http://www.FeedBurner.com)", "FeedBurner"},
+		{"Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/103.0.5060.134 Safari/537.36", "bingbot"},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.UA, d.Exp)
+	}
+}
+
+func moreThanOneBotFound(t *testing.T) {
+	testMatch := func(t *testing.T, agent string, exp string) {
+		got, err := botScan(agent)
+		if !strings.Contains(err.Error(), "more than one") {
+			t.Errorf("did not get expected error: %s", err)
+		}
+		if got != exp {
+			t.Errorf("bot doesn't match, got %s, exp %s", got, exp)
+		}
+	}
+
+	data := []struct {
+		UA  string
+		Exp string
+	}{
+		{"Bingbot/2.0; http://Bingbot.com", "Bingbot"},
 	}
 
 	for _, d := range data {
@@ -142,7 +176,9 @@ func TestBotAhoSearch(t *testing.T) {
 		UA  string
 		Exp string
 	}{
+		{"Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/114.0.5735.99 Mobile/15E148 Safari/604.1", ""},
 		{"Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "Googlebot"},
+		{"FeedBurner/1.0 (http://www.FeedBurner.com)", "FeedBurner/"},
 	}
 
 	for _, d := range data {

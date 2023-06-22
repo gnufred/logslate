@@ -3,5 +3,8 @@
 root_dir=$(git rev-parse --show-toplevel)
 cd $root_dir
 
+mkdir -p .cover
+
 go clean -testcache
-TZ=Etc/UTC go test "$@" ./... -cover
+TZ=Etc/UTC go test "$@" ./... -cover -coverprofile=.cover/profile.out
+go tool cover -html=.cover/profile.out

@@ -37,6 +37,24 @@ func TestTimeTotalValid(t *testing.T) {
 	}
 }
 
+func TestAllPerSecSmallerThanZero(t *testing.T) {
+	now := time.Now()
+	r := Report{
+		Run: Runtimes{
+			Start: now,
+			End:   now.Add(10 * time.Millisecond),
+		},
+		Line: Lines{Ok: 1},
+		Size: Sizes{Byte: 1},
+	}
+	if got := r.BytesPerSec(); got != 1 {
+		t.Errorf("bytes per sec doesn't match, exp 0, got %d", got)
+	}
+	if got := r.LinesPerSec(); got != 1 {
+		t.Errorf("lines per sec doesn't match, exp 0, got %d", got)
+	}
+}
+
 func TestAllPerSecNil(t *testing.T) {
 	r := Report{}
 	if got := r.BytesPerSec(); got != 0 {
