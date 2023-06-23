@@ -30,13 +30,16 @@ func main() {
 }
 
 func Init() error {
-	debug.Init()
-
 	err := args.Init()
+	if err != nil {
+		return err
+	}
+
+	debug.Init()
 	debug.Log(debug.VVV, "os.Args", os.Args)
 	debug.Log(debug.VVV, "args.Get", args.Get())
 
-	return err
+	return nil
 }
 
 func Banner() {
