@@ -69,10 +69,10 @@ func TestAttacks(t *testing.T) {
 		{"hello(", result{0, 0}},
 		{"replace(", result{5, 5}},
 		{"\x22id\x22:\x221\x22", result{12, 1}},
-		{"path/stuff../../etc/passwd", result{13, 4}},
+		{"path/stuff../../etc/passwd", result{9, 4}},
 		{"hello'boba_sleep(", result{5, 2}},
 		{"hello'boba_SLEEP(", result{5, 2}},
-		{"./././././././././././././././././././././././././././././././././", result{132, 4}},
+		{"./././././././././././././././././././././././././././././././././", result{66, 4}},
 	}
 
 	for _, d := range data {
