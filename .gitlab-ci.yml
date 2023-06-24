@@ -1,4 +1,9 @@
+# gitlab-ci.yaml documentation
+# https://docs.gitlab.com/ee/ci/yaml/
+
 stages:
+  - test
+  - build
   - release
 
 variables:
@@ -13,19 +18,38 @@ variables:
   BREW_BIN: $BIN_NAME
   BREW_DESCRIPTION: "Logslate (log translate)"
   BREW_BOT_EMAIL: "gnufred+gitlab-ci@gmail.com"
-  BREW_GITLAB_URL: "gitlab.com/gnufred/logslate"
+  BREW_GITLAB_URL: "gitlab.com/gnufred/logslate"  
 
-default:
+test:
   image: golang:1.20
+  stage: test
+  only:
+    - tags
+  script:
+    - .gitlab/lint
+    - .gitlab/test
+    - .gitlab/cover
 
-release:
-  stage: release
+build:
+  image: golang:1.20
+  stage: build
   only:
     - tags
   script: 
-    - .gitlab/lint
-    - .gitlab/test
     - .gitlab/build
+  artifacts:
+    name: "bin-generic"
+    when: on_success
+    expire_in: 1 hour
+    paths:
+      - .bin/generic
+
+release:
+  image: golang:1.20
+  stage: release
+  only:
+    - tags
+  script:
     - .gitlab/package
     - .gitlab/release
     - .brew/release

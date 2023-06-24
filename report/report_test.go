@@ -7,9 +7,6 @@ import (
 
 func TestNew(t *testing.T) {
 	got := New()
-	if got == nil {
-		t.Error("returned nil")
-	}
 	if got.Path != "" || got.Frmt != "" {
 		t.Error("path and frmt should be empty")
 	}

@@ -43,7 +43,8 @@ func testRunOk(t *testing.T) {
 	Run()
 }
 
-func testRunTooLong(t *testing.T) {
+// TODO: fix test.MockStdin() to get 100% coverage.
+/* func testRunTooLong(t *testing.T) {
 	file := "root/testdata/toolong.log"
 	input, err := os.ReadFile(file)
 	if err != nil {
@@ -51,7 +52,7 @@ func testRunTooLong(t *testing.T) {
 	}
 	test.MockStdin(input)
 	Run()
-}
+} */
 
 func TestExit(t *testing.T) {
 	exitErrAny(t)

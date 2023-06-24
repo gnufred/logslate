@@ -2,4 +2,5 @@
 
 echo "Running tests."
 
+go clean -testcache
 TZ=Etc/UTC go test "$@" ./...

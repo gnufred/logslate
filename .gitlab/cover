@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# checks thresholds
+minimum=90
+
+# get coverage report
+echo "Checking coverage."
+go clean -testcache
+coverage=$(TZ=Etc/UTC go test "$@" ./... -cover)
+echo "$coverage"
+
+# get the numbers of reports
+line_count=$(echo "$coverage"|wc -l)
+# calculate coverage stats 
+stats=$(echo "$coverage"|awk '{print $5}'|sed 's/\.[0-9]%//')
+total=$(echo "$stats"|awk '{s+=$1} END {print s}')
+percent=$(expr "$total" / "$line_count")
+
+echo "Total: $percent%
+"
+
+# validate the result
+if [[ "$percent" -lt "$minimum" ]]; then
+	echo "error: got $percent% cover, minimum $minimum%"
+	exit 1
+fi

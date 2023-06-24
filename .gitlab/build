@@ -1,18 +1,18 @@
 #!/bin/bash
 
-mkdir .bin
+mkdir -p .bin/generic
 
 echo "Building Linux package."
 GOOS=linux GOARCH=amd64 go build \
     -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" \
-    -o ".bin/${LINUX_AMD64_BINARY}"
+    -o ".bin/generic/${LINUX_AMD64_BINARY}"
 
 echo "Building MacOS package."
 GOOS=darwin GOARCH=amd64 go build \
     -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" \
-    -o ".bin/${DARWIN_AMD64_BINARY}"
+    -o ".bin/generic/${DARWIN_AMD64_BINARY}"
 
 echo "Building Windows package."
 GOOS=windows GOARCH=amd64 go build \
     -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" \
-    -o ".bin/${WINDOWS_AMD64_BINARY}"
+    -o ".bin/generic/${WINDOWS_AMD64_BINARY}"

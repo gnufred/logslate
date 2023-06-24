@@ -6,13 +6,21 @@ go install honnef.co/go/tools/cmd/staticcheck@latest
 
 # https://staticcheck.io/docs/getting-started/
 echo "Lint: staticcheck"
-staticcheck ./...
+failed=$(staticcheck ./...)
+if [[ -n "$failed" ]]; then
+	echo "staticcheck: there are failures"
+	echo "$failed"
+	exit 1
+fi
 
 # https://pkg.go.dev/cmd/gofmt
 echo "Lint: gofmt"
 unformated=$(gofmt -s -l .)
-if [[ ! -z "$unformated" ]]; then
+if [[ -n "$unformated" ]]; then
 	echo "gofmt: unformatted files"
 	echo "$unformated"
+	echo "fix them with:"
+	echo "go fmt -s -w file.go"
+	echo "then commit the changes"
 	exit 1
 fi
