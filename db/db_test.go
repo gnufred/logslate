@@ -118,11 +118,11 @@ func redestroyDB(t *testing.T) {
 // === benchmarks ===
 
 func BenchmarkDbInsertBulk(b *testing.B) {
-	benchDbInsert(b, 200, []int{1, 3, 5, 7, 9}, []string{})
+	benchDbInsert(b, 200, []int{1, 3, 5, 7, 9, 15, 20, 30}, []string{})
 }
 
 func BenchmarkDbWithDefaults(b *testing.B) {
-	benchDbInsert(b, 200, []int{1, 3, 5, 7, 9}, []string{
+	benchDbInsert(b, 200, []int{1, 3, 5, 7, 9, 15, 20, 30}, []string{
 		"synchronous = off",
 		"journal_mode = off",
 		"locking_mode = exclusive",

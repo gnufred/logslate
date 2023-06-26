@@ -130,8 +130,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		if a.Db != "" {
 			d.InsertLog(ls)
 			// Commit every "x" successfully parsed lines.
-			// Testing with db/BenchmarkDbInsert shows that "7" is the best number of inserts to batch.
-			if par.Ok%7 == 0 {
+			// Testing with db/BenchmarkDbInsert shows that "10" is the best number of inserts to batch.
+			if par.Ok%10 == 0 {
 				d.Commit()
 				d.Begin()
 			}

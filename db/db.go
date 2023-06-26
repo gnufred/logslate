@@ -8,7 +8,7 @@ import (
 
 	"gitlab.com/gnufred/logslate/translate"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type Dber struct {
@@ -45,7 +45,7 @@ func (d *Dber) Create(file string) error {
 		}
 	}
 
-	d.db, err = sql.Open("sqlite3", d.dns)
+	d.db, err = sql.Open("sqlite", d.dns)
 	if err != nil {
 		return err
 	}

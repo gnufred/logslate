@@ -7,6 +7,6 @@ ver=$(git describe --tags --always)
 
 mkdir -p .bin
 rm -fr .bin/logslate
-go build \
+CGO_ENABLED=0 go build \
     -ldflags="-X 'main.Version=${ver}'" \
     -o .bin/logslate

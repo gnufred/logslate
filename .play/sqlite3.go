@@ -1,8 +1,6 @@
 /* Figure out how to use SQLite3 connection directly, and not as a database/sql driver
    https://github.com/mattn/go-sqlite3
    https://pkg.go.dev/github.com/mattn/go-sqlite3
-
-   Gotta figure this to to fix https://gitlab.com/gnufred/logslate/-/issues/1
 */
 
 package main

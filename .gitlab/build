@@ -3,19 +3,19 @@
 mkdir -p .bin
 
 echo "Building Linux package."
-GOOS=linux GOARCH=amd64 CGO_ENABLED=1 \
-	/usr/local/go/bin/go build \
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
+	go build \
     -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" \
     -o ".bin/${LINUX_AMD64_BINARY}"
 
 echo "Building MacOS package."
-GOOS=darwin GOARCH=amd64 \
-	/usr/local/go/bin/go build \
+GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 \
+	go build \
     -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" \
     -o ".bin/${DARWIN_AMD64_BINARY}"
 
 echo "Building Windows package."
-GOOS=windows GOARCH=amd64 \
-	/usr/local/go/bin/go build \
+GOOS=windows GOARCH=amd64 CGO_ENABLED=0 \
+	go build \
     -ldflags="-X 'main.Version=${CI_COMMIT_TAG}'" \
     -o ".bin/${WINDOWS_AMD64_BINARY}"

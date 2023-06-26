@@ -2,8 +2,6 @@
 # https://docs.gitlab.com/ee/ci/yaml/
 
 stages:
-  - test
-  - build
   - release
 
 variables:
@@ -20,37 +18,16 @@ variables:
   BREW_BOT_EMAIL: "gnufred+gitlab-ci@gmail.com"
   BREW_GITLAB_URL: "gitlab.com/gnufred/logslate"  
 
-test:
-  image: golang:1.20
-  stage: test
-  only:
-    - tags
-  script:
-    - .gitlab/lint
-    - .gitlab/test
-    - .gitlab/cover
-
-build:
-  image: ubuntu:20.04
-  stage: build
-  only:
-    - tags
-  script: 
-    - .gitlab/ubuntu/install
-    - .gitlab/ubuntu/build
-  artifacts:
-    name: "binaries"
-    when: on_success
-    expire_in: 1 hour
-    paths:
-      - .bin
-
 release:
   image: golang:1.20
   stage: release
   only:
     - tags
   script:
+    - .gitlab/lint
+    - .gitlab/test
+    - .gitlab/cover
+    - .gitlab/build
     - .gitlab/package
     - .gitlab/release
     - .brew/release
