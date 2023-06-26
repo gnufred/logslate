@@ -31,18 +31,19 @@ test:
     - .gitlab/cover
 
 build:
-  image: golang:1.20
+  image: ubuntu:20.04
   stage: build
   only:
     - tags
   script: 
-    - .gitlab/build
+    - .gitlab/ubuntu/install
+    - .gitlab/ubuntu/build
   artifacts:
-    name: "bin-generic"
+    name: "binaries"
     when: on_success
     expire_in: 1 hour
     paths:
-      - .bin/generic
+      - .bin
 
 release:
   image: golang:1.20

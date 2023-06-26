@@ -14,15 +14,15 @@ upload_package() {
 
 echo "Uploading new version packages."
 upload_package \
-	".bin/generic/${LINUX_AMD64_BINARY}" \
+	".bin/${LINUX_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}"
 
 upload_package \
-	".bin/generic/${DARWIN_AMD64_BINARY}" \
+	".bin/${DARWIN_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}"
 
 upload_package \
-	".bin/generic/${WINDOWS_AMD64_BINARY}" \
+	".bin/${WINDOWS_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_CURRENT}/${WINDOWS_AMD64_BINARY}"
 
 # Check if we're releasing a "real" version.
@@ -39,13 +39,13 @@ fi
 echo -e "\nUploading latest packages."
 
 upload_package \
-	".bin/generic/${LINUX_AMD64_BINARY}" \
+	".bin/${LINUX_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_LATEST}/${LINUX_AMD64_BINARY}"
 
 upload_package \
-	".bin/generic/${DARWIN_AMD64_BINARY}" \
+	".bin/${DARWIN_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_LATEST}/${DARWIN_AMD64_BINARY}"
 
 upload_package \
-	".bin/generic/${WINDOWS_AMD64_BINARY}" \
+	".bin/${WINDOWS_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_LATEST}/${WINDOWS_AMD64_BINARY}"
