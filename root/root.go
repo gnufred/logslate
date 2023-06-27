@@ -29,11 +29,10 @@ type Parsed struct {
 }
 
 var (
-	ErrNoFormat     = errors.New("no log_format specified")
-	ErrNoInputData  = errors.New("no input data")
-	ErrDbCreateFail = errors.New("database creation error")
-	ErrReadPipe     = errors.New("error while reading piped io.Stdin")
-	ErrLimitReach   = errors.New("parsing error limit reached")
+	ErrNoFormat    = errors.New("no log_format specified")
+	ErrNoInputData = errors.New("no input data")
+	ErrReadPipe    = errors.New("error while reading piped io.Stdin")
+	ErrLimitReach  = errors.New("parsing error limit reached")
 )
 
 func ParseStdin(a args.Args) (Parsed, error) {
@@ -52,7 +51,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	if a.Db != "" {
 		err := d.Create(a.Db)
 		if err != nil {
-			return par, fmt.Errorf("%s: %w", err, ErrDbCreateFail)
+			return par, err
 		}
 		d.ApplyDefaults()
 	}

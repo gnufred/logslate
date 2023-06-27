@@ -6,5 +6,22 @@ cd $root_dir
 mkdir -p .cover
 
 go clean -testcache
-TZ=Etc/UTC go test "$@" ./... -cover -coverprofile=.cover/profile.out
-go tool cover -html=.cover/profile.out
+coverage=$(TZ=Etc/UTC go test "$@" ./... -cover -coverprofile=.cover/profile.out)
+testfail="$?"
+
+if [[ "testfail" -eq 0 ]]; then
+	# get the numbers of reports
+	line_count=$(echo "$coverage"|wc -l)
+	# calculate coverage stats 
+	stats=$(echo "$coverage"|awk '{print $5}'|sed 's/\.[0-9]%//')
+	total=$(echo "$stats"|awk '{s+=$1} END {print s}')
+	percent=$(expr "$total" / "$line_count")
+
+	echo "total: $percent% "
+fi
+
+echo "$coverage"
+
+if [[ "testfail" -eq 0 ]]; then
+	go tool cover -html=.cover/profile.out
+fi

@@ -46,7 +46,10 @@ func TestErrDbCreateFail(t *testing.T) {
 
 	test.DisableOutput()
 	_, err = ParseStdin(a)
-	if !errors.Is(err, ErrDbCreateFail) {
+
+	// Test: https://gitlab.com/gnufred/logslate/-/issues/106
+	// Don't use strings.Contais(). The error must be an exact match.
+	if err.Error() != "unable to create database: file root_test.db already exists" {
 		t.Errorf("did not get expected error: %s", err)
 	}
 	test.EnableOutput()
