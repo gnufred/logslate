@@ -36,8 +36,37 @@ func MockStdin(input []byte) {
 		panic(fmt.Sprintf("mocking Stdin failed: %s", err))
 	}
 
+	// https://gitlab.com/gnufred/logslate/-/issues/99
+	// The code hang here when the input is 65536 character long, so
+	// greater than a uint16.
+	//
+	// https://linux.die.net/man/7/pipe
+	// Since Linux 2.6.11, the pipe capacity is 65536 bytes.
+	//
+	// To solve this issue we need to change the capacity of the pipe at runtime.
+	//
+	// Here's an example on how to do this with Python
+	// https://www.golinuxhub.com/2018/05/how-to-view-and-increase-default-pipe-size-buffer/
+	//
+	// There's a constant for this in the syscall package but I don't understand how
+	// to interact with it.
+	// https://cs.opensource.google/go/go/+/refs/tags/go1.20.5:src/syscall/zerrors_linux_amd64.go;l=11
+	//
+	// The best I could come up with is the following but it panic on a nil pointer.
+	/*
+		var p *[2]C.int
+		syscall.RawSyscall(
+			syscall.SYS_PIPE2,
+			uintptr(unsafe.Pointer(p)),
+			uintptr(syscall.F_SETPIPE_SZ),
+			1048576,
+		)
+		w := os.NewFile(uintptr(p[1]), "|1")
+		w.Write(input)
+	*/
 	_, err = w.Write(input)
-	defer w.Close()
+	w.Close()
+
 	if err != nil {
 		panic("Error while mocking Stdin")
 	}

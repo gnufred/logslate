@@ -72,7 +72,8 @@ func TestNoFormat(t *testing.T) {
 }
 
 // Must handle buffio.Scan() ErrTooLong properly.
-// TODO: https://gitlab.com/gnufred/logslate/-/issues/99
+// Cannot test: MockStdin() need to change the os.Pipe buffer at runtime.
+// See test.MockStdin comments for more information.
 /*
 func TestParseTokenTooLong(t *testing.T) {
 	a := args.Get()
