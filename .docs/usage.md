@@ -1,32 +1,9 @@
 # Usage
 
-Using `logslate` consist of the following steps:
+Usage usually consist of the following steps:
 
-* Parse access.log files into an SQLite3 database
-* Query the `sqlite3` database 
-* (upcoming) Reviewing the detection report 
-
-The current version only support **NGINX default log format**. Version 0.14 and later will support other formats. 
-
-## Installation
-
-If you want to use `logslate` on your local workstation, it's recommended to use the `brew` package manager.
-
-```
-# install
-brew tap gnufred/logslate https://gitlab.com/gnufred/logslate
-brew install logslate
-# update
-brew update && brew upgrade logslate
-```
-
-If you're using `logslate` on a server, or need to install it in a built container, it's recommended to use `curl`.
-
-```
-curl --location --output ./logslate https://gitlab.com/api/v4/projects/gnufred%2Flogslate/packages/generic/logslate/latest/logslate-linux-amd64
-```
-
-For **Windows** and other uses cases, head to the [release page](https://gitlab.com/gnufred/logslate/-/releases) and download the binary manually.
+* Parse an access.log files into an SQLite3 database
+* Create a detection report 
 
 ## Parsing access log files
 
@@ -38,11 +15,13 @@ If you have logs in multiple locations you can `find /var/log/sites/ -type f -na
 
 You can also, get logs directly from your server `ssh webserver 'find /var/log/sites/ -type f -name 'access.log' | xargs cat' | logslate --db all.db`.
 
+Read the [database usage guide](database.md) for instruction on how to query the database.
+
 ## Create a report
 
-There's no report by default. That being said, in most cases, you'll want to use `--report screen` to print the report on the screen.
+There's no report by default. In most cases, you'll want to use `--report screen` to print the report on the screen after parsing completes.
 
-If the run fires automatically then you can write the report to disk with `--report /var/log/logslate/report.txt`. If you want to get a JSON formatted report instead use `--report /var/log/logslate/report.json`.
+Otherwise, write the report to disk with `--report report.txt` or `--report report.json` to get a text or JSON formatted output.
 
 ## NGINX `log_format`
 
@@ -99,28 +78,6 @@ If your disk is slow or you are not permitted to save the data on your workstati
 For example, on most Linux systems you'd use `--db /run/user/1000/log.db`.
 
 To follow your **compliance or security** framework, you can use **both** ssh and a tmpfs drive `ssh server 'cat /var/log/www/example.com/access.log' | logslate --db /run/user/1000/example.db` to avoid saving information on permanent storage.
-
-## Accessing the database
-
-To use the database file, you need to install the [SQLite3 CLI](https://www.sqlite.org/cli.html). Then it's just a matter of `sqlite3 log.db`.
-
-That being said, **I highly recommend you issue queries from your shell** instead `sqlite3 log.db 'select * from logs;'`.
-
-## SQL queries
-
-The database schema is in [db.go#L56](https://gitlab.com/gnufred/logslate/-/blob/main/db/db.go#L56).
-
-List and count top 10 IPs
-
-```
-select count(ip), ip from logs group by ip order by count(ip) desc limit 10;
-```
-
-List all requests from an IP, order by URL path and query string
-
-```
-select ip, path, query from logs where ip = '208.115.199.20' order by path, query;
-```
 
 ## Debuging
 

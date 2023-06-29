@@ -10,7 +10,7 @@ If you need a GoLang package to parse NGINX access.log, use [gnufred/nxparse](ht
 
 ### In development
 
-See the [development roadmap](roadmap.md) for the current status.
+See the [development roadmap](.docs/roadmap.md) for the current status.
 
 ### License
 
@@ -18,14 +18,13 @@ This project is licended under [GPL v3.0](license.md)
 
 ## Installation
 
-See **[the comprehensive usage guide](usage.md)** for installation instructions and their corresponding use cases.
-
 Install with `curl`, `brew`, or manual downloads.
 
+See **[the installation documentation](.docs/install.md)**.
 
 ## Usage
 
-See **[the comprehensive usage guide](usage.md)** for detailed use cases.
+See the **[comprehensive usage guide](.docs/usage.md)** and the **[database usage guide](.docs/database.md)** for detailed use cases.
 
 ```
 cat access.log | logslate
