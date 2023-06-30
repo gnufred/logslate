@@ -1,0 +1,3 @@
+=== [[ Bots ]] ==={{if .BotCnt}}{{range $d := .BotCnt}}
+{{$d.Item}}: {{AddCommas $d.Num}}{{end}}{{else}}{{range $name, $data := .Bot}}
+{{$name}}: {{AddCommas $data.Cnt}}{{end}}{{end}}

@@ -5,3 +5,5 @@
 .dbs/
 .logs/
 *.db
+*.json
+*.txt

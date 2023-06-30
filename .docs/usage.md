@@ -9,19 +9,42 @@ Usage usually consist of the following steps:
 
 Logslate accept input **only from stdin**. You have to feed it with pipes. 
 
-The simplest case is to parse one file `cat access.log | logslate --db log.db`, but you can parse multiple files `cat *.log | logslate --db all.db`. If your files are Gziped `zcat access*.log.gz | logslate --db all.db`.
+The simplest case is to parse one file `cat access.log | logslate`, but you can parse multiple files `cat *.log | logslate`. If your files are Gziped `zcat access*.log.gz | logslate`.
 
-If you have logs in multiple locations you can `find /var/log/sites/ -type f -name 'access.log' | xargs cat | logslate --db all.db`.
+If you have logs in multiple locations you can `find /var/log/sites/ -type f -name 'access.log' | xargs cat | logslate`.
 
-You can also, get logs directly from your server `ssh webserver 'find /var/log/sites/ -type f -name 'access.log' | xargs cat' | logslate --db all.db`.
+You can also, get logs directly from your server `ssh webserver 'find /var/log/sites/ -type f -name 'access.log' | xargs cat' | logslate`.
+
+## Database
+
+It's possible to parse log entries into an SQLite3 database with `--db file.db`.
 
 Read the [database usage guide](database.md) for instruction on how to query the database.
 
-## Create a report
+## Reports
 
 There's no report by default. In most cases, you'll want to use `--report screen` to print the report on the screen after parsing completes.
 
 Otherwise, write the report to disk with `--report report.txt` or `--report report.json` to get a text or JSON formatted output.
+
+### Custom report layouts
+
+It's possible to specify your own screen and text report layouts with `--layout section:option_value,section2:option1_value:option2_value,etc`.
+
+Possible values are:
+
+```
+summary
+time
+threats
+attacks
+attackers
+  order_name (default)
+  order_count
+bots
+  order_name (default)
+  order_count
+```
 
 ## NGINX `log_format`
 

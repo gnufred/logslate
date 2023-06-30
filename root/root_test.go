@@ -207,7 +207,7 @@ func TestTimeArgs(t *testing.T) {
 func TestReport(t *testing.T) {
 	a := args.Get()
 	a.ReportPath = "testdata/report.txt"
-	a.ReportFrmt = "text"
+	a.ReportFormat = "text"
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{

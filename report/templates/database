@@ -1,0 +1,2 @@
+{{if .Db.Path}}=== [[ Database ]] ===
+Path: {{.Db.Path}}{{end}}

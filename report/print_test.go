@@ -9,8 +9,8 @@ import (
 	"gitlab.com/gnufred/logslate/test"
 )
 
-func newTestReport() *Report {
-	r := New()
+func newTestReport(path, format string) *Report {
+	r := New(path, format, defaultLayout)
 	r.Run = Runtimes{
 		time.Now(),
 		time.Now().Add(time.Second * 10),
@@ -27,40 +27,66 @@ func TestPrint(t *testing.T) {
 }
 
 func printFrmt(t *testing.T, frmt string) {
-	r := newTestReport()
+	var path, format string
 
 	switch frmt {
 	case "screen":
-		r.Path = "screen"
-		r.Frmt = "text"
+		path = "screen"
+		format = "text"
 	case "text":
-		r.Path = "testreport.txt"
-		r.Frmt = "text"
+		path = "testreport.txt"
+		format = "text"
 	case "json":
-		r.Path = "testreport.json"
-		r.Frmt = "json"
+		path = "testreport.json"
+		format = "json"
 	}
 
+	r := newTestReport(path, format)
 	test.DisableOutput()
 	r.Print()
 	test.EnableOutput()
 
-	if r.Path != "screen" {
-		err := os.Remove(r.Path)
+	if path != "screen" {
+		err := os.Remove(path)
 		if err != nil {
 			t.Error(err)
 		}
 	}
 }
 
+func TestPrintTest(t *testing.T) {
+	r := New("screen", "text", "banana!")
+	err := printText(r)
+	if err == nil || !strings.Contains(err.Error(), "report error") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+
+	r = New("/invalid/path/fail/please", "text", "summary")
+	err = printText(r)
+	if err == nil || !strings.Contains(err.Error(), "no such file") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+
+	r = New("/invalid/path/fail/please", "json", "summary")
+	err = printJson(r)
+	if err == nil || !strings.Contains(err.Error(), "no such file") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+}
+
 func TestCreateTextOutput(t *testing.T) {
+	validTextOutput(t)
+	invalidTextOutput(t)
+}
+
+func validTextOutput(t *testing.T) {
 	testOut := func(t *testing.T, gs, exp string) {
 		if !strings.Contains(gs, exp) {
 			t.Errorf("text output didn't contain %s", exp)
 		}
 	}
 
-	r := New()
+	r := New("screen", "text", "summary,time")
 	got, err := createTextOutput(r)
 	if err != nil {
 		t.Error(err)
@@ -70,10 +96,126 @@ func TestCreateTextOutput(t *testing.T) {
 	data := []string{
 		"=== [[ Summary ]] ===",
 		"=== [[ Time ]] ===",
-		"=== [[ Report ]] ===",
 	}
 
 	for _, s := range data {
 		testOut(t, gs, s)
+	}
+}
+
+func invalidTextOutput(t *testing.T) {
+	r := New("screen", "text", "banana!")
+	_, err := createTextOutput(r)
+	if err == nil || !strings.Contains(err.Error(), "does not exist") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+
+	r = New("screen", "text", "bots:banana!_lots!")
+	_, err = createTextOutput(r)
+	if err == nil || !strings.Contains(err.Error(), "layout specification") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+}
+
+func TestAtkrOptions(t *testing.T) {
+	rep := New("screen", "text", "attackers")
+	data := NewText(rep)
+	err := atkrOptions(data, Opts{"banana!": ""})
+	if !strings.Contains(err.Error(), "invalid option") {
+		t.Errorf("did not get expected error, got %s", err)
+	}
+}
+
+func TestAtkrOrder(t *testing.T) {
+	rep := New("screen", "text", "attackers")
+	rep.Atkr["127.0.0.1"] = Atkrs{10}
+	rep.Atkr["127.0.0.2"] = Atkrs{100}
+	data := NewText(rep)
+
+	err := atkrOrder(data, "")
+	if !strings.Contains(err.Error(), "invalid option") {
+		t.Errorf("did not get expected error, got %s", err)
+	}
+	if data.AtkrCnt != nil {
+		t.Error("attacker count is not nil")
+	}
+
+	err = atkrOrder(data, "count")
+	if err != nil {
+		t.Error(err)
+	}
+	if data.AtkrCnt[0].Item != "127.0.0.2" {
+		t.Error("attacker order by count data is incorrect")
+	}
+}
+
+func TestBotOptions(t *testing.T) {
+	rep := New("screen", "text", "bots")
+	data := NewText(rep)
+	err := botOptions(data, Opts{"banana!": ""})
+	if !strings.Contains(err.Error(), "invalid option") {
+		t.Errorf("did not get expected error, got %s", err)
+	}
+}
+
+func TestBotOrder(t *testing.T) {
+	rep := New("screen", "text", "attackers")
+	rep.Bot["one"] = Bots{10}
+	rep.Bot["two"] = Bots{100}
+	data := NewText(rep)
+
+	err := botOrder(data, "")
+	if !strings.Contains(err.Error(), "invalid option") {
+		t.Errorf("did not get expected error, got %s", err)
+	}
+	if data.BotCnt != nil {
+		t.Error("bot count is not nil")
+	}
+
+	err = botOrder(data, "count")
+	if err != nil {
+		t.Error(err)
+	}
+	if data.BotCnt[0].Item != "two" {
+		t.Error("bot ordered by count data is incorrect")
+	}
+}
+
+func TestCompileTemplateText(t *testing.T) {
+	validTemplateText(t)
+	invalidTemplateText(t)
+}
+
+func validTemplateText(t *testing.T) {
+	testMatch := func(t *testing.T, in, exp string) {
+		rep := New("screen", "text", in)
+		text, _ := compileTemplateText(rep)
+		if !strings.Contains(text, exp) {
+			t.Errorf("did not find expected text: %s", exp)
+		}
+	}
+
+	data := []struct {
+		In  string
+		Exp string
+	}{
+		{"summary", "[[ Summary ]]"},
+		{"time", "[[ Time ]]"},
+		{"threats", "[[ Threats ]]"},
+		{"attacks", "[[ Attacks ]]"},
+		{"attackers", "[[ Attackers ]]"},
+		{"bots", "[[ Bots ]]"},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
+	}
+}
+
+func invalidTemplateText(t *testing.T) {
+	rep := New("screen", "text", "banana!")
+	_, err := compileTemplateText(rep)
+	if !strings.Contains(err.Error(), "does not exist") {
+		t.Errorf("did not get the expected error, got %s", err)
 	}
 }

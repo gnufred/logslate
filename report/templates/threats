@@ -1,0 +1,7 @@
+=== [[ Threats ]] ===
+Attacks:
+  * {{AddCommas .Thrt.Atks.Its}}
+  * {{.Thrt.Atks.Prct}} %
+Bots:
+  * {{AddCommas .Thrt.Bots.Its}}
+  * {{.Thrt.Bots.Prct}} %

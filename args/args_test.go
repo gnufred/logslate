@@ -2,6 +2,7 @@ package args
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -14,27 +15,69 @@ func TestValidate(t *testing.T) {
 	validateHelp(t)
 	invalidDebugArg(t)
 	invalidReportPath(t)
+	invalidNargs(t)
+	invalidLayout(t)
+	customReportWithJsonFormat(t)
 	test.EnableOutput()
 }
 
 func validateHelp(t *testing.T) {
+	narg := 0
 	args.Help = true
-	validate()
+	err := validate(narg)
+	if !strings.Contains(err.Error(), "help shown") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
 	args.Help = false
 }
 
 func invalidDebugArg(t *testing.T) {
+	narg := 0
 	args.Debug = 999
-	validate()
+	err := validate(narg)
+	if !strings.Contains(err.Error(), "help shown") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
 	args.Debug = 0
 }
 
 func invalidReportPath(t *testing.T) {
+	narg := 0
 	args.ReportPath = "report.invalid"
-	args.ReportFrmt = "invalid"
-	validate()
+	args.ReportFormat = "invalid"
+	err := validate(narg)
+	if !strings.Contains(err.Error(), "help shown") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
 	args.ReportPath = ""
-	args.ReportFrmt = ""
+	args.ReportFormat = ""
+}
+
+func invalidNargs(t *testing.T) {
+	narg := 1
+	err := validate(narg)
+	if !strings.Contains(err.Error(), "help shown") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+}
+
+func invalidLayout(t *testing.T) {
+	narg := 0
+	args.ReportLayout = "banana!"
+	err := validate(narg)
+	if !strings.Contains(err.Error(), "help shown") {
+		t.Errorf("did not get the expected error, got %s", err)
+	}
+}
+
+func customReportWithJsonFormat(t *testing.T) {
+	args.ReportPath = "report.json"
+	args.ReportFormat = "json"
+	args.ReportLayout = "summary"
+	validate(0)
+	args.ReportPath = ""
+	args.ReportFormat = ""
+	args.ReportLayout = ""
 }
 
 func TestDefaultArgs(t *testing.T) {

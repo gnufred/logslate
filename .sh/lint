@@ -16,5 +16,7 @@ unformated=$(gofmt -s -l .)
 if [[ ! -z "$unformated" ]]; then
 	echo "gofmt: unformatted files"
 	echo "$unformated"
+	echo "fix with:"
+	echo "  gofmt -s -w file.go"
 	exit 1
 fi

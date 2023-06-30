@@ -178,10 +178,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Process report data if requested.
 	if a.ReportPath != "" {
-		// Aggregate report data.
-		rep := report.New()
-		rep.Path = a.ReportPath
-		rep.Frmt = a.ReportFrmt
+		rep := report.New(
+			a.ReportPath,
+			a.ReportFormat,
+			a.ReportLayout,
+		)
+
 		rep.Run.Start = runStartedAt
 		rep.Run.End = runEndedAt
 		rep.Size.Byte = bytesTotal
@@ -192,7 +194,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Time.Until = a.Until()
 		rep.Time.Start = a.StartTime()
 		rep.Time.End = a.EndTime()
-		rep.Db.Path = a.Db
 
 		rep.Thrt.Atks.Its = par.Atk
 		rep.Thrt.Atks.Prct = report.Prct(par.Atk, par.Ok)

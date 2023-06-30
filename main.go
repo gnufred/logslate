@@ -12,6 +12,7 @@ import (
 	"gitlab.com/gnufred/logslate/root"
 )
 
+// Changed at compile/runtime by `-ldflags`.
 var Version = "dev"
 
 func main() {

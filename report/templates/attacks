@@ -1,0 +1,7 @@
+=== [[ Attacks ]] ===
+Total:      {{AddCommas .AtkTy.Total}}
+Unknown:    {{AddCommas .AtkTy.Unk}}
+SQL inject: {{AddCommas .AtkTy.SQL}}
+CMD inject: {{AddCommas .AtkTy.CMD}}
+Dir trav:   {{AddCommas .AtkTy.Dir}}
+Cross site: {{AddCommas .AtkTy.XSS}}

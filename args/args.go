@@ -3,6 +3,8 @@ package args
 import (
 	"errors"
 	"fmt"
+	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -11,21 +13,24 @@ import (
 )
 
 type Args struct {
-	Help       bool
-	Debug      int
-	CpuProf    string
-	MemProf    string
-	Db         string
-	LogFrmt    string
-	ReportPath string
-	ReportFrmt string
+	Help    bool
+	Debug   int
+	CpuProf string
+	MemProf string
+	Db      string
+	LogFrmt string
 
-	// Time arguments are managed in time.go
-	// Set all 4 time vars .SetSinceUntil()
+	// Time arguments (time.go)
+	// Set with .SetSinceUntil()
 	since     string    // Geter .Since()
 	until     string    // Geter .Until()
 	startTime time.Time // Geter .StartTime()
 	endTime   time.Time // Geter .EndTime()
+
+	// Report arguments (report.go)
+	ReportPath   string
+	ReportFormat string
+	ReportLayout string
 }
 
 var args = Args{}
@@ -38,7 +43,9 @@ func Init() error {
 		if err != nil {
 			return err
 		}
-		err = validate()
+
+		narg := pflag.NArg()
+		err = validate(narg)
 		if err != nil {
 			return err
 		}
@@ -50,10 +57,40 @@ func Get() Args {
 	return args
 }
 
-func validate() error {
+func Help() {
+	usage := `
+PARSING
+  -f, --log_format
+    Need to match NGINX log_format directive from your nginx.conf.
+    Default to NGINX default combined format.
+
+  -s, --since
+  -u, --until
+    Parse entries using specified date(s).
+    Can use timestamps or system.d style wording.
+
+DATABASE
+  -d, --db
+    SQLite3 DB file path.
+
+REPORT
+  -r, --report
+    Report file path. Must end with .txt or .json.
+
+  -l, --layout
+    Custom report layout for screen and text reports.
+
+MORE
+  You should read the detailed usage guide at:
+  https://gitlab.com/gnufred/logslate/-/blob/main/.docs/usage.md
+`
+
+	fmt.Fprint(os.Stderr, usage)
+}
+
+func validate(narg int) error {
 	showHelp := func() error {
-		fmt.Printf("Usage:\n")
-		pflag.PrintDefaults()
+		Help()
 		return ErrShowHelp
 	}
 
@@ -68,15 +105,29 @@ func validate() error {
 		return showHelp()
 	}
 
+	// --layout contains only valid characters.
+	regex := "[^a-z:,\\_]"
+	match, _ := regexp.MatchString(regex, args.ReportLayout)
+	if match {
+		fmt.Printf("Error: invalid characters in layout format.\n\n")
+		return showHelp()
+	}
+
+	// --layout is not used with JSON format reports.
+	if args.ReportFormat == "json" && args.ReportLayout != "" {
+		fmt.Printf("Error: report layout is only available for screen and text reports.\n\n")
+		return showHelp()
+	}
+
 	// There are extra unknown arguments or params.
-	if narg := pflag.NArg(); narg != 0 {
+	if narg != 0 {
 		fmt.Printf("Error: unknown argument(s) found\n\n")
 		return showHelp()
 	}
 
 	// Report format is invalid.
 	if args.ReportPath != "" {
-		if f := args.ReportFrmt; f != "json" && f != "text" {
+		if f := args.ReportFormat; f != "json" && f != "text" {
 			fmt.Printf("Error: --format value must end with .json or .txt\n\n")
 			return showHelp()
 		}
@@ -92,41 +143,44 @@ func parse() error {
 	hideFlags := true
 
 	// Help flags.
-	helpFlag := flags.BoolP("help", "h", false, "Show help message.")
+	helpFlag := flags.BoolP("help", "h", false, "")
 	if hideFlags {
 		flags.MarkHidden("help")
 	}
 
 	// Debug flags.
-	flags.CountP("debug", "v", "Debug: verbosity")
+	flags.CountP("debug", "v", "")
 	if hideFlags {
 		flags.MarkHidden("debug")
 	}
 
 	// pprof profiling flags.
-	cpuprofFlag := flags.StringP("profcpu", "", "", "Profile CPU usage.")
+	cpuprofFlag := flags.StringP("profcpu", "", "", "")
 	if hideFlags {
 		flags.MarkHidden("profcpu")
 	}
 	flags.Lookup("profcpu").NoOptDefVal = "cpu.prof"
-	memprofFlag := flags.StringP("profmem", "", "", "Profile memory usage.")
+	memprofFlag := flags.StringP("profmem", "", "", "")
 	if hideFlags {
 		flags.MarkHidden("profmem")
 	}
 	flags.Lookup("profmem").NoOptDefVal = "mem.prof"
 
 	// Time flags.
-	sinceFlag := flags.StringP("since", "s", "", "Parse entries since specified date.")
-	untilFlag := flags.StringP("until", "u", "", "Parse entries until specified date.")
+	sinceFlag := flags.StringP("since", "s", "", "")
+	untilFlag := flags.StringP("until", "u", "", "")
 
 	// Database flags.
-	dbFlag := flags.StringP("db", "d", "", "SQLite3 DB file path.")
+	dbFlag := flags.StringP("db", "d", "", "")
 
 	// NGINX `log_format` flags.
-	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "NGINX log_format directive.")
+	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "")
 
 	// Report flags.
-	reportFlag := flags.StringP("report", "r", "", "Report file path. Must end with .txt or .json.")
+	reportFlag := flags.StringP("report", "r", "", "")
+
+	// Report layout flag.
+	reportLayoutFlag := flags.StringP("layout", "l", "", "")
 
 	// Parse and save CLI args.
 	args = Args{}
@@ -152,7 +206,9 @@ func parse() error {
 
 	args.ReportPath = string(*reportFlag)
 
-	args.ReportFrmt = parseReportPath(string(*reportFlag))
+	args.ReportFormat = parseReportPath(string(*reportFlag))
+
+	args.ReportLayout = string(*reportLayoutFlag)
 
 	return nil
 }

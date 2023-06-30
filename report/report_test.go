@@ -6,9 +6,16 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	got := New()
-	if got.Path != "" || got.Frmt != "" {
-		t.Error("path and frmt should be empty")
+	got := New("", "", "")
+	if got.Line.Ok != 0 {
+		t.Error("empty report has non empty values")
+	}
+}
+
+func TestNewText(t *testing.T) {
+	got := NewText(New("", "", ""))
+	if got.Line.Ok != 0 {
+		t.Error("empty report has non empty values")
 	}
 }
 

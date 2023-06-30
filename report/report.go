@@ -6,26 +6,61 @@ import (
 
 // Global data set.
 type Report struct {
-	Path string `json:"path"`
-	Frmt string `json:"format"`
+	path   string
+	format string
+	layout []section
 
 	// Report aggregated data.
 	Run   Runtimes         `json:"runtimes"`
 	Line  Lines            `json:"parsed"`
 	Size  Sizes            `json:"size"`
 	Time  Times            `json:"time_args"`
-	Db    Dbs              `json:"database"`
 	Thrt  Thrts            `json:"threats"`
 	AtkTy AtkTypes         `json:"attack_types"`
 	Atkr  map[string]Atkrs `json:"attackers"`
 	Bot   map[string]Bots  `json:"bots"`
 }
 
-func New() *Report {
-	rep := Report{}
-	rep.Atkr = make(map[string]Atkrs)
-	rep.Bot = make(map[string]Bots)
-	return &rep
+type TextReport struct {
+	Report
+	// Order by count data structures.
+	AtkrCnt []Count
+	BotCnt  []Count
+}
+
+type Count struct {
+	Num  uint
+	Item string
+}
+
+func New(path, format, layout string) *Report {
+	r := Report{}
+	r.path = path
+	r.format = format
+	if layout == "" {
+		layout = defaultLayout
+	}
+	r.layout = parseLayout(layout)
+	r.Atkr = make(map[string]Atkrs)
+	r.Bot = make(map[string]Bots)
+	return &r
+}
+
+func NewText(r *Report) *TextReport {
+	t := TextReport{}
+	t.path = r.path
+	t.format = r.format
+	t.layout = r.layout
+	t.Run = r.Run
+	t.Line = r.Line
+	t.Size = r.Size
+	t.Time = r.Time
+	t.Thrt = r.Thrt
+	t.AtkTy = r.AtkTy
+	t.Atkr = r.Atkr
+	t.Bot = r.Bot
+
+	return &t
 }
 
 // Performance data.
