@@ -7,7 +7,7 @@ require (
 	github.com/petar-dambovaliev/aho-corasick v0.0.0-20211021192214-5ab2d9280aa9
 	github.com/schollz/progressbar/v3 v3.13.1
 	github.com/spf13/pflag v1.0.5
-	gitlab.com/gnufred/nxparse v1.2.0
+	gitlab.com/gnufred/nxparse v1.2.1
 	modernc.org/sqlite v1.23.1
 )
 
