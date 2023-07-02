@@ -29,7 +29,6 @@ type Parsed struct {
 }
 
 var (
-	ErrNoFormat    = errors.New("no log_format specified")
 	ErrNoInputData = errors.New("no input data")
 	ErrReadPipe    = errors.New("error while reading piped io.Stdin")
 	ErrLimitReach  = errors.New("parsing error limit reached")
@@ -41,10 +40,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	if !pi.IsPiped() {
 		return par, ErrNoInputData
-	}
-
-	if a.LogFrmt == "" {
-		return par, ErrNoFormat
 	}
 
 	d := db.Singleton()
