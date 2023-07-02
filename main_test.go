@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/root"
 	"gitlab.com/gnufred/logslate/test"
 )
@@ -55,9 +56,18 @@ func testRunOk(t *testing.T) {
 } */
 
 func TestExit(t *testing.T) {
+	exitErrHelp(t)
 	exitErrAny(t)
 	exitErrTooLong(t)
 	exitErrLimitReach(t)
+}
+
+func exitErrHelp(t *testing.T) {
+	got := Exit(args.ErrHelpShown)
+	exp := 1
+	if got != exp {
+		t.Errorf("bad exit status, got %d, exp %d", got, exp)
+	}
 }
 
 func exitErrAny(t *testing.T) {

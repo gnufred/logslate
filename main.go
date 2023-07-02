@@ -60,6 +60,10 @@ func Exit(err error) int {
 		return 0
 	}
 
+	if errors.Is(err, args.ErrHelpShown) {
+		return 1
+	}
+
 	stderr := log.New(os.Stderr, "", 0)
 	fmtErr := "\nfatal: %s."
 
