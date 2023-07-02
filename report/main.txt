@@ -12,12 +12,7 @@ Per second:
 Since: {{.Time.Since}}{{end}}
 Start: {{HumanTime .Time.Start}}{{if .Time.Until}}
 Until: {{.Time.Until}}{{end}}
-End:   {{HumanTime .Time.End}}{{if .Db.Path}}
-=== [[ Database ]] ===
-Path: {{.Db.Path}}{{end}}
-=== [[ Report ]] ===
-Path: {{.Path}} 
-Format: {{.Frmt}}
+End:   {{HumanTime .Time.End}}
 === [[ Threats ]] ===
 Attacks:
   * {{AddCommas .Thrt.Atks.Its}}

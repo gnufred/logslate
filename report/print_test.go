@@ -70,7 +70,8 @@ func TestCreateTextOutput(t *testing.T) {
 	data := []string{
 		"=== [[ Summary ]] ===",
 		"=== [[ Time ]] ===",
-		"=== [[ Report ]] ===",
+		"=== [[ Threats ]] ===",
+		"=== [[ Attacks ]] ===",
 	}
 
 	for _, s := range data {
