@@ -35,7 +35,7 @@ type Args struct {
 
 var args = Args{}
 
-var ErrShowHelp = errors.New("help shown")
+var ErrHelpShown = errors.New("help shown")
 
 func Init() error {
 	if !pflag.Parsed() {
@@ -91,7 +91,7 @@ MORE
 func validate(narg int) error {
 	showHelp := func() error {
 		Help()
-		return ErrShowHelp
+		return ErrHelpShown
 	}
 
 	// User asked for help.

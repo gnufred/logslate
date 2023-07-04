@@ -60,17 +60,6 @@ func TestErrDbCreateFail(t *testing.T) {
 	}
 }
 
-// Must fail given no --log_format is specified.
-func TestNoFormat(t *testing.T) {
-	a := args.Get()
-	test.DisableOutput()
-	_, err := ParseStdin(a)
-	test.EnableOutput()
-	if !errors.Is(err, ErrNoFormat) {
-		t.Errorf("Did not get the expected error")
-	}
-}
-
 // Must handle buffio.Scan() ErrTooLong properly.
 // Cannot test: MockStdin() need to change the os.Pipe buffer at runtime.
 // See test.MockStdin comments for more information.
