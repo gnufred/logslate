@@ -2,10 +2,10 @@ package translate
 
 import (
 	"net"
-	"strings"
 	"testing"
 	"time"
 
+	"gitlab.com/gnufred/logslate/test"
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
@@ -107,21 +107,15 @@ func TestNginxTranslateError(t *testing.T) {
 		t.Errorf("Parse() error %s", err)
 	}
 	got, err := Nginx(ngxLog)
-	expErr := "malformed NGINX request"
-	if !strings.Contains(err.Error(), expErr) {
-		t.Errorf("did not get expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "malformed NGINX request")
 	compareStruct(t, got, exp)
 }
 
 // https://gitlab.com/gnufred/logslate/-/issues/92
 func TestIssue92Fix(t *testing.T) {
-	expErr := "malformed NGINX request"
 	crashString := "GET /rest/V1/directory/countries?_=16869P/1.1"
 	_, err := splitNginxRequest(crashString)
-	if !strings.Contains(err.Error(), expErr) {
-		t.Errorf("did not get expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "malformed NGINX request")
 }
 
 func compareStruct(t *testing.T, got, exp Log) {

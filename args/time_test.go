@@ -1,9 +1,10 @@
 package args
 
 import (
-	"strings"
 	"testing"
 	"time"
+
+	"gitlab.com/gnufred/logslate/test"
 )
 
 func TestSetSinceUntil(t *testing.T) {
@@ -51,9 +52,7 @@ func invalidSince(t *testing.T) {
 
 	a := Get()
 	err := a.SetSinceUntil(sinceArg, untilArg)
-	if !strings.Contains(err.Error(), "unable to parse") {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "unable to parse")
 }
 
 func invalidUntil(t *testing.T) {
@@ -62,9 +61,7 @@ func invalidUntil(t *testing.T) {
 
 	a := Get()
 	err := a.SetSinceUntil(sinceArg, untilArg)
-	if !strings.Contains(err.Error(), "unable to parse") {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "unable to parse")
 }
 
 func TestNullTimestamp(t *testing.T) {
@@ -74,9 +71,7 @@ func TestNullTimestamp(t *testing.T) {
 
 func TestBadTimestamp(t *testing.T) {
 	_, err := parseTimestamp("invalid_time_string", time.Time{})
-	if !strings.Contains(err.Error(), "unable to parse") {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "unable to parse")
 }
 
 func TestTranslatedTimeNow(t *testing.T) {

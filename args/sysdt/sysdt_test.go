@@ -1,9 +1,10 @@
 package sysdt
 
 import (
-	"strings"
 	"testing"
 	"time"
+
+	"gitlab.com/gnufred/logslate/test"
 )
 
 func TestWorded(t *testing.T) {
@@ -29,9 +30,7 @@ func TestWorded(t *testing.T) {
 
 func testInvalidWord(t *testing.T, raw string) {
 	_, err := Worded(raw)
-	if !strings.Contains(err.Error(), "no match") {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "no match")
 }
 
 func TestAdjust(t *testing.T) {
@@ -56,9 +55,7 @@ func TestAdjust(t *testing.T) {
 func testInvalidAdjust(t *testing.T) {
 	nilTime := time.Time{}
 	tm, err := Adjust("invalid_duration", nilTime)
-	if !strings.Contains(err.Error(), "incorrect format") {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "incorrect format")
 	if tm != nilTime {
 		t.Errorf("time not nil")
 	}

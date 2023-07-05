@@ -1,7 +1,6 @@
 package root
 
 import (
-	"errors"
 	"os"
 	"testing"
 
@@ -21,9 +20,7 @@ func TestNoData(t *testing.T) {
 	test.DisableOutput()
 	_, err := ParseStdin(a)
 	test.EnableOutput()
-	if !errors.Is(err, ErrNoInputData) {
-		t.Errorf("Did not get the expected error")
-	}
+	test.ErrorExpected(t, err, ErrNoInputData.Error())
 }
 
 // Must fail given the database file already exists.
@@ -49,9 +46,9 @@ func TestErrDbCreateFail(t *testing.T) {
 
 	// Test: https://gitlab.com/gnufred/logslate/-/issues/106
 	// Don't use strings.Contais(). The error must be an exact match.
-	if err.Error() != "unable to create database: file root_test.db already exists" {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err,
+		"unable to create database: file root_test.db already exists",
+	)
 	test.EnableOutput()
 
 	err = os.Remove(a.Db)
@@ -78,9 +75,7 @@ func TestParseTokenTooLong(t *testing.T) {
 	test.DisableOutput()
 	_, err := ParseStdin(a)
 	test.EnableOutput()
-	if !errors.Is(err, bufio.ErrTooLong) {
-		t.Errorf("Did not get the expected error")
-	}
+	test.ErrorExpected(err, bufio.ErrTooLong.Error())
 }
 */
 
@@ -99,9 +94,7 @@ func TestParseErrorLimit(t *testing.T) {
 	test.DisableOutput()
 	_, err = ParseStdin(a)
 	test.EnableOutput()
-	if !errors.Is(err, ErrLimitReach) {
-		t.Errorf("Did not get the expected error")
-	}
+	test.ErrorExpected(t, err, ErrLimitReach.Error())
 }
 
 func TestNormalLogs(t *testing.T) {

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"os"
 	"testing"
 
@@ -38,4 +39,12 @@ func TestMockStdin(t *testing.T) {
 	if exp != got {
 		t.Errorf("mocked data doesn't match, got %s, exp %s", got, exp)
 	}
+}
+
+// Testing that this function works as expected causes test_test.go to fail.
+func TestErrorExpected(t *testing.T) {
+	ErrorExpected(t,
+		errors.New("this is an error"),
+		"an error",
+	)
 }

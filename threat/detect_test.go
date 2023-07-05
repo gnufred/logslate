@@ -1,8 +1,9 @@
 package threat
 
 import (
-	"strings"
 	"testing"
+
+	"gitlab.com/gnufred/logslate/test"
 )
 
 type result struct {
@@ -141,9 +142,7 @@ func validBotScans(t *testing.T) {
 func moreThanOneBotFound(t *testing.T) {
 	testMatch := func(t *testing.T, agent string, exp string) {
 		got, err := botScan(agent)
-		if !strings.Contains(err.Error(), "more than one") {
-			t.Errorf("did not get expected error: %s", err)
-		}
+		test.ErrorExpected(t, err, "more than one")
 		if got != exp {
 			t.Errorf("bot doesn't match, got %s, exp %s", got, exp)
 		}

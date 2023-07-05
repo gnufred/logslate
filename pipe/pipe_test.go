@@ -62,7 +62,9 @@ func TestReadLine_TwoLinesPlusEOF(t *testing.T) {
 func checkData(t *testing.T, pipe *Piper, data []mockedStdinExpect) {
 	for _, d := range data {
 		text, _, err := pipe.ReadLine()
-		checkError(t, err, d.err)
+		if d.err != nil {
+			test.ErrorExpected(t, err, d.err.Error())
+		}
 		checkLine(t, text, d.len)
 	}
 }
@@ -71,11 +73,5 @@ func checkLine(t *testing.T, got string, expected int) {
 	gotLen := len(got)
 	if gotLen != expected {
 		t.Errorf("Got %d text, expeced %d", gotLen, expected)
-	}
-}
-
-func checkError(t *testing.T, got error, expected error) {
-	if got != expected {
-		t.Errorf("Got error %s, expected error %s", got, expected)
 	}
 }

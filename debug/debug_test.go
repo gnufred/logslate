@@ -1,8 +1,9 @@
 package debug
 
 import (
-	"strings"
 	"testing"
+
+	"gitlab.com/gnufred/logslate/test"
 )
 
 func TestInit(t *testing.T) {
@@ -41,33 +42,22 @@ func TestInvalidVerbosityLevels(t *testing.T) {
 
 func testInvalidVerbosity(t *testing.T, wantverb int) {
 	err := setVerbosity(wantverb)
-	exp := "invalid debug verb"
-	if !strings.Contains(err.Error(), exp) {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "invalid debug verb")
 
 }
 
 func TestDebugDisabled(t *testing.T) {
 	setVerbosity(OFF)
 	err := Log(V, "log_name: test", "log_message: test")
-	exp := "debug output disabled"
-	if !strings.Contains(err.Error(), exp) {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "debug output disabled")
 }
 
 func TestVerbFailures(t *testing.T) {
 	setVerbosity(V)
-	exp := "does not meet"
 
 	err := Log(VV, "log_name: test", "log_message: test")
-	if !strings.Contains(err.Error(), exp) {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "does not meet")
 
 	err = Log(VVV, "log_name: test", "log_message: test")
-	if !strings.Contains(err.Error(), exp) {
-		t.Errorf("did not get expected error: %s", err)
-	}
+	test.ErrorExpected(t, err, "does not meet")
 }

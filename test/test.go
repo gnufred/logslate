@@ -7,6 +7,8 @@ package test
 import (
 	"fmt"
 	"os"
+	"strings"
+	"testing"
 )
 
 var defaultStdout *os.File
@@ -28,6 +30,19 @@ func DisableOutput() {
 func EnableOutput() {
 	os.Stdout = defaultStdout
 	os.Stderr = defaultStderr
+}
+
+func ErrorExpected(t *testing.T, err error, exp string) {
+	if err == nil {
+		t.Errorf("got an nil error\nexp: %s", exp)
+	}
+	got := err.Error()
+	if !strings.Contains(got, exp) {
+		t.Errorf(
+			"did not get the expected error\ngot: %s\nexp: %s",
+			got, exp,
+		)
+	}
 }
 
 func MockStdin(input []byte) {

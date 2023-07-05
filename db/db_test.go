@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"gitlab.com/gnufred/logslate/test"
 	"gitlab.com/gnufred/logslate/translate"
 	nginx "gitlab.com/gnufred/nxparse"
 )
@@ -89,9 +90,7 @@ func recloseDB(t *testing.T) {
 func closeCreateError(t *testing.T) {
 	db := Singleton()
 	err := db.createTables()
-	if !strings.Contains(err.Error(), "closed") {
-		t.Errorf("did not get expected error: got %s", err)
-	}
+	test.ErrorExpected(t, err, "closed")
 }
 
 func TestDestroy(t *testing.T) {

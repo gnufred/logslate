@@ -57,21 +57,15 @@ func printFrmt(t *testing.T, frmt string) {
 func TestPrintTest(t *testing.T) {
 	r := New("screen", "text", "banana!")
 	err := printText(r)
-	if err == nil || !strings.Contains(err.Error(), "report error") {
-		t.Errorf("did not get the expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "report error")
 
 	r = New("/invalid/path/fail/please", "text", "summary")
 	err = printText(r)
-	if err == nil || !strings.Contains(err.Error(), "no such file") {
-		t.Errorf("did not get the expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "no such file")
 
 	r = New("/invalid/path/fail/please", "json", "summary")
 	err = printJson(r)
-	if err == nil || !strings.Contains(err.Error(), "no such file") {
-		t.Errorf("did not get the expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "no such file")
 }
 
 func TestCreateTextOutput(t *testing.T) {
@@ -106,24 +100,18 @@ func validTextOutput(t *testing.T) {
 func invalidTextOutput(t *testing.T) {
 	r := New("screen", "text", "banana!")
 	_, err := createTextOutput(r)
-	if err == nil || !strings.Contains(err.Error(), "does not exist") {
-		t.Errorf("did not get the expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "does not exist")
 
 	r = New("screen", "text", "bots:banana!_lots!")
 	_, err = createTextOutput(r)
-	if err == nil || !strings.Contains(err.Error(), "layout specification") {
-		t.Errorf("did not get the expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "layout specification")
 }
 
 func TestAtkrOptions(t *testing.T) {
 	rep := New("screen", "text", "attackers")
 	data := NewText(rep)
 	err := atkrOptions(data, Opts{"banana!": ""})
-	if !strings.Contains(err.Error(), "invalid option") {
-		t.Errorf("did not get expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "invalid option")
 }
 
 func TestAtkrOrder(t *testing.T) {
@@ -133,9 +121,7 @@ func TestAtkrOrder(t *testing.T) {
 	data := NewText(rep)
 
 	err := atkrOrder(data, "")
-	if !strings.Contains(err.Error(), "invalid option") {
-		t.Errorf("did not get expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "invalid option")
 	if data.AtkrCnt != nil {
 		t.Error("attacker count is not nil")
 	}
@@ -153,9 +139,7 @@ func TestBotOptions(t *testing.T) {
 	rep := New("screen", "text", "bots")
 	data := NewText(rep)
 	err := botOptions(data, Opts{"banana!": ""})
-	if !strings.Contains(err.Error(), "invalid option") {
-		t.Errorf("did not get expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "invalid option")
 }
 
 func TestBotOrder(t *testing.T) {
@@ -165,9 +149,7 @@ func TestBotOrder(t *testing.T) {
 	data := NewText(rep)
 
 	err := botOrder(data, "")
-	if !strings.Contains(err.Error(), "invalid option") {
-		t.Errorf("did not get expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "invalid option")
 	if data.BotCnt != nil {
 		t.Error("bot count is not nil")
 	}
@@ -215,7 +197,5 @@ func validTemplateText(t *testing.T) {
 func invalidTemplateText(t *testing.T) {
 	rep := New("screen", "text", "banana!")
 	_, err := compileTemplateText(rep)
-	if !strings.Contains(err.Error(), "does not exist") {
-		t.Errorf("did not get the expected error, got %s", err)
-	}
+	test.ErrorExpected(t, err, "does not exist")
 }
