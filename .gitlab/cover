@@ -1,26 +1,72 @@
 #!/bin/bash
 
-# checks thresholds
-minimum=90
+# hardcoded minimums
+declare -A minCov
+minCov[args/args.go]=96
+minCov[args/sysdt/sysdt.go]=89
+minCov[args/time.go]=100
+minCov[db/db.go]=85
+minCov[debug/debug.go]=86
+minCov[main.go]=89
+minCov[pipe/pipe.go]=90
+minCov[prof/prof.go]=79
+minCov[report/format.go]=100
+minCov[report/layout.go]=100
+minCov[report/print.go]=93
+minCov[report/report.go]=100
+minCov[root/root.go]=96
+minCov[test/test.go]=81
+minCov[threat/ahocorasick.go]=100
+minCov[threat/attacks.go]=100
+minCov[threat/detect.go]=100
+minCov[translate/translate.go]=100
 
-# get coverage report
-echo "Checking coverage."
+# prepare script execution
+root_dir=$(git rev-parse --show-toplevel)
+cd $root_dir
+mkdir -p .cover
+
+# run go tests
 go clean -testcache
-coverage=$(TZ=Etc/UTC go test "$@" ./... -cover)
-echo "$coverage"
+coverage=$(TZ=Etc/UTC go test "$@" ./... -cover -coverprofile=.cover/profile.out)
+testfail="$?"
 
-# get the numbers of reports
-line_count=$(echo "$coverage"|wc -l)
-# calculate coverage stats 
-stats=$(echo "$coverage"|awk '{print $5}'|sed 's/\.[0-9]%//')
-total=$(echo "$stats"|awk '{s+=$1} END {print s}')
-percent=$(expr "$total" / "$line_count")
+# check if there are test failures
+if [[ "testfail" -ne 0 ]]; then
+    echo "$coverage"
+    exit 1
+fi
 
-echo "Total: $percent%
-"
+# generate profile data
+go tool cover -html=.cover/profile.out -o .cover/profile.html
+files=$(grep -oE 'gitlab.com/gnufred/logslate/[a-z/]*\.go \([0-9]*\.[0-9]%\)' .cover/profile.html)
 
-# validate the result
-if [[ "$percent" -lt "$minimum" ]]; then
-	echo "error: got $percent% cover, minimum $minimum%"
-	exit 1
+
+if [[ -n "$files" ]]; then
+    while IFS= read -r result; do
+        # get percentage
+        file=$(echo "$result"|awk '{print $1}'|sed "s,gitlab.com/gnufred/logslate/,,")
+        min="${minCov[$file]}"
+        cover=$(echo "$result"|awk '{print $2}'|sed 's,[()%],,g'|cut -d. -f1)
+        if [[ $cover -lt $min ]]; then
+            status="NO"
+        else
+            status="--"
+        fi
+        table="${table}$file,$min,$cover,$status\n"
+    done <<< "$files"
+fi
+
+echo -e "$table"|column \
+    -C name=FILE,left \
+    -C name=MIN,right \
+    -C name=GOT,right \
+    -C name=OK,right \
+    -s, -t
+
+fails=$(echo -e "$table"|grep NO)
+if [[ -n "$fails" ]]; then
+    echo -e "\nError: minimum coverage not reached"
+    echo "$fails"|cut -d, -f1
+    exit 1
 fi
