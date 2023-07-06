@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 )
 
 //go:embed templates/summary
@@ -85,9 +86,7 @@ func printText(r *Report) error {
 	return nil
 }
 
-func createTextOutput(r *Report) (bytes.Buffer, error) {
-	var out bytes.Buffer
-
+func newTemplate() *template.Template {
 	tmpl := template.New("report")
 	tmpl.Funcs(template.FuncMap{
 		"HumanTime":     HumanTime,
@@ -95,11 +94,11 @@ func createTextOutput(r *Report) (bytes.Buffer, error) {
 		"AddCommas":     AddCommas,
 		"BytesToMB":     BytesToMB,
 	})
+	return tmpl
+}
 
-	templateText, err := compileTemplateText(r)
-	if err != nil {
-		return out, err
-	}
+func createTextOutput(r *Report) (bytes.Buffer, error) {
+	var out bytes.Buffer
 
 	data, err := prepareData(r)
 	if err != nil {
@@ -108,19 +107,42 @@ func createTextOutput(r *Report) (bytes.Buffer, error) {
 		return out, err
 	}
 
-	_, err = tmpl.Parse(templateText)
-	if err != nil {
-		err := fmt.Errorf("template parsing: %w", err)
-		return out, err
-	}
+	for _, section := range r.layout {
+		templateText, ok := templateEmbeds[section.Name]
+		if !ok {
+			return out, fmt.Errorf("section \"%s\" does not exist", section.Name)
+		}
 
-	err = tmpl.Execute(&out, &data)
-	if err != nil {
-		err := fmt.Errorf("template execution: %w", err)
-		return out, err
+		tmpl := newTemplate()
+
+		_, err = tmpl.Parse(templateText)
+		if err != nil {
+			err := fmt.Errorf("template parsing: %w", err)
+			return out, err
+		}
+
+		buf := bytes.Buffer{}
+		err = tmpl.Execute(&buf, &data)
+		if err != nil {
+			err := fmt.Errorf("template execution: %w", err)
+			return out, err
+		}
+
+		bytes := buf.Bytes()
+		if len(bytes) > 1 {
+			out.WriteString(header(section.Name))
+			out.Write(bytes)
+		}
 	}
 
 	return out, nil
+}
+
+func header(s string) string {
+	return fmt.Sprintf(
+		"=== [[ %s ]] ===",
+		strings.ToUpper(s[:1])+s[1:],
+	)
 }
 
 func prepareData(r *Report) (*TextReport, error) {
@@ -203,18 +225,6 @@ func botOrder(t *TextReport, order string) error {
 	}
 	t.BotCnt = count
 	return nil
-}
-
-func compileTemplateText(r *Report) (string, error) {
-	text := ""
-	for _, section := range r.layout {
-		embed, ok := templateEmbeds[section.Name]
-		if !ok {
-			return "", fmt.Errorf("section \"%s\" does not exist", section.Name)
-		}
-		text += embed
-	}
-	return text, nil
 }
 
 func writeReport(path string, out []byte) error {

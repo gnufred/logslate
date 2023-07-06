@@ -1,10 +1,10 @@
-=== [[ Summary ]] ===
+
 Runtime: {{HumanDuration .Run.Total}}
 Data size: {{BytesToMB .Size.Byte}} MB
-Lines: {{AddCommas .Line.Total}}
-  * Ok: {{AddCommas .Line.Ok}}
-  * Skipped: {{AddCommas .Line.Skip}}
-  * Errors: {{AddCommas .Line.Error}}
+Lines: {{AddCommas .Line.Total}}{{if ne .Line.Ok .Line.Total}}
+  * Ok: {{AddCommas .Line.Ok}}{{end}}{{if .Line.Skip}}
+  * Skipped: {{AddCommas .Line.Skip}}{{end}}{{if .Line.Error}}
+  * Errors: {{AddCommas .Line.Error}}{{end}}
 Per second:
   * {{BytesToMB .BytesPerSec}} MB
   * {{AddCommas .LinesPerSec}} lines

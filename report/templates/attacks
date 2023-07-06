@@ -1,7 +1,6 @@
-=== [[ Attacks ]] ===
-Total:      {{AddCommas .AtkTy.Total}}
-Unknown:    {{AddCommas .AtkTy.Unk}}
-SQL inject: {{AddCommas .AtkTy.SQL}}
-CMD inject: {{AddCommas .AtkTy.CMD}}
-Dir trav:   {{AddCommas .AtkTy.Dir}}
-Cross site: {{AddCommas .AtkTy.XSS}}
+{{if .AtkTy.Unk}}
+Unknown:    {{AddCommas .AtkTy.Unk}}{{end}}{{if .AtkTy.SQL}}
+SQL inject: {{AddCommas .AtkTy.SQL}}{{end}}{{if .AtkTy.CMD}}
+CMD inject: {{AddCommas .AtkTy.CMD}}{{end}}{{if .AtkTy.Dir}}
+Dir trav:   {{AddCommas .AtkTy.Dir}}{{end}}{{if .AtkTy.XSS}}
+Cross site: {{AddCommas .AtkTy.XSS}}{{end}}

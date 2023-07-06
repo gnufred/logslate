@@ -74,26 +74,33 @@ func TestCreateTextOutput(t *testing.T) {
 }
 
 func validTextOutput(t *testing.T) {
-	testOut := func(t *testing.T, gs, exp string) {
+	testMatch := func(t *testing.T, layout, exp string) {
+		r := New("screen", "text", layout)
+		r.Thrt.Bots.Its = 100
+		r.Thrt.Bots.Prct = 1
+		got, err := createTextOutput(r)
+		if err != nil {
+			t.Error(err)
+		}
+		gs := got.String()
 		if !strings.Contains(gs, exp) {
-			t.Errorf("text output didn't contain %s", exp)
+			t.Errorf("text output didn't contain %s\noutput:\n%s", exp, gs)
 		}
 	}
 
-	r := New("screen", "text", "summary,time")
-	got, err := createTextOutput(r)
-	if err != nil {
-		t.Error(err)
+	data := []struct {
+		Layout, Exp string
+	}{
+		{"summary", header("summary")},
+		{"summary", "Runtime:"},
+		{"time", header("time")},
+		{"time", "Start: 0001-01-01 00:00:00 UTC"},
+		{"threats", header("threats")},
+		{"threats", "Bots: 100 (1%)"},
 	}
-	gs := got.String()
 
-	data := []string{
-		"=== [[ Summary ]] ===",
-		"=== [[ Time ]] ===",
-	}
-
-	for _, s := range data {
-		testOut(t, gs, s)
+	for _, d := range data {
+		testMatch(t, d.Layout, d.Exp)
 	}
 }
 
@@ -105,6 +112,26 @@ func invalidTextOutput(t *testing.T) {
 	r = New("screen", "text", "bots:banana!_lots!")
 	_, err = createTextOutput(r)
 	test.ErrorExpected(t, err, "layout specification")
+}
+
+func TestHeader(t *testing.T) {
+	testMatch := func(t *testing.T, in, exp string) {
+		got := header(in)
+		if got != exp {
+			t.Errorf("header doesn't match, got %s, exp %s", got, exp)
+		}
+	}
+
+	data := []struct {
+		In, Exp string
+	}{
+		{"summary", "=== [[ Summary ]] ==="},
+		{"test", "=== [[ Test ]] ==="},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
+	}
 }
 
 func TestAtkrOptions(t *testing.T) {
@@ -161,41 +188,4 @@ func TestBotOrder(t *testing.T) {
 	if data.BotCnt[0].Item != "two" {
 		t.Error("bot ordered by count data is incorrect")
 	}
-}
-
-func TestCompileTemplateText(t *testing.T) {
-	validTemplateText(t)
-	invalidTemplateText(t)
-}
-
-func validTemplateText(t *testing.T) {
-	testMatch := func(t *testing.T, in, exp string) {
-		rep := New("screen", "text", in)
-		text, _ := compileTemplateText(rep)
-		if !strings.Contains(text, exp) {
-			t.Errorf("did not find expected text: %s", exp)
-		}
-	}
-
-	data := []struct {
-		In  string
-		Exp string
-	}{
-		{"summary", "[[ Summary ]]"},
-		{"time", "[[ Time ]]"},
-		{"threats", "[[ Threats ]]"},
-		{"attacks", "[[ Attacks ]]"},
-		{"attackers", "[[ Attackers ]]"},
-		{"bots", "[[ Bots ]]"},
-	}
-
-	for _, d := range data {
-		testMatch(t, d.In, d.Exp)
-	}
-}
-
-func invalidTemplateText(t *testing.T) {
-	rep := New("screen", "text", "banana!")
-	_, err := compileTemplateText(rep)
-	test.ErrorExpected(t, err, "does not exist")
 }
