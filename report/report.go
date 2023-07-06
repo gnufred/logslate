@@ -16,9 +16,9 @@ type Report struct {
 	Size  Sizes            `json:"size"`
 	Time  Times            `json:"time_args"`
 	Thrt  Thrts            `json:"threats"`
+	Bot   map[string]Bots  `json:"bots"`
 	AtkTy AtkTypes         `json:"attack_types"`
 	Atkr  map[string]Atkrs `json:"attackers"`
-	Bot   map[string]Bots  `json:"bots"`
 }
 
 type TextReport struct {
@@ -143,6 +143,11 @@ type Cnt struct {
 	Prct float64 `json:"percent"`
 }
 
+// Bots data.
+type Bots struct {
+	Cnt uint `json:"count"`
+}
+
 // Attack data.
 type AtkTypes struct {
 	Unk uint `json:"gen"`
@@ -158,10 +163,5 @@ func (a *AtkTypes) Total() uint {
 
 // Attackers data.
 type Atkrs struct {
-	Cnt uint `json:"count"`
-}
-
-// Bots data.
-type Bots struct {
 	Cnt uint `json:"count"`
 }
