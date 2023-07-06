@@ -4,7 +4,7 @@ package threat
 type AttackType byte
 
 const (
-	Nil AttackType = iota + 0
+	Nil AttackType = iota
 	Unk            // Unknown or uncategorized
 	SQL            // SQL injection
 	CMD            // Command injection
