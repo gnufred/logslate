@@ -9,28 +9,34 @@ import (
 	"gitlab.com/gnufred/logslate/args"
 )
 
+type verbosity int
+
 // Verbosity level constants.
-const OFF = int(0)
-const V = int(1)
-const VV = int(2)
-const VVV = int(3)
+const (
+	OFF verbosity = iota
+	V
+	VV
+	VVV
+)
 
 // Verbosity level. Change with setVerbosity().
-var verbosity = OFF
+var verbositySetting = OFF
 
 // stderr output logger.
 var stderr = log.New(os.Stderr, "", 0)
 
 func Init() {
-	verb := 0
+	var verb, argDebug, envDebug verbosity
+	verb = OFF
 	a := args.Get()
 
-	argDebug := a.Debug
+	argDebug = verbosity(a.Debug)
 	if argDebug > 0 {
 		verb = argDebug
 	}
 
-	envDebug, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
+	r, _ := strconv.Atoi(os.Getenv("LS_DEBUG"))
+	envDebug = verbosity(r)
 	if envDebug > 0 {
 		verb = envDebug
 	}
@@ -40,7 +46,7 @@ func Init() {
 	}
 }
 
-func Log(msgverb int, name string, msg interface{}) error {
+func Log(msgverb verbosity, name string, msg interface{}) error {
 	verb := GetVerbosity()
 
 	if verb == OFF {
@@ -52,17 +58,20 @@ func Log(msgverb int, name string, msg interface{}) error {
 		return nil
 	}
 
-	return fmt.Errorf("dedug message level %d does not meet current set verbosity %d", msgverb, verb)
+	return fmt.Errorf(
+		"dedug message level %d does not meet current set verbosity %d",
+		msgverb, verb,
+	)
 }
 
-func setVerbosity(wantverb int) error {
-	if wantverb >= OFF && wantverb <= VVV {
-		verbosity = wantverb
+func setVerbosity(want verbosity) error {
+	if want >= OFF && want <= VVV {
+		verbositySetting = want
 		return nil
 	}
-	return fmt.Errorf("invalid debug verbosity value: %d", wantverb)
+	return fmt.Errorf("invalid debug verbosity value: %d", want)
 }
 
-func GetVerbosity() int {
-	return verbosity
+func GetVerbosity() verbosity {
+	return verbositySetting
 }

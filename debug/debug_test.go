@@ -23,14 +23,14 @@ func TestValidVerbosityLevels(t *testing.T) {
 	testValidVerbosity(t, VVV)
 }
 
-func testValidVerbosity(t *testing.T, wantverb int) {
-	err := setVerbosity(wantverb)
+func testValidVerbosity(t *testing.T, want verbosity) {
+	err := setVerbosity(want)
 	if err != nil {
 		t.Error(err)
 	}
 	verb := GetVerbosity()
-	if verb != wantverb {
-		t.Errorf("GetVerbosity() got %d, expected %d", verb, wantverb)
+	if verb != want {
+		t.Errorf("GetVerbosity() got %d, expected %d", verb, want)
 	}
 
 }
@@ -40,8 +40,8 @@ func TestInvalidVerbosityLevels(t *testing.T) {
 	testInvalidVerbosity(t, 4)
 }
 
-func testInvalidVerbosity(t *testing.T, wantverb int) {
-	err := setVerbosity(wantverb)
+func testInvalidVerbosity(t *testing.T, want verbosity) {
+	err := setVerbosity(want)
 	test.ErrorExpected(t, err, "invalid debug verb")
 
 }
