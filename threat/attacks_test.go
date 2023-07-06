@@ -15,7 +15,7 @@ var testPatterns = []ptrn{
 }
 
 func TestAttackTypeString(t *testing.T) {
-	testMatch := func(t *testing.T, in byte, exp string) {
+	testMatch := func(t *testing.T, in AttackType, exp string) {
 		got := String(in)
 		if got != exp {
 			t.Errorf("attack type string doesn't match, got %s, exp %s", got, exp)
@@ -23,10 +23,10 @@ func TestAttackTypeString(t *testing.T) {
 	}
 
 	data := []struct {
-		In  byte
+		In  AttackType
 		Exp string
 	}{
-		{0, ""},
+		{Nil, ""},
 		{Unk, "generic"},
 		{SQL, "sql_injection"},
 		{CMD, "command_injection"},

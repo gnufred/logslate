@@ -17,7 +17,7 @@ type Threat struct {
 }
 
 type Attack struct {
-	Id    byte
+	Id    AttackType
 	Score uint32
 	Name  string
 }
@@ -38,7 +38,7 @@ func Detect(path, query, agent string) (Threat, error) {
 }
 
 // attackScan searches for attack patterns in the URL query string and URL path.
-func attackScan(path, query string) (byte, uint32) {
+func attackScan(path, query string) (AttackType, uint32) {
 	// Important: It's faster to scan longer strings than searching twice.
 	// See https://gitlab.com/gnufred/logslate/-/issues/71 for details.
 	attack, total := attackAhoSearch(attackAC, attackPatterns, path+query)

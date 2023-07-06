@@ -8,7 +8,7 @@ import (
 
 type result struct {
 	To uint32
-	Ty byte
+	Ty AttackType
 }
 
 func TestDetect(t *testing.T) {
@@ -24,7 +24,7 @@ func TestDetect(t *testing.T) {
 		"EdgeScan/1.1 (+https://www.edgescan.com/)",
 		Threat{
 			Attack{
-				2,
+				SQL,
 				5,
 				"sql_injection",
 			},
@@ -68,12 +68,12 @@ func TestAttacks(t *testing.T) {
 		Exp result
 	}{
 		{"hello(", result{0, 0}},
-		{"replace(", result{5, 5}},
-		{"\x22id\x22:\x221\x22", result{12, 1}},
-		{"path/stuff../../etc/passwd", result{9, 4}},
-		{"hello'boba_sleep(", result{5, 2}},
-		{"hello'boba_SLEEP(", result{5, 2}},
-		{"./././././././././././././././././././././././././././././././././", result{66, 4}},
+		{"replace(", result{5, XSS}},
+		{"\x22id\x22:\x221\x22", result{12, Unk}},
+		{"path/stuff../../etc/passwd", result{9, Dir}},
+		{"hello'boba_sleep(", result{5, SQL}},
+		{"hello'boba_SLEEP(", result{5, SQL}},
+		{"./././././././././././././././././././././././././././././././././", result{66, Dir}},
 	}
 
 	for _, d := range data {

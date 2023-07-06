@@ -1,13 +1,15 @@
 package threat
 
 // I use bytes over strings because I want to use the smallest possible values.
+type AttackType byte
+
 const (
-	// Attack types.
-	Unk = byte(1) // Unknown or uncategorized
-	SQL = byte(2) // SQL injection
-	CMD = byte(3) // Command injection
-	Dir = byte(4) // Directory traversal
-	XSS = byte(5) // Cross site scripting
+	Nil AttackType = iota + 0
+	Unk            // Unknown or uncategorized
+	SQL            // SQL injection
+	CMD            // Command injection
+	Dir            // Directory traversal
+	XSS            // Cross site scripting
 )
 
 // Attack pattern structure.
@@ -18,7 +20,7 @@ const (
 // * 6+: not used.
 type ptrn struct {
 	Name  string
-	Type  byte
+	Type  AttackType
 	Score byte
 }
 
@@ -209,8 +211,8 @@ var attackPatterns = []ptrn{
 }
 
 // String translate an attack type byte to a human readable string
-func String(threatType byte) string {
-	switch threatType {
+func String(atk AttackType) string {
+	switch atk {
 	case Unk:
 		return "generic"
 	case SQL:

@@ -74,7 +74,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Initialize parser loop variables.
 	var bytesTotal uint
-	atkTypes := make(map[byte]uint, threat.XSS)
+	// Initialize map length with highest attack type constant.
+	atkTypes := make(map[threat.AttackType]uint, threat.XSS)
 	attackers := make(map[string]uint)
 	bots := make(map[string]uint)
 
