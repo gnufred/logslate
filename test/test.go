@@ -35,6 +35,7 @@ func EnableOutput() {
 func ErrorExpected(t *testing.T, err error, exp string) {
 	if err == nil {
 		t.Errorf("got an nil error\nexp: %s", exp)
+		return
 	}
 	got := err.Error()
 	if !strings.Contains(got, exp) {

@@ -1,3 +1,4 @@
 {{if .BotCnt}}{{range $d := .BotCnt}}
 {{$d.Item}}: {{AddCommas $d.Num}}{{end}}{{else}}{{range $name, $data := .Bot}}
-{{$name}}: {{AddCommas $data.Cnt}}{{end}}{{end}}
+{{$name}}: {{AddCommas $data.Cnt}}{{end}}{{end}}{{if .BotFiltered}}
+**hidden: {{AddCommas .BotFiltered}}**{{end}}

@@ -6,6 +6,7 @@ import (
 
 // Global data set.
 type Report struct {
+	// Report specifications.
 	path   string
 	format string
 	layout []section
@@ -23,9 +24,12 @@ type Report struct {
 
 type TextReport struct {
 	Report
-	// Order by count data structures.
+
 	AtkrCnt []Count
 	BotCnt  []Count
+
+	AtkrFiltered uint
+	BotFiltered  uint
 }
 
 type Count struct {

@@ -8,7 +8,6 @@ import (
 	"html/template"
 	"log"
 	"os"
-	"sort"
 	"strings"
 )
 
@@ -157,74 +156,6 @@ func prepareData(r *Report) (*TextReport, error) {
 		}
 	}
 	return t, err
-}
-
-func atkrOptions(t *TextReport, options Opts) error {
-	var err error
-	for opt, val := range options {
-		switch opt {
-		case "order":
-			err = atkrOrder(t, val)
-		default:
-			err = fmt.Errorf("invalid option \"%s\"", opt)
-		}
-	}
-	return err
-}
-
-func atkrOrder(r *TextReport, order string) error {
-	switch order {
-	default:
-		return fmt.Errorf("invalid option value \"%s\"", order)
-	case "count":
-	case "name":
-	}
-
-	count := []Count{}
-	if order == "count" {
-		for ip, atkr := range r.Atkr {
-			count = append(count, Count{atkr.Cnt, ip})
-		}
-		sort.Slice(count, func(i, j int) bool {
-			return count[i].Num > count[j].Num
-		})
-	}
-	r.AtkrCnt = count
-	return nil
-}
-
-func botOptions(t *TextReport, options Opts) error {
-	var err error
-	for opt, val := range options {
-		switch opt {
-		case "order":
-			err = botOrder(t, val)
-		default:
-			err = fmt.Errorf("invalid option \"%s\"", opt)
-		}
-	}
-	return err
-}
-
-func botOrder(t *TextReport, order string) error {
-	switch order {
-	default:
-		return fmt.Errorf("invalid option value \"%s\"", order)
-	case "count":
-	case "name":
-	}
-
-	count := []Count{}
-	if order == "count" {
-		for name, bot := range t.Bot {
-			count = append(count, Count{bot.Cnt, name})
-		}
-		sort.Slice(count, func(i, j int) bool {
-			return count[i].Num > count[j].Num
-		})
-	}
-	t.BotCnt = count
-	return nil
 }
 
 func writeReport(path string, out []byte) error {
