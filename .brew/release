@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# How to push a new commit from the CI to push the new release to the current release branch
-# https://stackoverflow.com/questions/51716044/how-do-i-push-to-a-repo-from-within-a-gitlab-ci-pipeline
-
-# Also, this needs to run in the same CI that created the binaries, given it's using them to generate sha256sum
-
-#####################
-echo "Installing jq."
-curl -s --location --output /usr/local/bin/jq "https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64"
-echo ""
-chmod +x /usr/local/bin/jq
-
-
 ########################################
 echo "Preparing brew release variables."
 
