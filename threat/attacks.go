@@ -36,8 +36,9 @@ var attackPatterns = []ptrn{
 	{Name: "***", Type: Unk, Score: 2},
 	{Name: "(((", Type: Unk, Score: 5},
 	{Name: ")))", Type: Unk, Score: 5},
-	{Name: "}}", Type: Unk, Score: 4},
-	{Name: "{{", Type: Unk, Score: 4},
+	// False positive: w1.01
+	// {Name: "}}", Type: Unk, Score: 0},
+	// {Name: "{{", Type: Unk, Score: 0},
 	{Name: "'+", Type: SQL, Score: 2},   // In XSS, SQL, and legit URLs.
 	{Name: "\x22", Type: Unk, Score: 3}, // All over the place and never alone.
 
