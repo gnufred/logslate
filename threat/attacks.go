@@ -164,6 +164,7 @@ var attackPatterns = []ptrn{
 	{Name: "uname", Type: CMD, Score: 1},
 	{Name: "whoami", Type: CMD, Score: 5},
 	{Name: "socket", Type: CMD, Score: 1}, // Legit word. In attacks, with other triggers.
+	{Name: "%00{.", Type: CMD, Score: 5},  // CVE-2014-6287 https://packetstormsecurity.com/files/128243/HttpFileServer-2.3.x-Remote-Command-Execution.html
 
 	// !!! Cross site scripting attacks !!! //
 	// https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
