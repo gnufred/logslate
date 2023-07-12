@@ -106,7 +106,7 @@ func validate(narg int) error {
 	}
 
 	// --layout contains only valid characters.
-	regex := "[^a-z:,\\_]"
+	regex := "[^a-z0-9:,\\_]"
 	match, _ := regexp.MatchString(regex, args.ReportLayout)
 	if match {
 		fmt.Printf("Error: invalid characters in layout format.\n\n")

@@ -41,9 +41,11 @@ attacks
 attackers
   order_name (default)
   order_count
+  min_X (int)
 bots
   order_name (default)
   order_count
+  min_X (int)
 ```
 
 ## NGINX `log_format`
