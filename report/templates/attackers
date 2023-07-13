@@ -1,4 +1,4 @@
 {{if .AtkrCnt}}{{range $d := .AtkrCnt}}
 {{$d.Item}}: {{AddCommas $d.Num}}{{end}}{{else}}{{range $ip, $data := .Atkr}}
 {{$ip}}: {{AddCommas $data.Cnt}}{{end}}{{end}}{{if .AtkrFiltered}}
-**hidden: {{AddCommas .AtkrFiltered}}**{{end}}
+**and {{.AtkrFiltered}} more**{{end}}
