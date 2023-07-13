@@ -17,7 +17,7 @@ type Threat struct {
 }
 
 type Attack struct {
-	Id    AttackType
+	Type  AttackType
 	Score uint32
 	Name  string
 }
@@ -29,7 +29,7 @@ func Detect(path, query, agent string) (Threat, error) {
 
 	return Threat{
 		Attack: Attack{
-			Id:    attack,
+			Type:  attack,
 			Score: score,
 			Name:  String(attack),
 		},

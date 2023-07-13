@@ -37,16 +37,25 @@ func TestDetect(t *testing.T) {
 		t.Error(err)
 	}
 
-	if got.Attack.Id != td.Exp.Attack.Id {
-		t.Errorf("attack id doesn't match, got %d, exp %d", got.Attack.Id, td.Exp.Attack.Id)
+	if got.Attack.Type != td.Exp.Attack.Type {
+		t.Errorf(
+			"attack id doesn't match, got %d, exp %d",
+			got.Attack.Type, td.Exp.Attack.Type,
+		)
 	}
 
 	if got.Attack.Score != td.Exp.Attack.Score {
-		t.Errorf("attack score doesn't match, got %d, exp %d", got.Attack.Score, td.Exp.Attack.Score)
+		t.Errorf(
+			"attack score doesn't match, got %d, exp %d",
+			got.Attack.Score, td.Exp.Attack.Score,
+		)
 	}
 
 	if got.Attack.Name != td.Exp.Attack.Name {
-		t.Errorf("attack name doesn't match, got %s, exp %s", got.Attack.Name, td.Exp.Attack.Name)
+		t.Errorf(
+			"attack name doesn't match, got %s, exp %s",
+			got.Attack.Name, td.Exp.Attack.Name,
+		)
 	}
 
 	if got.Bot != td.Exp.Bot {

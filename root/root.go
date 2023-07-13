@@ -132,12 +132,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		if ls.Attack.Score > 0 {
+		if ls.Attack.Type != threat.Nil {
 			debug.Log(debug.VVV, "flagged", ls.Attack.Name+" | "+ls.Path+ls.Query)
 
 			// Compile attack type data.
 			if a.ReportPath != "" {
-				atkTypes[ls.Attack.Id]++
+				atkTypes[ls.Attack.Type]++
 				attackers[ls.Ip.String()]++
 			}
 			par.Atk++

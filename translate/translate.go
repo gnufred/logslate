@@ -72,7 +72,7 @@ func Nginx(nx nginx.Entry) (Log, error) {
 
 	// Get attack detection results.
 	thr, err := threat.Detect(ls.Path, ls.Query, ls.Agent)
-	ls.Attack.Id = thr.Attack.Id
+	ls.Attack.Type = thr.Attack.Type
 	ls.Attack.Name = thr.Attack.Name
 	ls.Attack.Score = thr.Attack.Score
 	ls.Bot = thr.Bot
