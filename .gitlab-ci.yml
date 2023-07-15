@@ -24,6 +24,7 @@ release:
   only:
     - tags
   script:
+    - .gitlab/vuln
     - .gitlab/lint
     - .gitlab/test
     - .gitlab/cover

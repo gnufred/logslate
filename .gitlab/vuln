@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# download dependencies
+echo "Downloading ..."
+go install golang.org/x/vuln/cmd/govulncheck@latest
+
+# https://staticcheck.io/docs/getting-started/
+echo "Running: govulncheck"
+scan=$(govulncheck ./...)
+result=$(echo "$scan"|grep "No vulnerabilities found.")
+echo "$scan"
+
+if [[ -z "$result" ]]; then
+	echo -e "\nError: Found vulnerabilities."
+	exit 1
+fi
