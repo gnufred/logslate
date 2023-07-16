@@ -183,23 +183,23 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			a.ReportLayout,
 		)
 
-		rep.Run.Start = runStartedAt
-		rep.Run.End = runEndedAt
+		rep.Runtime.Start = runStartedAt
+		rep.Runtime.End = runEndedAt
 		rep.Size.Byte = bytesTotal
-		rep.Line.Ok = par.Ok
-		rep.Line.Skip = par.Skip
-		rep.Line.Error = par.Err
-		rep.Time.Since = a.Since()
-		rep.Time.Until = a.Until()
-		rep.Time.Start = a.StartTime()
-		rep.Time.End = a.EndTime()
+		rep.Parsed.Ok = par.Ok
+		rep.Parsed.Skip = par.Skip
+		rep.Parsed.Error = par.Err
+		rep.TimeArgs.Since = a.Since()
+		rep.TimeArgs.Until = a.Until()
+		rep.TimeArgs.Start = a.StartTime()
+		rep.TimeArgs.End = a.EndTime()
 
-		rep.Thrt.Atks.Its = par.Atk
-		rep.Thrt.Atks.Prct = report.Prct(par.Atk, par.Ok)
-		rep.Thrt.Bots.Its = par.Bot
-		rep.Thrt.Bots.Prct = report.Prct(par.Bot, par.Ok)
+		rep.Threats.Attacks.Its = par.Atk
+		rep.Threats.Attacks.Prct = report.Prct(par.Atk, par.Ok)
+		rep.Threats.Bots.Its = par.Bot
+		rep.Threats.Bots.Prct = report.Prct(par.Bot, par.Ok)
 
-		rep.AtkTy = report.AtkTypes{
+		rep.AttackTypes = report.AttackTypesRD{
 			Unk: atkTypes[threat.Unk],
 			SQL: atkTypes[threat.SQL],
 			CMD: atkTypes[threat.CMD],
@@ -208,13 +208,13 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}
 
 		for ip, cnt := range attackers {
-			rep.Atkr[ip] = report.Atkrs{
+			rep.Attackers[ip] = report.AttackersRD{
 				Cnt: cnt,
 			}
 		}
 
 		for name, cnt := range bots {
-			rep.Bot[name] = report.Bots{
+			rep.Bots[name] = report.BotsRD{
 				Cnt: cnt,
 			}
 		}

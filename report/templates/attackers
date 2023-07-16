@@ -1,4 +1,4 @@
-{{if .AtkrCnt}}{{range $d := .AtkrCnt}}
-{{$d.Item}}: {{AddCommas $d.Num}}{{end}}{{else}}{{range $ip, $data := .Atkr}}
-{{$ip}}: {{AddCommas $data.Cnt}}{{end}}{{end}}{{if .AtkrFiltered}}
-**and {{.AtkrFiltered}} more**{{end}}
+{{if .AttackersCount}}{{range $d := .AttackersCount}}
+{{$d.Item}}: {{AddCommas $d.Num}}{{end}}{{else}}{{range $ip, $data := .Attackers}}
+{{$ip}}: {{AddCommas $data.Cnt}}{{end}}{{end}}{{if .AttackersFiltered}}
+**and {{.AttackersFiltered}} more**{{end}}

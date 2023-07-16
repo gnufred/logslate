@@ -11,25 +11,25 @@ type Report struct {
 	format string
 	layout []section
 
-	// Report aggregated data.
-	Run   Runtimes         `json:"runtimes"`
-	Line  Lines            `json:"parsed"`
-	Size  Sizes            `json:"size"`
-	Time  Times            `json:"time_args"`
-	Thrt  Thrts            `json:"threats"`
-	Bot   map[string]Bots  `json:"bots"`
-	AtkTy AtkTypes         `json:"attack_types"`
-	Atkr  map[string]Atkrs `json:"attackers"`
+	// Report Data (RD).
+	Runtime     RuntimeRD              `json:"runtime"`
+	Parsed      ParsedRD               `json:"parsed"`
+	Size        SizeRD                 `json:"size"`
+	TimeArgs    TimeArgsRD             `json:"time_args"`
+	Threats     ThreatsRD              `json:"threats"`
+	Bots        map[string]BotsRD      `json:"bots"`
+	AttackTypes AttackTypesRD          `json:"attack_types"`
+	Attackers   map[string]AttackersRD `json:"attackers"`
 }
 
 type TextReport struct {
 	Report
 
-	AtkrCnt []Count
-	BotCnt  []Count
+	AttackersCount []Count
+	BotsCount      []Count
 
-	AtkrFiltered uint
-	BotFiltered  uint
+	AttackersFiltered uint
+	BotsFiltered      uint
 }
 
 type Count struct {
@@ -45,8 +45,8 @@ func New(path, format, layout string) *Report {
 		layout = defaultLayout
 	}
 	r.layout = parseLayout(layout)
-	r.Atkr = make(map[string]Atkrs)
-	r.Bot = make(map[string]Bots)
+	r.Attackers = make(map[string]AttackersRD)
+	r.Bots = make(map[string]BotsRD)
 	return &r
 }
 
@@ -55,21 +55,21 @@ func NewText(r *Report) *TextReport {
 	t.path = r.path
 	t.format = r.format
 	t.layout = r.layout
-	t.Run = r.Run
-	t.Line = r.Line
+	t.Runtime = r.Runtime
+	t.Parsed = r.Parsed
 	t.Size = r.Size
-	t.Time = r.Time
-	t.Thrt = r.Thrt
-	t.AtkTy = r.AtkTy
-	t.Atkr = r.Atkr
-	t.Bot = r.Bot
+	t.TimeArgs = r.TimeArgs
+	t.Threats = r.Threats
+	t.AttackTypes = r.AttackTypes
+	t.Attackers = r.Attackers
+	t.Bots = r.Bots
 
 	return &t
 }
 
 // Performance data.
 func (r *Report) BytesPerSec() uint {
-	rt := r.Run.Total()
+	rt := r.Runtime.Total()
 	if rt == 0 {
 		return 0
 	}
@@ -82,12 +82,12 @@ func (r *Report) BytesPerSec() uint {
 }
 
 func (r *Report) LinesPerSec() uint {
-	rt := r.Run.Total()
+	rt := r.Runtime.Total()
 	if rt == 0 {
 		return 0
 	}
 	sec := int64(rt) / 1000000000
-	rlt := int64(r.Line.Total())
+	rlt := int64(r.Parsed.Total())
 	if sec <= 0 {
 		return uint(rlt)
 	}
@@ -95,36 +95,36 @@ func (r *Report) LinesPerSec() uint {
 }
 
 // Runtime data.
-type Runtimes struct {
+type RuntimeRD struct {
 	Start time.Time `json:"start"`
 	End   time.Time `json:"end"`
 }
 
-func (r *Runtimes) Total() time.Duration {
+func (r *RuntimeRD) Total() time.Duration {
 	if r.Start.Before(r.End) {
 		return r.End.Sub(r.Start)
 	}
 	return 0
 }
 
-// Line data.
-type Lines struct {
+// Parsed data.
+type ParsedRD struct {
 	Ok    uint `json:"ok"`
 	Skip  uint `json:"skip"`
 	Error uint `json:"error"`
 }
 
-func (l *Lines) Total() uint {
+func (l *ParsedRD) Total() uint {
 	return l.Ok + l.Skip + l.Error
 }
 
 // Size data.
-type Sizes struct {
+type SizeRD struct {
 	Byte uint `json:"byte"`
 }
 
-// Time options data.
-type Times struct {
+// Time arguments data.
+type TimeArgsRD struct {
 	Since string    `json:"since"`
 	Until string    `json:"until"`
 	Start time.Time `json:"start"`
@@ -137,9 +137,9 @@ type Dbs struct {
 }
 
 // Threat counts.
-type Thrts struct {
-	Atks Cnt `json:"attacks"`
-	Bots Cnt `json:"bots"`
+type ThreatsRD struct {
+	Attacks Cnt `json:"attacks"`
+	Bots    Cnt `json:"bots"`
 }
 
 type Cnt struct {
@@ -147,13 +147,13 @@ type Cnt struct {
 	Prct float64 `json:"percent"`
 }
 
-// Bots data.
-type Bots struct {
+// Bot data.
+type BotsRD struct {
 	Cnt uint `json:"count"`
 }
 
 // Attack data.
-type AtkTypes struct {
+type AttackTypesRD struct {
 	Unk uint `json:"gen"`
 	SQL uint `json:"sql"`
 	CMD uint `json:"cmd"`
@@ -161,11 +161,11 @@ type AtkTypes struct {
 	XSS uint `json:"xss"`
 }
 
-func (a *AtkTypes) Total() uint {
+func (a *AttackTypesRD) Total() uint {
 	return a.Unk + a.SQL + a.CMD + a.Dir + a.XSS
 }
 
-// Attackers data.
-type Atkrs struct {
+// Attacker data.
+type AttackersRD struct {
 	Cnt uint `json:"count"`
 }

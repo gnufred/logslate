@@ -1,3 +1,3 @@
-{{if .Thrt.Bots.Its}}
-Bots: {{AddCommas .Thrt.Bots.Its}} ({{.Thrt.Bots.Prct}}%){{end}}{{if .Thrt.Atks.Its}}
-Attacks: {{AddCommas .Thrt.Atks.Its}} ({{.Thrt.Atks.Prct}}%){{end}}
+{{if .Threats.Bots.Its}}
+Bots: {{AddCommas .Threats.Bots.Its}} ({{.Threats.Bots.Prct}}%){{end}}{{if .Threats.Attacks.Its}}
+Attacks: {{AddCommas .Threats.Attacks.Its}} ({{.Threats.Attacks.Prct}}%){{end}}

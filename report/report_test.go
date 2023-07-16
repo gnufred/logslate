@@ -7,20 +7,20 @@ import (
 
 func TestNew(t *testing.T) {
 	got := New("", "", "")
-	if got.Line.Ok != 0 {
+	if got.Parsed.Ok != 0 {
 		t.Error("empty report has non empty values")
 	}
 }
 
 func TestNewText(t *testing.T) {
 	got := NewText(New("", "", ""))
-	if got.Line.Ok != 0 {
+	if got.Parsed.Ok != 0 {
 		t.Error("empty report has non empty values")
 	}
 }
 
 func TestLinesTotal(t *testing.T) {
-	l := Lines{Ok: 1, Skip: 1, Error: 1}
+	l := ParsedRD{Ok: 1, Skip: 1, Error: 1}
 	got := l.Total()
 	exp := uint(3)
 	if got != exp {
@@ -30,7 +30,7 @@ func TestLinesTotal(t *testing.T) {
 
 func TestTimeTotalValid(t *testing.T) {
 	now := time.Now()
-	tm := Runtimes{
+	tm := RuntimeRD{
 		Start: now,
 		End:   now.Add(1 * time.Hour),
 	}
@@ -44,12 +44,12 @@ func TestTimeTotalValid(t *testing.T) {
 func TestAllPerSecSmallerThanZero(t *testing.T) {
 	now := time.Now()
 	r := Report{
-		Run: Runtimes{
+		Runtime: RuntimeRD{
 			Start: now,
 			End:   now.Add(10 * time.Millisecond),
 		},
-		Line: Lines{Ok: 1},
-		Size: Sizes{Byte: 1},
+		Parsed: ParsedRD{Ok: 1},
+		Size:   SizeRD{Byte: 1},
 	}
 	if got := r.BytesPerSec(); got != 1 {
 		t.Errorf("bytes per sec doesn't match, exp 0, got %d", got)
@@ -72,12 +72,12 @@ func TestAllPerSecNil(t *testing.T) {
 func TestAllPerSecValid(t *testing.T) {
 	now := time.Now()
 	r := Report{
-		Run: Runtimes{
+		Runtime: RuntimeRD{
 			Start: now,
 			End:   now.Add(10 * time.Second),
 		},
-		Line: Lines{Ok: 50},
-		Size: Sizes{Byte: 500},
+		Parsed: ParsedRD{Ok: 50},
+		Size:   SizeRD{Byte: 500},
 	}
 	exp := uint(50)
 	if got := r.BytesPerSec(); got != exp {
@@ -90,7 +90,7 @@ func TestAllPerSecValid(t *testing.T) {
 }
 
 func TestAttackTotal(t *testing.T) {
-	at := AtkTypes{1, 1, 1, 1, 1}
+	at := AttackTypesRD{1, 1, 1, 1, 1}
 	got := at.Total()
 	exp := uint(5)
 	if got != exp {

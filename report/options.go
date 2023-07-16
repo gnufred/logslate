@@ -46,14 +46,14 @@ func atkrOrder(r *TextReport, order string) error {
 
 	count := []Count{}
 	if order == "count" {
-		for ip, atkr := range r.Atkr {
+		for ip, atkr := range r.Attackers {
 			count = append(count, Count{atkr.Cnt, ip})
 		}
 		sort.Slice(count, func(i, j int) bool {
 			return count[i].Num > count[j].Num
 		})
 	}
-	r.AtkrCnt = count
+	r.AttackersCount = count
 	return nil
 }
 
@@ -67,14 +67,14 @@ func botOrder(t *TextReport, order string) error {
 
 	count := []Count{}
 	if order == "count" {
-		for name, bot := range t.Bot {
+		for name, bot := range t.Bots {
 			count = append(count, Count{bot.Cnt, name})
 		}
 		sort.Slice(count, func(i, j int) bool {
 			return count[i].Num > count[j].Num
 		})
 	}
-	t.BotCnt = count
+	t.BotsCount = count
 	return nil
 }
 
@@ -84,24 +84,24 @@ func atkrMin(t *TextReport, min string) error {
 		return fmt.Errorf("invalid option value \"%s\"", min)
 	}
 
-	filtered := make(map[string]Atkrs)
-	for ip, atkr := range t.Atkr {
+	filtered := make(map[string]AttackersRD)
+	for ip, atkr := range t.Attackers {
 		if atkr.Cnt >= uint(imin) {
-			filtered[ip] = Atkrs{atkr.Cnt}
+			filtered[ip] = AttackersRD{atkr.Cnt}
 		} else {
-			t.AtkrFiltered++
+			t.AttackersFiltered++
 		}
 	}
-	t.Atkr = filtered
+	t.Attackers = filtered
 
-	if t.AtkrCnt != nil {
+	if t.AttackersCount != nil {
 		count := []Count{}
-		for _, atrk := range t.AtkrCnt {
+		for _, atrk := range t.AttackersCount {
 			if atrk.Num >= uint(imin) {
 				count = append(count, atrk)
 			}
 		}
-		t.AtkrCnt = count
+		t.AttackersCount = count
 	}
 
 	return nil
@@ -113,24 +113,24 @@ func botMin(t *TextReport, min string) error {
 		return fmt.Errorf("invalid option value \"%s\"", min)
 	}
 
-	filtered := make(map[string]Bots)
-	for name, bot := range t.Bot {
+	filtered := make(map[string]BotsRD)
+	for name, bot := range t.Bots {
 		if bot.Cnt >= uint(imin) {
-			filtered[name] = Bots{bot.Cnt}
+			filtered[name] = BotsRD{bot.Cnt}
 		} else {
-			t.BotFiltered++
+			t.BotsFiltered++
 		}
 	}
-	t.Bot = filtered
+	t.Bots = filtered
 
-	if t.BotCnt != nil {
+	if t.BotsCount != nil {
 		count := []Count{}
-		for _, bot := range t.BotCnt {
+		for _, bot := range t.BotsCount {
 			if bot.Num >= uint(imin) {
 				count = append(count, bot)
 			}
 		}
-		t.BotCnt = count
+		t.BotsCount = count
 	}
 
 	return nil

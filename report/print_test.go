@@ -11,11 +11,11 @@ import (
 
 func newTestReport(path, format string) *Report {
 	r := New(path, format, defaultLayout)
-	r.Run = Runtimes{
+	r.Runtime = RuntimeRD{
 		time.Now(),
 		time.Now().Add(time.Second * 10),
 	}
-	r.Line = Lines{5000, 0, 0}
+	r.Parsed = ParsedRD{5000, 0, 0}
 	r.Size.Byte = 50000000
 	return r
 }
@@ -76,8 +76,8 @@ func TestCreateTextOutput(t *testing.T) {
 func validTextOutput(t *testing.T) {
 	testMatch := func(t *testing.T, layout, exp string) {
 		r := New("screen", "text", layout)
-		r.Thrt.Bots.Its = 100
-		r.Thrt.Bots.Prct = 1
+		r.Threats.Bots.Its = 100
+		r.Threats.Bots.Prct = 1
 		got, err := createTextOutput(r)
 		if err != nil {
 			t.Error(err)

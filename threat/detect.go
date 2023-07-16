@@ -11,7 +11,7 @@ import (
 // Holds the score that we need to flag a searches as an attack.
 var Threshold = uint32(5)
 
-type Threat struct {
+type Threats struct {
 	Attack Attack
 	Bot    string
 }
@@ -23,11 +23,11 @@ type Attack struct {
 }
 
 // Detect threats and return information about them.
-func Detect(path, query, agent string) (Threat, error) {
+func Detect(path, query, agent string) (Threats, error) {
 	attack, score := attackScan(path, query)
 	bot, err := botScan(agent)
 
-	return Threat{
+	return Threats{
 		Attack: Attack{
 			Type:  attack,
 			Score: score,

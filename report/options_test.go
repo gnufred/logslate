@@ -46,13 +46,13 @@ func TestBotOptions(t *testing.T) {
 
 func TestAtkrOrder(t *testing.T) {
 	rep := New("screen", "text", "attackers")
-	rep.Atkr["127.0.0.1"] = Atkrs{10}
-	rep.Atkr["127.0.0.2"] = Atkrs{100}
+	rep.Attackers["127.0.0.1"] = AttackersRD{10}
+	rep.Attackers["127.0.0.2"] = AttackersRD{100}
 	data := NewText(rep)
 
 	err := atkrOrder(data, "")
 	test.ErrorExpected(t, err, "invalid option")
-	if data.AtkrCnt != nil {
+	if data.AttackersCount != nil {
 		t.Error("attacker count is not nil")
 	}
 
@@ -60,19 +60,19 @@ func TestAtkrOrder(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if data.AtkrCnt[0].Item != "127.0.0.2" {
+	if data.AttackersCount[0].Item != "127.0.0.2" {
 		t.Error("attacker order by count data is incorrect")
 	}
 }
 func TestBotOrder(t *testing.T) {
 	rep := New("screen", "text", "attackers")
-	rep.Bot["one"] = Bots{10}
-	rep.Bot["two"] = Bots{100}
+	rep.Bots["one"] = BotsRD{10}
+	rep.Bots["two"] = BotsRD{100}
 	data := NewText(rep)
 
 	err := botOrder(data, "")
 	test.ErrorExpected(t, err, "invalid option")
-	if data.BotCnt != nil {
+	if data.BotsCount != nil {
 		t.Error("bot count is not nil")
 	}
 
@@ -80,7 +80,7 @@ func TestBotOrder(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if data.BotCnt[0].Item != "two" {
+	if data.BotsCount[0].Item != "two" {
 		t.Error("bot ordered by count data is incorrect")
 	}
 }
@@ -104,11 +104,11 @@ func TestAtkrMin(t *testing.T) {
 	}
 
 	rep := New("screen", "text", "attackers")
-	rep.Atkr["127.0.0.0"] = Atkrs{0}
-	rep.Atkr["127.0.0.1"] = Atkrs{1}
-	rep.Atkr["127.0.0.2"] = Atkrs{5}
-	rep.Atkr["127.0.0.3"] = Atkrs{10}
-	rep.Atkr["127.0.0.4"] = Atkrs{20}
+	rep.Attackers["127.0.0.0"] = AttackersRD{0}
+	rep.Attackers["127.0.0.1"] = AttackersRD{1}
+	rep.Attackers["127.0.0.2"] = AttackersRD{5}
+	rep.Attackers["127.0.0.3"] = AttackersRD{10}
+	rep.Attackers["127.0.0.4"] = AttackersRD{20}
 	data := NewText(rep)
 
 	err := atkrMin(data, "")
@@ -124,9 +124,9 @@ func TestAtkrMin(t *testing.T) {
 		t.Error(err)
 	}
 
-	testMinimum(t, len(data.Atkr), 2)
-	testMinimum(t, len(data.AtkrCnt), 2)
-	testFiltered(t, data.AtkrFiltered, 3)
+	testMinimum(t, len(data.Attackers), 2)
+	testMinimum(t, len(data.AttackersCount), 2)
+	testFiltered(t, data.AttackersFiltered, 3)
 }
 
 func TestBotMin(t *testing.T) {
@@ -148,11 +148,11 @@ func TestBotMin(t *testing.T) {
 	}
 
 	rep := New("screen", "text", "bots")
-	rep.Bot["zero"] = Bots{1}
-	rep.Bot["one"] = Bots{10}
-	rep.Bot["two"] = Bots{20}
-	rep.Bot["three"] = Bots{50}
-	rep.Bot["four"] = Bots{100}
+	rep.Bots["zero"] = BotsRD{1}
+	rep.Bots["one"] = BotsRD{10}
+	rep.Bots["two"] = BotsRD{20}
+	rep.Bots["three"] = BotsRD{50}
+	rep.Bots["four"] = BotsRD{100}
 	data := NewText(rep)
 
 	err := botMin(data, "")
@@ -168,7 +168,7 @@ func TestBotMin(t *testing.T) {
 		t.Error(err)
 	}
 
-	testMinimum(t, len(data.Bot), 2)
-	testMinimum(t, len(data.BotCnt), 2)
-	testFiltered(t, data.BotFiltered, 3)
+	testMinimum(t, len(data.Bots), 2)
+	testMinimum(t, len(data.BotsCount), 2)
+	testFiltered(t, data.BotsFiltered, 3)
 }

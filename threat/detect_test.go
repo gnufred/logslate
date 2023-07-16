@@ -17,12 +17,12 @@ func TestDetect(t *testing.T) {
 		Path  string
 		Query string
 		Agent string
-		Exp   Threat
+		Exp   Threats
 	}{
 		"user/",
 		"id=1'PG_SLEEP(1000)",
 		"EdgeScan/1.1 (+https://www.edgescan.com/)",
-		Threat{
+		Threats{
 			Attack{
 				SQL,
 				5,
