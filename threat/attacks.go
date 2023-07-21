@@ -33,12 +33,11 @@ var attackPatterns = []ptrn{
 	// Patterns I've seen mixed in with other attacks.
 	{Name: "%40%40", Type: Unk, Score: 2},
 	{Name: ",,", Type: Unk, Score: 2},
-	{Name: "***", Type: Unk, Score: 2},
+	// {Name: "***", Type: Unk, Score: 1}, // False positive: w2.02, can be used in "hidden" credit card numbers
 	{Name: "(((", Type: Unk, Score: 5},
 	{Name: ")))", Type: Unk, Score: 5},
-	// False positive: w1.01
-	// {Name: "}}", Type: Unk, Score: 0},
-	// {Name: "{{", Type: Unk, Score: 0},
+	// {Name: "}}", Type: Unk, Score: 0}, // False positive: w1.01
+	// {Name: "{{", Type: Unk, Score: 0}, // False positive: w1.01
 	{Name: "'+", Type: SQL, Score: 2},   // In XSS, SQL, and legit URLs.
 	{Name: "\x22", Type: Unk, Score: 3}, // All over the place and never alone.
 
@@ -150,7 +149,7 @@ var attackPatterns = []ptrn{
 	{Name: "concat(", Type: CMD, Score: 5}, // In SQL injec but mostly in OS inject.
 	{Name: "concat%", Type: CMD, Score: 5},
 	{Name: "chr(", Type: CMD, Score: 5},
-	{Name: "chr%", Type: CMD, Score: 2}, // Can match German "spiegelschr".
+	{Name: "chr%", Type: CMD, Score: 1}, // Can match German "spiegelschr".
 	{Name: "hex(", Type: CMD, Score: 5},
 	{Name: "echo", Type: CMD, Score: 1}, // In legit URLs and attacks.
 	{Name: "gethostbyname", Type: CMD, Score: 5},
@@ -198,11 +197,11 @@ var attackPatterns = []ptrn{
 	{Name: "=)(", Type: XSS, Score: 5},
 	{Name: "%3D%29%28", Type: XSS, Score: 5},
 	{Name: "esi:include", Type: XSS, Score: 5},
-	{Name: "iframe%", Type: XSS, Score: 2},
+	{Name: "iframe%", Type: XSS, Score: 1},
 	{Name: "iframe_", Type: XSS, Score: 2},
 	{Name: "iframe_src", Type: XSS, Score: 5},
 	{Name: "injected_by", Type: XSS, Score: 5},
-	{Name: "script=", Type: XSS, Score: 5},
+	{Name: "script=", Type: XSS, Score: 4}, // False positive: w2.03
 	{Name: "script>", Type: XSS, Score: 5},
 	{Name: "script&gt", Type: XSS, Score: 5},
 	{Name: "script%3e", Type: XSS, Score: 5},
