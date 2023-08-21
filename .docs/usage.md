@@ -112,4 +112,4 @@ Debug output to `stderr` meaning you can redirect it like so `cat access.log | l
 
 ## Profiling
 
-You can enable `runtime/pprof` CPU and memory profiling with `--cpuprof` and `--memprof`.
+You can enable `runtime/pprof` CPU and memory profiling with `--profcpu` and `--profmem`.
