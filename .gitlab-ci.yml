@@ -19,7 +19,7 @@ variables:
   BREW_GITLAB_URL: "gitlab.com/gnufred/logslate"  
 
 release:
-  image: golang:1.20
+  image: golang:1.21
   stage: release
   only:
     - tags
