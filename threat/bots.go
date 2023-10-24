@@ -123,6 +123,7 @@ var botPatterns = []string{
 	"Konduto",                   // http://www.konduto.com
 	"MJ12bot",                   // http://mj12bot.com/
 	"MailChimp",                 // https://mailchimp.com/
+	"Monsidobot",                // https://monsido.com/bot-html
 	"Productsup",                // http://productsup.io
 	"Screaming Frog SEO Spider", // https://www.screamingfrog.co.uk/seo-spider/
 	"SemrushBot",                // https://www.semrush.com/bot/
@@ -204,6 +205,7 @@ var botPatterns = []string{
 	"Google-Apps-Script",  // https://script.google.com
 	"Google-Firebase",     // https://firebase.google.com/
 	"Grammarly",           // https://www.grammarly.com/plagiarism-checker
+	"HesBot",              // https://hesbot.ir/
 	"InternetMeasurement", // https://internet-measurement.com/
 	"Linespider",          // https://lin.ee/4dwXkTH
 	"Microsoft Data Access Internet Publishing Provider DAV",
@@ -213,4 +215,5 @@ var botPatterns = []string{
 	"Scrapy",          // https://scrapy.org
 	"azure-logic-apps",
 	"paloaltonetworks", // https://www.paloaltonetworks.com/
+	"test-bot",         // A generic name developers love to give to their bots
 }
