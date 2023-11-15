@@ -210,10 +210,16 @@ var botPatterns = []string{
 	"Linespider",          // https://lin.ee/4dwXkTH
 	"Microsoft Data Access Internet Publishing Provider DAV",
 	"Microsoft-WebDAV-MiniRedir",
-	"NostoCrawlerBot", // http://my.nosto.com/
-	"RyteBota",        // https://bot.ryte.com/
-	"Scrapy",          // https://scrapy.org
-	"azure-logic-apps",
+	"NostoCrawlerBot",  // http://my.nosto.com/
+	"RyteBota",         // https://bot.ryte.com/
+	"Scrapy",           // https://scrapy.org
+	"azure-logic-apps", // https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview
 	"paloaltonetworks", // https://www.paloaltonetworks.com/
-	"test-bot",         // A generic name developers love to give to their bots
+
+	// !!! Anonymous bots !!! //
+	// Bots for which I couldn't find public documentation, and a public facing service.
+	"fidget-spinner-bot",  // https://community.cloudflare.com/t/getting-tons-of-bad-bots-attack-recently/578502
+	"my-tiny-bot",         // https://community.cloudflare.com/t/getting-tons-of-bad-bots-attack-recently/578502
+	"test-bot",            // https://community.cloudflare.com/t/getting-tons-of-bad-bots-attack-recently/578502
+	"thesis-research-bot", // https://community.cloudflare.com/t/getting-tons-of-bad-bots-attack-recently/578502
 }
