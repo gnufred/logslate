@@ -147,18 +147,18 @@ var botPatterns = []string{
 	// usually cache results, therefor will usually not cause any issues.
 	// There are some very weird edge cases where they can be harmful, so it's
 	// important to detect them.
-	"GoogleDocs",       // http://docs.google.com
-	"GoogleImageProxy", // https://www.scientiamobile.com/what-is-google-image-proxy/
-	"Microsoft Office",
-	"SkypeUriPreview",
+	"GoogleDocs",               // http://docs.google.com
+	"GoogleImageProxy",         // https://www.scientiamobile.com/what-is-google-image-proxy/
+	"Microsoft Office",         //
+	"SkypeUriPreview",          //
 	"Slackbot-LinkExpanding",   // https://api.slack.com/robots
 	"Snap URL Preview Service", // https://developers.snap.com/robots
 	"SnapchatAds",              // https://businesshelp.snapchat.com/s/article/adsbot-crawler
 	"TelegramBot",              // https://core.telegram.org/bots
 	"UniversalFeedParser",      // https://code.google.com/p/feedparser/
-	"WhatsApp",
-	"bitlybot",            // http://bit.ly/
-	"facebookexternalhit", // http://www.facebook.com/externalhit_uatext.php
+	"WhatsApp",                 //
+	"bitlybot",                 // http://bit.ly/
+	"facebookexternalhit",      // http://www.facebook.com/externalhit_uatext.php
 
 	// !!! Availability monitoring bots !!! //
 	// Those bots are the actual opposite of a threat. They check that resources are
@@ -166,15 +166,16 @@ var botPatterns = []string{
 	// On endpoint with lower traffic, it can happen that a very high percentage
 	// of calls are health checks, which is useful to become aware of, but is usually
 	// not a threat.
-	"Amazon-Route53-Health-Check-Service", // https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-types.html
-	"Better Uptime",                       // https://docs.digitalocean.com/products/marketplace/catalog/better-uptime/
-	"Cloudflare-Healthchecks",             // https://www.cloudflare.com/
-	"Elastic-Heartbeat",
-	"EyeMonIT Uptime",
+	"Amazon-Route53-Health-Check-Service",      // https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-types.html
+	"Better Uptime",                            // https://docs.digitalocean.com/products/marketplace/catalog/better-uptime/
+	"Cloudflare-Healthchecks",                  // https://www.cloudflare.com/
+	"Elastic-Heartbeat",                        //
+	"EyeMonIT Uptime",                          //
 	"GoogleStackdriverMonitoring-UptimeChecks", // https://cloud.google.com/monitoring
 	"HetrixTools Uptime",                       // https://hetrixtools.com/uptime-monitor/
 	"Mozilla/DnsHealthCheckBot",                // https://support.mozilla.org/en-US/kb/firefox-dns-over-https
 	"NodePing",                                 // https://nodeping.com/
+	"Monibot",                                  // https://monibot.io/
 	"Overtir-iWeb-Monitoring",                  // https://www.site24x7.com/
 	"Pingdom.com",                              // http://www.pingdom.com/
 	"Rightpoint Monitoring",                    // https://www.rightpoint.com/
@@ -199,6 +200,7 @@ var botPatterns = []string{
 	"Barkrowler",          // https://babbar.tech/crawler
 	"CCBot",               // https://commoncrawl.org/faq/
 	"Celigo",              // https://www.celigo.com/
+	"ChatGPT-User",        // https://platform.openai.com/docs/plugins/bot
 	"Devart ADO.NET",      // https://www.devart.com/dotconnect/
 	"FeedBurner/",         // http://www.FeedBurner.com
 	"Feedonomics",         // https://feedonomics.com/
@@ -213,6 +215,7 @@ var botPatterns = []string{
 	"NostoCrawlerBot",  // http://my.nosto.com/
 	"RyteBota",         // https://bot.ryte.com/
 	"Scrapy",           // https://scrapy.org
+	"YouBot",           // http://www.you.com/
 	"azure-logic-apps", // https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview
 	"paloaltonetworks", // https://www.paloaltonetworks.com/
 
