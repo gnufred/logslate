@@ -83,6 +83,8 @@ func TestAttacks(t *testing.T) {
 		{"hello'boba_sleep(", result{5, SQL}},
 		{"hello'boba_SLEEP(", result{5, SQL}},
 		{"./././././././././././././././././././././././././././././././././", result{66, Dir}},
+		{"db.sql", result{5, Scn}},
+		{"/search/phpmyadmin", result{5, Scn}},
 	}
 
 	for _, d := range data {
@@ -110,6 +112,7 @@ func TestSearchAttackPts(t *testing.T) {
 		{"socket.hitmycommandcenter", result{255, CMD}},
 		{"../etc/passwd", result{255, Dir}},
 		{"<script>", result{255, XSS}},
+		{"/phpmyadmin/dump.sql", result{255, Scn}},
 	}
 
 	for _, d := range data {

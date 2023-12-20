@@ -159,6 +159,7 @@ type AttackTypesRD struct {
 	CMD uint `json:"cmd"`
 	Dir uint `json:"dir"`
 	XSS uint `json:"xss"`
+	Scn uint `json:"scn"`
 }
 
 func (a *AttackTypesRD) Total() uint {

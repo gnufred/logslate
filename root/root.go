@@ -205,6 +205,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			CMD: atkTypes[threat.CMD],
 			Dir: atkTypes[threat.Dir],
 			XSS: atkTypes[threat.XSS],
+			Scn: atkTypes[threat.Scn],
 		}
 
 		for ip, cnt := range attackers {

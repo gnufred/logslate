@@ -10,6 +10,7 @@ const (
 	CMD            // Command injection
 	Dir            // Directory traversal
 	XSS            // Cross site scripting
+	Scn            // Leak & portal scanning
 )
 
 // Attack pattern structure.
@@ -209,6 +210,114 @@ var attackPatterns = []ptrn{
 	{Name: "%253a%252f%252flocalhost%252f", Type: XSS, Score: 5}, // Double URL encoded "://localhost/".
 	{Name: "document.domain", Type: XSS, Score: 5},
 	{Name: "void%280%29", Type: XSS, Score: 5}, // From URL encoded "javascript:void(0)".
+
+	// Config scans.
+	{Name: "Cargo.lock", Type: Scn, Score: 5},
+	{Name: "Cargo.toml", Type: Scn, Score: 5},
+	{Name: "DLPCenter/loginform.sms", Type: Scn, Score: 5},
+	{Name: "Dockerrun.aws.json", Type: Scn, Score: 5},
+	{Name: "Gemfile", Type: Scn, Score: 5},
+	{Name: "Guardfile", Type: Scn, Score: 5},
+	{Name: "Login.action", Type: Scn, Score: 5},
+	{Name: "Pipfile", Type: Scn, Score: 5},
+	{Name: "Pipfile.lock", Type: Scn, Score: 5},
+	{Name: "Procfile", Type: Scn, Score: 5},
+	{Name: "apps.tidy.infinity.json", Type: Scn, Score: 5},
+	{Name: "auth.js", Type: Scn, Score: 5},
+	{Name: "aws.sh", Type: Scn, Score: 5},
+	{Name: "awstats.conf", Type: Scn, Score: 5},
+	{Name: "azure-pipelines.yml", Type: Scn, Score: 5},
+	{Name: "azuredeploy.json", Type: Scn, Score: 5},
+	{Name: "bitbucket-pipelines.yml", Type: Scn, Score: 5},
+	{Name: "config.html", Type: Scn, Score: 5},
+	{Name: "config.inc.php", Type: Scn, Score: 5},
+	{Name: "config.js", Type: Scn, Score: 5},
+	{Name: "credentials.db", Type: Scn, Score: 5},
+	{Name: "crossdomain.xml", Type: Scn, Score: 5},
+	{Name: "dataOrigin.ashx", Type: Scn, Score: 5},
+	{Name: "databases.yml", Type: Scn, Score: 5},
+	{Name: "debug.log", Type: Scn, Score: 5},
+	{Name: "default.json", Type: Scn, Score: 5},
+	{Name: "deploy.sh", Type: Scn, Score: 5},
+	{Name: "desktop.ini", Type: Scn, Score: 5},
+	{Name: "development.log", Type: Scn, Score: 5},
+	{Name: "development.log", Type: Scn, Score: 5},
+	{Name: "env.js", Type: Scn, Score: 5},
+	{Name: "env.sh", Type: Scn, Score: 5},
+	{Name: "error.log", Type: Scn, Score: 5},
+	{Name: "errors.log", Type: Scn, Score: 5},
+	{Name: "firewall.log", Type: Scn, Score: 5},
+	{Name: "go.mod", Type: Scn, Score: 5},
+	{Name: "htaccess.txt", Type: Scn, Score: 5},
+	{Name: "init.sh", Type: Scn, Score: 5},
+	{Name: "karma.conf.js", Type: Scn, Score: 5},
+	{Name: "karma.js", Type: Scn, Score: 5},
+	{Name: "keycloak.json", Type: Scn, Score: 5},
+	{Name: "keys.js", Type: Scn, Score: 5},
+	{Name: "kustomization.yml", Type: Scn, Score: 5},
+	{Name: "login.action", Type: Scn, Score: 5},
+	{Name: "mobile.log", Type: Scn, Score: 5},
+	{Name: "privatekey.key", Type: Scn, Score: 5},
+	{Name: "production.log", Type: Scn, Score: 5},
+	{Name: "run.sh", Type: Scn, Score: 5},
+	{Name: "secret_token.rb", Type: Scn, Score: 5},
+	{Name: "security.yaml", Type: Scn, Score: 5},
+	{Name: "settings.py", Type: Scn, Score: 5},
+	{Name: "settings.yml", Type: Scn, Score: 5},
+	{Name: "user.xml", Type: Scn, Score: 5},
+	{Name: "vpn.log", Type: Scn, Score: 5},
+
+	// Admin panel scans.
+	// As of right now, I'm conservative.
+	// The idea is to flag paths that aren't used by legit users.
+	// I might change that later, but given the simplist nature of the detectiong logic,
+	// I'm keeping it simple.
+	// In any case, attackers will almost always scan weird paths that nobody uses.
+	{Name: "/cgi-bin", Type: Scn, Score: 5},
+	{Name: "/setup.php", Type: Scn, Score: 5},
+	{Name: "CgiStart", Type: Scn, Score: 5},
+	{Name: "FNDWRR.exe", Type: Scn, Score: 5},
+	{Name: "Telerik.Web.UI.DialogHandler", Type: Scn, Score: 5},
+	{Name: "b9dmx.php", Type: Scn, Score: 5},
+	{Name: "carbon/admin/login.jsp", Type: Scn, Score: 5},
+	{Name: "cfg/login", Type: Scn, Score: 5},
+	{Name: "phpmyadmin", Type: Scn, Score: 5},
+	{Name: "qmailadmin.cgi", Type: Scn, Score: 5},
+
+	// Database dump scans.
+	{Name: "backup/auto.php", Type: Scn, Score: 5},
+	{Name: "backup2.cgi", Type: Scn, Score: 5},
+	{Name: "cache/backup", Type: Scn, Score: 5},
+	{Name: "db.sql", Type: Scn, Score: 5},
+	{Name: "db_backup.sql", Type: Scn, Score: 5},
+	{Name: "dbdump.sql", Type: Scn, Score: 5},
+	{Name: "dump.sql", Type: Scn, Score: 5},
+
+	// Compressed dump scans.
+	{Name: "ROOT.7z", Type: Scn, Score: 5},
+	{Name: "ROOT.bz2", Type: Scn, Score: 5},
+	{Name: "ROOT.gz", Type: Scn, Score: 5},
+	{Name: "ROOT.lz", Type: Scn, Score: 5},
+	{Name: "ROOT.rar", Type: Scn, Score: 5},
+	{Name: "ROOT.tar", Type: Scn, Score: 5},
+	{Name: "backup.7z", Type: Scn, Score: 5},
+	{Name: "backup.bz2", Type: Scn, Score: 5},
+	{Name: "backup.gz", Type: Scn, Score: 5},
+	{Name: "backup.lz", Type: Scn, Score: 5},
+	{Name: "backup.rar", Type: Scn, Score: 5},
+	{Name: "backup.tar", Type: Scn, Score: 5},
+	{Name: "html.7z", Type: Scn, Score: 5},
+	{Name: "html.bz2", Type: Scn, Score: 5},
+	{Name: "html.gz", Type: Scn, Score: 5},
+	{Name: "html.lz", Type: Scn, Score: 5},
+	{Name: "html.rar", Type: Scn, Score: 5},
+	{Name: "html.tar", Type: Scn, Score: 5},
+	{Name: "public.7z", Type: Scn, Score: 5},
+	{Name: "public.bz2", Type: Scn, Score: 5},
+	{Name: "public.gz", Type: Scn, Score: 5},
+	{Name: "public.lz", Type: Scn, Score: 5},
+	{Name: "public.rar", Type: Scn, Score: 5},
+	{Name: "public.tar", Type: Scn, Score: 5},
 }
 
 // String translate an attack type byte to a human readable string
@@ -224,6 +333,8 @@ func String(atk AttackType) string {
 		return "directory_traversal"
 	case XSS:
 		return "xss"
+	case Scn:
+		return "scan"
 	default:
 		return ""
 	}

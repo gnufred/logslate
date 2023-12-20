@@ -3,4 +3,5 @@ Unknown:    {{AddCommas .AttackTypes.Unk}}{{end}}{{if .AttackTypes.SQL}}
 SQL inject: {{AddCommas .AttackTypes.SQL}}{{end}}{{if .AttackTypes.CMD}}
 CMD inject: {{AddCommas .AttackTypes.CMD}}{{end}}{{if .AttackTypes.Dir}}
 Dir trav:   {{AddCommas .AttackTypes.Dir}}{{end}}{{if .AttackTypes.XSS}}
-Cross site: {{AddCommas .AttackTypes.XSS}}{{end}}
+Cross site: {{AddCommas .AttackTypes.XSS}}{{end}}{{if .AttackTypes.Scn}}
+Leak scan:  {{AddCommas .AttackTypes.Scn}}{{end}}
