@@ -20,7 +20,7 @@ func TestDetect(t *testing.T) {
 		Exp   Threats
 	}{
 		"user/",
-		"utm_source=google&id=1'PG_SLEEP(1000)",
+		"id=1'PG_SLEEP(1000)",
 		"EdgeScan/1.1 (+https://www.edgescan.com/)",
 		Threats{
 			Attack{
@@ -28,7 +28,7 @@ func TestDetect(t *testing.T) {
 				5,
 				"sql_injection",
 			},
-			"google",
+			"",
 			"EdgeScan",
 		},
 	}
@@ -61,6 +61,33 @@ func TestDetect(t *testing.T) {
 
 	if got.Bot != td.Exp.Bot {
 		t.Errorf("bot doesn't match, got %s, exp %s", got.Bot, td.Exp.Bot)
+	}
+}
+
+// TestMonoFlag ensure that an entry cannot be flagged as an advert if it's
+// flagged as an attack.
+func TestMonoFlag(t *testing.T) {
+	testMono := func(t *testing.T, query string) {
+		got, err := Detect("/", query, "")
+		if err != nil {
+			t.Error(err)
+		}
+		if got.Attack.Name != "" && got.Ad != "" {
+			t.Errorf("got both an attack and ad flag: %s, %s", got.Attack.Name, got.Ad)
+		}
+	}
+
+	data := []struct {
+		Query string
+	}{
+		{""},
+		{"utm_source=google"},
+		{"PG_SLEEP(10)"},
+		{"utm_source=google&PG_SLEEP(10)"},
+	}
+
+	for _, d := range data {
+		testMono(t, d.Query)
 	}
 }
 

@@ -27,7 +27,12 @@ type Attack struct {
 // Detect threats and return information about them.
 func Detect(path, query, agent string) (Threats, error) {
 	attack, score := attackScan(path, query)
-	ad := adScan(query)
+
+	ad := ""
+	if attack == Nil {
+		ad = adScan(query)
+	}
+
 	bot, err := botScan(agent)
 
 	return Threats{
