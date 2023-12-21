@@ -31,6 +31,7 @@ type TextReport struct {
 	BotsCount      []Count
 
 	AttackersFiltered uint
+	AdsFiltered       uint
 	BotsFiltered      uint
 }
 

@@ -27,6 +27,8 @@ func adOptions(t *TextReport, options Opts) error {
 		switch opt {
 		case "order":
 			err = adOrder(t, val)
+		case "min":
+			err = adMin(t, val)
 		default:
 			err = fmt.Errorf("invalid option \"%s\"", opt)
 		}
@@ -136,6 +138,35 @@ func atkrMin(t *TextReport, min string) error {
 			}
 		}
 		t.AttackersCount = count
+	}
+
+	return nil
+}
+
+func adMin(t *TextReport, min string) error {
+	imin, err := strconv.Atoi(min)
+	if err != nil {
+		return fmt.Errorf("invalid option value \"%s\"", min)
+	}
+
+	filtered := make(map[string]AdsRD)
+	for name, ad := range t.Ads {
+		if ad.Cnt >= uint(imin) {
+			filtered[name] = AdsRD{ad.Cnt}
+		} else {
+			t.AdsFiltered++
+		}
+	}
+	t.Ads = filtered
+
+	if t.AdsCount != nil {
+		count := []Count{}
+		for _, ad := range t.AdsCount {
+			if ad.Num >= uint(imin) {
+				count = append(count, ad)
+			}
+		}
+		t.AdsCount = count
 	}
 
 	return nil

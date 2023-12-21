@@ -41,6 +41,7 @@ func TestAdOptions(t *testing.T) {
 
 	testOptions(t, data, Opts{"order": "name"})
 	testOptions(t, data, Opts{"order": "count"})
+	testOptions(t, data, Opts{"min": "10"})
 }
 
 func TestBotOptions(t *testing.T) {
@@ -167,6 +168,50 @@ func TestAtkrMin(t *testing.T) {
 	testMinimum(t, len(data.Attackers), 2)
 	testMinimum(t, len(data.AttackersCount), 2)
 	testFiltered(t, data.AttackersFiltered, 3)
+}
+
+func TestAdMin(t *testing.T) {
+	testMinimum := func(t *testing.T, got, exp int) {
+		if got != exp {
+			t.Errorf(
+				"ad minimum is not the expected length, got %d, exp %d",
+				got, exp,
+			)
+		}
+	}
+	testFiltered := func(t *testing.T, got, exp uint) {
+		if got != exp {
+			t.Errorf(
+				"ad filtered is not the expected length, got %d, exp %d",
+				got, exp,
+			)
+		}
+	}
+
+	rep := New("screen", "text", "ads")
+	rep.Ads["goog"] = AdsRD{1}
+	rep.Ads["face"] = AdsRD{10}
+	rep.Ads["pin"] = AdsRD{20}
+	rep.Ads["x"] = AdsRD{50}
+	rep.Ads["y"] = AdsRD{100}
+	data := NewText(rep)
+
+	err := adMin(data, "")
+	test.ErrorExpected(t, err, "invalid option")
+
+	// Order the current count, which atrkMin needs to update.
+	// Ignoring error because we test them in it's own test.
+	adOrder(data, "count")
+	// Then, filter by minimum.
+	err = adMin(data, "30")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	testMinimum(t, len(data.Ads), 2)
+	testMinimum(t, len(data.AdsCount), 2)
+	testFiltered(t, data.AdsFiltered, 3)
 }
 
 func TestBotMin(t *testing.T) {
