@@ -17,7 +17,7 @@ type Report struct {
 	Size        SizeRD                 `json:"size"`
 	TimeArgs    TimeArgsRD             `json:"time_args"`
 	Threats     ThreatsRD              `json:"threats"`
-	Ads        map[string]AdsRD      `json:"ads"`
+	Ads         map[string]AdsRD       `json:"ads"`
 	Bots        map[string]BotsRD      `json:"bots"`
 	AttackTypes AttackTypesRD          `json:"attack_types"`
 	Attackers   map[string]AttackersRD `json:"attackers"`
@@ -27,7 +27,7 @@ type TextReport struct {
 	Report
 
 	AttackersCount []Count
-	AdsCount      []Count
+	AdsCount       []Count
 	BotsCount      []Count
 
 	AttackersFiltered uint
@@ -143,7 +143,7 @@ type Dbs struct {
 // Threat counts.
 type ThreatsRD struct {
 	Attacks Cnt `json:"attacks"`
-	Ads    Cnt `json:"ads"`
+	Ads     Cnt `json:"ads"`
 	Bots    Cnt `json:"bots"`
 }
 

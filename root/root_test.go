@@ -124,6 +124,15 @@ func TestAttackDetections(t *testing.T) {
 	testInputDataLoop(t, a,
 		[]testData{
 			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 0, 20}},
+		},
+	)
+}
+
+func TestAdDetections(t *testing.T) {
+	a := args.Get()
+	a.LogFrmt = nginx.Combined
+	testInputDataLoop(t, a,
+		[]testData{
 			{"testdata/utm.log", Parsed{6, 0, 0, 0, 6, 0}},
 		},
 	)
@@ -196,6 +205,7 @@ func TestReport(t *testing.T) {
 		[]testData{
 			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 0, 20}},
 			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 0, 20}},
+			{"testdata/utm.log", Parsed{6, 0, 0, 0, 6, 0}},
 		},
 	)
 	err := os.Remove(a.ReportPath)

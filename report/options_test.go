@@ -25,6 +25,24 @@ func TestAtkrOptions(t *testing.T) {
 	testOptions(t, data, Opts{"min": "10"})
 }
 
+func TestAdOptions(t *testing.T) {
+	testOptions := func(t *testing.T, d *TextReport, o Opts) {
+		err := adOptions(d, o)
+		if err != nil {
+			t.Error(err)
+		}
+	}
+
+	rep := New("screen", "text", "ads")
+	data := NewText(rep)
+
+	err := adOptions(data, Opts{"banana!": ""})
+	test.ErrorExpected(t, err, "invalid option")
+
+	testOptions(t, data, Opts{"order": "name"})
+	testOptions(t, data, Opts{"order": "count"})
+}
+
 func TestBotOptions(t *testing.T) {
 	testOptions := func(t *testing.T, d *TextReport, o Opts) {
 		err := botOptions(d, o)
@@ -64,6 +82,28 @@ func TestAtkrOrder(t *testing.T) {
 		t.Error("attacker order by count data is incorrect")
 	}
 }
+
+func TestAdOrder(t *testing.T) {
+	rep := New("screen", "text", "ads")
+	rep.Ads["goog"] = AdsRD{10}
+	rep.Ads["face"] = AdsRD{100}
+	data := NewText(rep)
+
+	err := adOrder(data, "")
+	test.ErrorExpected(t, err, "invalid option")
+	if data.AdsCount != nil {
+		t.Error("ad count is not nil")
+	}
+
+	err = adOrder(data, "count")
+	if err != nil {
+		t.Error(err)
+	}
+	if data.AdsCount[0].Item != "face" {
+		t.Error("ad ordered by count data is incorrect")
+	}
+}
+
 func TestBotOrder(t *testing.T) {
 	rep := New("screen", "text", "attackers")
 	rep.Bots["one"] = BotsRD{10}

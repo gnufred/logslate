@@ -200,10 +200,7 @@ func TestBotAhoSearch(t *testing.T) {
 
 func TestAdScan(t *testing.T) {
 	testMatch := func(t *testing.T, query string, exp string) {
-		got, err := adScan(query)
-		if err != nil {
-			t.Error(err)
-		}
+		got := adScan(query)
 		if got != exp {
 			t.Errorf("bot doesn't match, got %s, exp %s", got, exp)
 		}

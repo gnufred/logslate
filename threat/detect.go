@@ -27,8 +27,8 @@ type Attack struct {
 // Detect threats and return information about them.
 func Detect(path, query, agent string) (Threats, error) {
 	attack, score := attackScan(path, query)
+	ad := adScan(query)
 	bot, err := botScan(agent)
-	ad, err := adScan(query)
 
 	return Threats{
 		Attack: Attack{
@@ -118,18 +118,14 @@ func botAhoSearch(AC *ac.AhoCorasick, haystack string) (string, error) {
 }
 
 // adScan search a query string for "utm_source" query param and returns the value.
-// At the moment, there is no case where an error is returned. That's because the regex
-// package doesn't return error. That being said, I want to assume there can be one,
-// and handle it as a proper error returning function, in case I want to add custom errors
-// in the future.
-func adScan(query string) (string, error) {
+func adScan(query string) string {
 	adRegex := `utm_source=(\w*)`
 	re := regexp.MustCompile(adRegex)
 	matches := re.FindStringSubmatch(query)
 
 	if len(matches) == 0 {
-		return "", nil
+		return ""
 	}
 
-	return matches[1], nil
+	return matches[1]
 }

@@ -24,7 +24,7 @@ type Log struct {
 	Referer string
 	Agent   string
 	Attack  threat.Attack
-	Ad     string
+	Ad      string
 	Bot     string
 }
 

@@ -58,14 +58,9 @@ if [[ -n "$files" ]]; then
     done <<< "$files"
 fi
 
-wc=$(which column 2> /dev/null)
+wc=$(which tidy-viewer 2> /dev/null)
 if [[ "$?" -eq "0" ]]; then
-	echo -e "$table"|column \
-		-C name=FILE,left \
-		-C name=MIN,right \
-		-C name=GOT,right \
-		-C name=OK,right \
-		-s, -t
+	echo -e "FILE,MIN,COV,OK\n$table"|tidy-viewer --no-dimensions
 else
 	echo -e "$table"|sed 's/,/  /g'
 fi

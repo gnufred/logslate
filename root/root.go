@@ -25,7 +25,7 @@ type Parsed struct {
 	Skip uint
 	Err  uint
 	Atk  uint
-	Ad  uint
+	Ad   uint
 	Bot  uint
 }
 
