@@ -1,3 +1,4 @@
-{{if .Threats.Bots.Its}}
+{{if .Threats.Ads.Its}}
+Ads: {{AddCommas .Threats.Ads.Its}} ({{.Threats.Ads.Prct}}%){{end}}{{if .Threats.Bots.Its}}
 Bots: {{AddCommas .Threats.Bots.Its}} ({{.Threats.Bots.Prct}}%){{end}}{{if .Threats.Attacks.Its}}
 Attacks: {{AddCommas .Threats.Attacks.Its}} ({{.Threats.Attacks.Prct}}%){{end}}
