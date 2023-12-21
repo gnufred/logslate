@@ -86,6 +86,7 @@ func (d *Dber) createTables() error {
 		"method" string,
 		"path" string,
 		"query" string,
+		"ad" string,
 		"proto" string,
 		"status" integer,
 		"sent" integer,
@@ -169,6 +170,7 @@ func (d *Dber) InsertLog(e translate.Log) error {
 		method,
 		path,
 		query,
+		ad,
 		proto,
 		status,
 		sent,
@@ -176,6 +178,7 @@ func (d *Dber) InsertLog(e translate.Log) error {
 		bot,
 		agent
 	) VALUES (
+		?,
 		?,
 		?,
 		?,
@@ -202,6 +205,7 @@ func (d *Dber) InsertLog(e translate.Log) error {
 		e.Method,
 		e.Path,
 		e.Query,
+		e.Ad,
 		e.Proto,
 		e.Status,
 		e.Sent,
