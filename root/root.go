@@ -25,6 +25,7 @@ type Parsed struct {
 	Skip uint
 	Err  uint
 	Atk  uint
+	Ad  uint
 	Bot  uint
 }
 
@@ -77,6 +78,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Initialize map length with highest attack type constant.
 	atkTypes := make(map[threat.AttackType]uint, threat.XSS)
 	attackers := make(map[string]uint)
+	ads := make(map[string]uint)
 	bots := make(map[string]uint)
 
 	// Parser loop.
@@ -146,6 +148,13 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			par.Atk++
 		}
 
+		if ls.Ad != "" {
+			if a.ReportPath != "" {
+				ads[ls.Ad]++
+			}
+			par.Ad++
+		}
+
 		if ls.Bot != "" {
 			if a.ReportPath != "" {
 				bots[ls.Bot]++
@@ -161,7 +170,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Print parsed line data.
 	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
-	fmt.Printf("Threats: attack [%d], bots [%d]\n", par.Atk, par.Bot)
+	fmt.Printf("Threats: attack [%d], ad [%d], bots [%d]\n", par.Atk, par.Ad, par.Bot)
 
 	// Stop CPU profiling.
 	prof.StopCpuProfile(a, cpuf)
@@ -196,6 +205,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		rep.Threats.Attacks.Its = par.Atk
 		rep.Threats.Attacks.Prct = report.Prct(par.Atk, par.Ok)
+		rep.Threats.Ads.Its = par.Ad
+		rep.Threats.Ads.Prct = report.Prct(par.Ad, par.Ok)
 		rep.Threats.Bots.Its = par.Bot
 		rep.Threats.Bots.Prct = report.Prct(par.Bot, par.Ok)
 
@@ -210,6 +221,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		for ip, cnt := range attackers {
 			rep.Attackers[ip] = report.AttackersRD{
+				Cnt: cnt,
+			}
+		}
+
+		for name, cnt := range ads {
+			rep.Ads[name] = report.AdsRD{
 				Cnt: cnt,
 			}
 		}

@@ -102,8 +102,8 @@ func TestNormalLogs(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 20}},
-			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 50}},
+			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 0, 20}},
+			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 0, 50}},
 		},
 	)
 }
@@ -113,7 +113,7 @@ func TestBrokenLogs(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 3}},
+			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 0, 3}},
 		},
 	)
 }
@@ -123,7 +123,8 @@ func TestAttackDetections(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 20}},
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 0, 20}},
+			{"testdata/utm.log", Parsed{6, 0, 0, 0, 6, 0}},
 		},
 	)
 }
@@ -134,9 +135,9 @@ func TestDatabase(t *testing.T) {
 	a.Db = ":memory:"
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 20}},
-			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 3}},
-			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 50}},
+			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 0, 20}},
+			{"testdata/3ok3broken.log", Parsed{3, 0, 3, 0, 0, 3}},
+			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 0, 50}},
 		},
 	)
 }
@@ -149,40 +150,40 @@ func TestTimeArgs(t *testing.T) {
 	a.SetSinceUntil("", "")
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 50}},
+			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 0, 50}},
 		})
 
 	// Should not return anything.
 	a.SetSinceUntil("2000-01-01 00:00", "2000-01-01 00:01")
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{0, 50, 0, 0, 0}},
+			{"testdata/googlebot.log", Parsed{0, 50, 0, 0, 0, 0}},
 		})
 
 	// Should return all lines, first and last should match.
 	a.SetSinceUntil("07/Apr/2023:13:40:26 +0000", "14/Apr/2023:09:40:59 +0000")
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 50}},
+			{"testdata/googlebot.log", Parsed{50, 0, 0, 0, 0, 50}},
 		})
 
 	// Should return all lines, but the first and last.
 	a.SetSinceUntil("07/Apr/2023:13:40:27 +0000", "14/Apr/2023:09:40:58 +0000")
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{48, 2, 0, 0, 48}},
+			{"testdata/googlebot.log", Parsed{48, 2, 0, 0, 0, 48}},
 		})
 
 	a.SetSinceUntil("13/Apr/2023", "")
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{9, 41, 0, 0, 9}},
+			{"testdata/googlebot.log", Parsed{9, 41, 0, 0, 0, 9}},
 		})
 
 	a.SetSinceUntil("", "13/Apr/2023")
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/googlebot.log", Parsed{41, 9, 0, 0, 41}},
+			{"testdata/googlebot.log", Parsed{41, 9, 0, 0, 0, 41}},
 		})
 }
 
@@ -193,8 +194,8 @@ func TestReport(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 20}},
-			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 20}},
+			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 0, 20}},
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 0, 20}},
 		},
 	)
 	err := os.Remove(a.ReportPath)
@@ -208,7 +209,7 @@ func TestTranslateError(t *testing.T) {
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
-			{"testdata/translateerror.log", Parsed{1, 0, 2, 0, 0}},
+			{"testdata/translateerror.log", Parsed{1, 0, 2, 0, 0, 0}},
 		},
 	)
 }
@@ -247,6 +248,10 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 
 	if expect.Atk != got.Atk {
 		t.Errorf("atk: expect %d, got %d", expect.Atk, got.Atk)
+	}
+
+	if expect.Ad != got.Ad {
+		t.Errorf("ad: expect %d, got %d", expect.Ad, got.Ad)
 	}
 
 	if expect.Bot != got.Bot {

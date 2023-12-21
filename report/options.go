@@ -21,6 +21,19 @@ func atkrOptions(t *TextReport, options Opts) error {
 	return err
 }
 
+func adOptions(t *TextReport, options Opts) error {
+	var err error
+	for opt, val := range options {
+		switch opt {
+		case "order":
+			err = adOrder(t, val)
+		default:
+			err = fmt.Errorf("invalid option \"%s\"", opt)
+		}
+	}
+	return err
+}
+
 func botOptions(t *TextReport, options Opts) error {
 	var err error
 	for opt, val := range options {
@@ -54,6 +67,27 @@ func atkrOrder(r *TextReport, order string) error {
 		})
 	}
 	r.AttackersCount = count
+	return nil
+}
+
+func adOrder(t *TextReport, order string) error {
+	switch order {
+	default:
+		return fmt.Errorf("invalid option value \"%s\"", order)
+	case "count":
+	case "name":
+	}
+
+	count := []Count{}
+	if order == "count" {
+		for name, ad := range t.Ads {
+			count = append(count, Count{ad.Cnt, name})
+		}
+		sort.Slice(count, func(i, j int) bool {
+			return count[i].Num > count[j].Num
+		})
+	}
+	t.AdsCount = count
 	return nil
 }
 

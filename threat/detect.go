@@ -2,6 +2,7 @@ package threat
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	ac "github.com/petar-dambovaliev/aho-corasick"
@@ -13,6 +14,7 @@ var Threshold = uint32(5)
 
 type Threats struct {
 	Attack Attack
+	Ad     string
 	Bot    string
 }
 
@@ -26,6 +28,7 @@ type Attack struct {
 func Detect(path, query, agent string) (Threats, error) {
 	attack, score := attackScan(path, query)
 	bot, err := botScan(agent)
+	ad, err := adScan(query)
 
 	return Threats{
 		Attack: Attack{
@@ -33,6 +36,7 @@ func Detect(path, query, agent string) (Threats, error) {
 			Score: score,
 			Name:  String(attack),
 		},
+		Ad:  ad,
 		Bot: bot,
 	}, err
 }
@@ -111,4 +115,21 @@ func botAhoSearch(AC *ac.AhoCorasick, haystack string) (string, error) {
 	}
 
 	return bot, nil
+}
+
+// adScan search a query string for "utm_source" query param and returns the value.
+// At the moment, there is no case where an error is returned. That's because the regex
+// package doesn't return error. That being said, I want to assume there can be one,
+// and handle it as a proper error returning function, in case I want to add custom errors
+// in the future.
+func adScan(query string) (string, error) {
+	adRegex := `utm_source=(\w*)`
+	re := regexp.MustCompile(adRegex)
+	matches := re.FindStringSubmatch(query)
+
+	if len(matches) == 0 {
+		return "", nil
+	}
+
+	return matches[1], nil
 }

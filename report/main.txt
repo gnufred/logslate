@@ -17,6 +17,9 @@ End:   {{HumanTime .Time.End}}
 Attacks:
   * {{AddCommas .Thrt.Atks.Its}}
   * {{.Thrt.Atks.Prct}} %
+Ads:
+  * {{AddCommas .Thrt.Utms.Its}}
+  * {{.Thrt.Utms.Prct}} %
 Bots:
   * {{AddCommas .Thrt.Bots.Its}}
   * {{.Thrt.Bots.Prct}} %
@@ -29,5 +32,7 @@ Dir trav:   {{AddCommas .AtkTy.Dir}}
 Cross site: {{AddCommas .AtkTy.XSS}}
 === [[ Attackers ]] ==={{range $ip, $data := .Atkr}}
 {{$ip}}: {{AddCommas $data.Cnt}}{{end}}
+=== [[ Ads ]] ==={{range $name, $data := .Utms}}
+{{$name}}: {{AddCommas $data.Cnt}}{{end}}
 === [[ Bots ]] ==={{range $name, $data := .Bot}}
 {{$name}}: {{AddCommas $data.Cnt}}{{end}}

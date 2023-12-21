@@ -26,6 +26,9 @@ var attacksTemplate string
 //go:embed templates/attackers
 var attackersTemplate string
 
+//go:embed templates/ads
+var adsTemplate string
+
 //go:embed templates/bots
 var botsTemplate string
 
@@ -35,6 +38,7 @@ var templateEmbeds = map[string]string{
 	"threats":   threatsTemplate,
 	"attacks":   attacksTemplate,
 	"attackers": attackersTemplate,
+	"ads":       adsTemplate,
 	"bots":      botsTemplate,
 }
 
@@ -151,6 +155,8 @@ func prepareData(r *Report) (*TextReport, error) {
 		switch section.Name {
 		case "attackers":
 			err = atkrOptions(t, section.Options)
+		case "ads":
+			err = adOptions(t, section.Options)
 		case "bots":
 			err = botOptions(t, section.Options)
 		}

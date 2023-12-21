@@ -24,6 +24,7 @@ type Log struct {
 	Referer string
 	Agent   string
 	Attack  threat.Attack
+	Ad     string
 	Bot     string
 }
 
@@ -75,6 +76,7 @@ func Nginx(nx nginx.Entry) (Log, error) {
 	ls.Attack.Type = thr.Attack.Type
 	ls.Attack.Name = thr.Attack.Name
 	ls.Attack.Score = thr.Attack.Score
+	ls.Ad = thr.Ad
 	ls.Bot = thr.Bot
 
 	// Done.

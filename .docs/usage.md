@@ -42,6 +42,9 @@ attackers
   order_name (default)
   order_count
   min_X (int)
+ads
+  order_name (default)
+  order_count
 bots
   order_name (default)
   order_count

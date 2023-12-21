@@ -17,6 +17,7 @@ type Report struct {
 	Size        SizeRD                 `json:"size"`
 	TimeArgs    TimeArgsRD             `json:"time_args"`
 	Threats     ThreatsRD              `json:"threats"`
+	Ads        map[string]AdsRD      `json:"ads"`
 	Bots        map[string]BotsRD      `json:"bots"`
 	AttackTypes AttackTypesRD          `json:"attack_types"`
 	Attackers   map[string]AttackersRD `json:"attackers"`
@@ -26,6 +27,7 @@ type TextReport struct {
 	Report
 
 	AttackersCount []Count
+	AdsCount      []Count
 	BotsCount      []Count
 
 	AttackersFiltered uint
@@ -46,6 +48,7 @@ func New(path, format, layout string) *Report {
 	}
 	r.layout = parseLayout(layout)
 	r.Attackers = make(map[string]AttackersRD)
+	r.Ads = make(map[string]AdsRD)
 	r.Bots = make(map[string]BotsRD)
 	return &r
 }
@@ -62,6 +65,7 @@ func NewText(r *Report) *TextReport {
 	t.Threats = r.Threats
 	t.AttackTypes = r.AttackTypes
 	t.Attackers = r.Attackers
+	t.Ads = r.Ads
 	t.Bots = r.Bots
 
 	return &t
@@ -139,12 +143,18 @@ type Dbs struct {
 // Threat counts.
 type ThreatsRD struct {
 	Attacks Cnt `json:"attacks"`
+	Ads    Cnt `json:"ads"`
 	Bots    Cnt `json:"bots"`
 }
 
 type Cnt struct {
 	Its  uint    `json:"count"`
 	Prct float64 `json:"percent"`
+}
+
+// UTM data.
+type AdsRD struct {
+	Cnt uint `json:"count"`
 }
 
 // Bot data.

@@ -1,0 +1,3 @@
+{{if .AdsCount}}{{range $d := .AdsCount}}
+{{$d.Item}}: {{AddCommas $d.Num}}{{end}}{{else}}{{range $name, $data := .Ads}}
+{{$name}}: {{AddCommas $data.Cnt}}{{end}}{{end}}

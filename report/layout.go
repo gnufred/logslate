@@ -11,7 +11,7 @@ type section struct {
 	Options Opts
 }
 
-const defaultLayout = "summary,time,threats,bots:order_name,attacks,attackers:order_name"
+const defaultLayout = "summary,time,threats,ads:order_name,bots:order_name,attacks,attackers:order_name"
 
 // parseReportCustomConfig parse the custom report argument string into a usable
 // data structure.
