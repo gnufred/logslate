@@ -35,65 +35,29 @@ cat access.log | logslate
 -r, --report "file.[txt,json]|screen"
 ```
 
-## Detection goal
+## Detection
 
-The goal is to be able to detect and report all of the following events:
+Logslate is able to detect and report of the following events.
 
-Generic attack like:
+### Attacks and scans
+
+Attacks, and scans are usually unwanted. They results in outages, bugs, performance issues, and log spam. Legitimate security scanners will very often cause the same problems.
+
+Categories:
 * SQL injection.
 * Command injection.
 * Directory traversal attacks.
+* Cross scripting attacks.
+* Bruteforce scanning (basic).
 
-Bots and cralwers:
-* Search engine indexers.
-* SEO analysis tools.
+### Bots and crawlers
 
-Ongoing online advertising campaigns from popular networks like Google AdWords, Facebook, etc.
+While most bots and web crawlers are usually friendly, they can cause performance issues, and outages. Being aware of their presence is always helpful.
 
-CMS and Framework known vulnerability exploitations.
-
-### Attacks and scanning
-
-In the vast majority of cases, attacks and scanners directed at website are unwanted. Furthermore, they will very likely result in outages, bugs, performance issues, and log spam. As such, it's primordial to detect and blog them.
-
-Multiple attack vectors are easy to identify by reading access logs and are usually pretty obvious.
-
-Detection techniques:
-* URL pattern matching.
-* Fake user agent detection.
-* Abusive IP reporting platforms.
-
-### Bots and crawler
-
-While most bots and web crawlers are usually friendly, they can often cause you site to load thousands of uncached pages causing performance issues or straight outages. As such, being aware of their present is immensly helpful when dealing with such problems.
-
-Detection techniques:
-* User agent matching.
-* IP verification.
-
-All legitimate bots and crawlers have clearly identifiable user agents. On top, some vendors publish IP ranges used. Therefor, they are quite easy to identify.
+All legitimate bots and crawlers have clearly identifiable user agents. Some vendors publish IP ranges used. They are quite easy to identify.
 
 ### Advertising campaigns
 
-Online advertisting compaigns usually cause a lot of legitimate traffic. Usually, those are run by marketing firms that may not prepare the infrastructure properly, or warn developers and system administrator before hand. Furthermore, campaigns are very expensive. As such, it's of prime importance to be able to detect ongoing campaing in order to react swiftly if issues arise.
+Advertisting campaigns cause a lot of traffic. Usually, they are manage by teams that may not be able to prepare the infrastructure properly, or warn system administrator before hand. Traffic spikes cause performance issues, and outages.
 
-The vast majority of advertisting platform add URL query parametters to identify and track marketing campaings, making ad related traffic easy to detect.
-
-Detection techniques:
-* URL pattern matching
-
-### Vulnerability exploitation
-
-Popular CMSes and Frameworks like WordPress and Drupal are actively exploited at all time. While detecting exploitation activities is usually somewhat complex, it's possible to identify some via access.log.
-
-CMS and framework:
-* Magento
-* WordPress
-* Drupal
-* Symfony
-
-## LULZ
-
-State-sponsored hackers, ransomware gangs, cyber criminals, cyber spies, and scammers are laughing at our security.
-
-![A well dressed Sir, holding a glass of wine](.sir/fullsize.png)
+All advertisting platform add the `utm_source` URL query parametters to identify themselves making it trivial to detect.

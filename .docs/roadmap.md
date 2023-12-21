@@ -1,14 +1,17 @@
 # Development roadmap
 
-## v0.4
+## v1.1
 
-Ads and marketing campaign detection.
+User agent intel:
 
-## v0.5
+Review what's useful to gather about user agent, like fake agents, and so on.
 
-Detect more attack types than: dir traversal, sql injection, command injection, XSS.
+## v1.2
 
-## v0.6
+GraphQL endpoint attack detection based on Cloudflare's post: https://blog.cloudflare.com/protecting-graphql-apis-from-malicious-queries/
+
+
+## v1.3
 
 IP analysis:
 
@@ -25,25 +28,7 @@ Logslate will include a new version number 'w01' which will be the week of the y
 v0.5.1 will include known IPs for Fastly, Cloudflare, and Cloudfront.
 v0.5.x will add more CDNs, and known active bad actors.
 
-## v0.7
 
-User agent intel:
-
-Review what's useful to gather about user agent, like fake agents, and so on.
-
-## v0.9
-
-PHP app/framework exploit:
-
-* v0.9.0: Magento (specifically MageCart attacks)
-* v0.9.1: WordPress
-* v0.9.2: Drupal
-* v0.9.3: Symfony
-
-## v0.9
-
-GraphQL endpoint attack detection based on Cloudflare's post: https://blog.cloudflare.com/protecting-graphql-apis-from-malicious-queries/
-
-### v0.10
+### v1.4
 
 Add support for Apache access.log files
