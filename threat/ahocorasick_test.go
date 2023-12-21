@@ -30,7 +30,7 @@ func TestACMatches(t *testing.T) {
 		for k, m := range matches {
 			l := m.End() - m.Start()
 			if exp[k].P != m.Pattern() || exp[k].L != l || exp[k].E != m.End() {
-				t.Fatalf("search result doesn't match, got %v, exp %v", matches, exp)
+				t.Fatalf("search result doesn't match: got %v, exp %v, for %s", matches, exp, hay)
 			}
 		}
 	}

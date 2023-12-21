@@ -69,7 +69,7 @@ func TestAttacks(t *testing.T) {
 		ty, to := attackScan(hay, "")
 		got := result{Ty: ty, To: to}
 		if got != exp {
-			t.Errorf("query total doesn't match, got %v, exp %v", got, exp)
+			t.Errorf("query total doesn't match: got %v, exp %v, for %s", got, exp, hay)
 		}
 	}
 
@@ -84,8 +84,10 @@ func TestAttacks(t *testing.T) {
 		{"hello'boba_sleep(", result{5, SQL}},
 		{"hello'boba_SLEEP(", result{5, SQL}},
 		{"./././././././././././././././././././././././././././././././././", result{66, Dir}},
-		{"db.sql", result{5, Scn}},
-		{"/search/phpmyadmin", result{5, Scn}},
+		{"/phpmyadmin", result{5, Scn}},
+		{"/db.sql", result{5, Scn}},
+		{"/ROOT.tar.gz", result{8, Scn}},
+		{"/html.zip", result{5, Scn}},
 	}
 
 	for _, d := range data {

@@ -12,7 +12,7 @@ var testPatterns = []ptrn{
 	{Name: "socket.hitmycommandcenter", Type: CMD, Score: 255},
 	{Name: "../etc/passwd", Type: Dir, Score: 255},
 	{Name: "<script>", Type: XSS, Score: 255},
-	{Name: "/phpmyadmin/dump.sql", Type: Scn, Score: 255},
+	{Name: "/dump.sql", Type: Scn, Score: 255},
 }
 
 // TestFalsePositives tests squashed false positives after 2023-07-06. This will avoid
