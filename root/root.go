@@ -220,19 +220,19 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}
 
 		for ip, cnt := range attackers {
-			rep.Attackers[ip] = report.AttackersRD{
+			rep.Attackers[ip] = report.ListRD{
 				Cnt: cnt,
 			}
 		}
 
 		for name, cnt := range ads {
-			rep.Ads[name] = report.AdsRD{
+			rep.Ads[name] = report.ListRD{
 				Cnt: cnt,
 			}
 		}
 
 		for name, cnt := range bots {
-			rep.Bots[name] = report.BotsRD{
+			rep.Bots[name] = report.ListRD{
 				Cnt: cnt,
 			}
 		}

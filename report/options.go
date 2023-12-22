@@ -11,9 +11,20 @@ func atkrOptions(t *TextReport, options Opts) error {
 	for opt, val := range options {
 		switch opt {
 		case "order":
-			err = atkrOrder(t, val)
+			switch val {
+			default:
+				return fmt.Errorf("invalid option value \"%s\"", val)
+			case "count":
+				t.AttackersCount = filterOrder(t.Attackers)
+			case "name":
+			}
 		case "min":
-			err = atkrMin(t, val)
+			min, err := strconv.Atoi(val)
+			if err != nil {
+				return fmt.Errorf("invalid option value \"%s\"", val)
+			}
+			t.Attackers, t.AttackersFiltered, t.AttackersCount = filterMin(
+				min, t.Attackers, t.AttackersCount)
 		default:
 			err = fmt.Errorf("invalid option \"%s\"", opt)
 		}
@@ -26,9 +37,20 @@ func adOptions(t *TextReport, options Opts) error {
 	for opt, val := range options {
 		switch opt {
 		case "order":
-			err = adOrder(t, val)
+			switch val {
+			default:
+				return fmt.Errorf("invalid option value \"%s\"", val)
+			case "count":
+				t.AdsCount = filterOrder(t.Ads)
+			case "name":
+			}
 		case "min":
-			err = adMin(t, val)
+			min, err := strconv.Atoi(val)
+			if err != nil {
+				return fmt.Errorf("invalid option value \"%s\"", val)
+			}
+			t.Ads, t.AdsFiltered, t.AdsCount = filterMin(
+				min, t.Ads, t.AdsCount)
 		default:
 			err = fmt.Errorf("invalid option \"%s\"", opt)
 		}
@@ -41,9 +63,20 @@ func botOptions(t *TextReport, options Opts) error {
 	for opt, val := range options {
 		switch opt {
 		case "order":
-			err = botOrder(t, val)
+			switch val {
+			default:
+				return fmt.Errorf("invalid option value \"%s\"", val)
+			case "count":
+				t.BotsCount = filterOrder(t.Bots)
+			case "name":
+			}
 		case "min":
-			err = botMin(t, val)
+			min, err := strconv.Atoi(val)
+			if err != nil {
+				return fmt.Errorf("invalid option value \"%s\"", val)
+			}
+			t.Bots, t.BotsFiltered, t.BotsCount = filterMin(
+				min, t.Bots, t.BotsCount)
 		default:
 			err = fmt.Errorf("invalid option \"%s\"", opt)
 		}
@@ -51,152 +84,35 @@ func botOptions(t *TextReport, options Opts) error {
 	return err
 }
 
-func atkrOrder(r *TextReport, order string) error {
-	switch order {
-	default:
-		return fmt.Errorf("invalid option value \"%s\"", order)
-	case "count":
-	case "name":
-	}
-
+func filterOrder(report map[string]ListRD) []Count {
 	count := []Count{}
-	if order == "count" {
-		for ip, atkr := range r.Attackers {
-			count = append(count, Count{atkr.Cnt, ip})
-		}
-		sort.Slice(count, func(i, j int) bool {
-			return count[i].Num > count[j].Num
-		})
+	for name, entry := range report {
+		count = append(count, Count{entry.Cnt, name})
 	}
-	r.AttackersCount = count
-	return nil
+	sort.Slice(count, func(i, j int) bool {
+		return count[i].Num > count[j].Num
+	})
+	return count
 }
 
-func adOrder(t *TextReport, order string) error {
-	switch order {
-	default:
-		return fmt.Errorf("invalid option value \"%s\"", order)
-	case "count":
-	case "name":
-	}
+func filterMin(min int, report map[string]ListRD, reportCount []Count) (map[string]ListRD, uint, []Count) {
+	filtered := make(map[string]ListRD)
+	var filteredNum uint
 
-	count := []Count{}
-	if order == "count" {
-		for name, ad := range t.Ads {
-			count = append(count, Count{ad.Cnt, name})
-		}
-		sort.Slice(count, func(i, j int) bool {
-			return count[i].Num > count[j].Num
-		})
-	}
-	t.AdsCount = count
-	return nil
-}
-
-func botOrder(t *TextReport, order string) error {
-	switch order {
-	default:
-		return fmt.Errorf("invalid option value \"%s\"", order)
-	case "count":
-	case "name":
-	}
-
-	count := []Count{}
-	if order == "count" {
-		for name, bot := range t.Bots {
-			count = append(count, Count{bot.Cnt, name})
-		}
-		sort.Slice(count, func(i, j int) bool {
-			return count[i].Num > count[j].Num
-		})
-	}
-	t.BotsCount = count
-	return nil
-}
-
-func atkrMin(t *TextReport, min string) error {
-	imin, err := strconv.Atoi(min)
-	if err != nil {
-		return fmt.Errorf("invalid option value \"%s\"", min)
-	}
-
-	filtered := make(map[string]AttackersRD)
-	for ip, atkr := range t.Attackers {
-		if atkr.Cnt >= uint(imin) {
-			filtered[ip] = AttackersRD{atkr.Cnt}
+	for name, entry := range report {
+		if entry.Cnt >= uint(min) {
+			filtered[name] = ListRD{entry.Cnt}
 		} else {
-			t.AttackersFiltered++
+			filteredNum++
 		}
 	}
-	t.Attackers = filtered
 
-	if t.AttackersCount != nil {
-		count := []Count{}
-		for _, atrk := range t.AttackersCount {
-			if atrk.Num >= uint(imin) {
-				count = append(count, atrk)
-			}
-		}
-		t.AttackersCount = count
-	}
-
-	return nil
-}
-
-func adMin(t *TextReport, min string) error {
-	imin, err := strconv.Atoi(min)
-	if err != nil {
-		return fmt.Errorf("invalid option value \"%s\"", min)
-	}
-
-	filtered := make(map[string]AdsRD)
-	for name, ad := range t.Ads {
-		if ad.Cnt >= uint(imin) {
-			filtered[name] = AdsRD{ad.Cnt}
-		} else {
-			t.AdsFiltered++
+	filteredCount := []Count{}
+	for _, entry := range reportCount {
+		if entry.Num >= uint(min) {
+			filteredCount = append(filteredCount, entry)
 		}
 	}
-	t.Ads = filtered
 
-	if t.AdsCount != nil {
-		count := []Count{}
-		for _, ad := range t.AdsCount {
-			if ad.Num >= uint(imin) {
-				count = append(count, ad)
-			}
-		}
-		t.AdsCount = count
-	}
-
-	return nil
-}
-
-func botMin(t *TextReport, min string) error {
-	imin, err := strconv.Atoi(min)
-	if err != nil {
-		return fmt.Errorf("invalid option value \"%s\"", min)
-	}
-
-	filtered := make(map[string]BotsRD)
-	for name, bot := range t.Bots {
-		if bot.Cnt >= uint(imin) {
-			filtered[name] = BotsRD{bot.Cnt}
-		} else {
-			t.BotsFiltered++
-		}
-	}
-	t.Bots = filtered
-
-	if t.BotsCount != nil {
-		count := []Count{}
-		for _, bot := range t.BotsCount {
-			if bot.Num >= uint(imin) {
-				count = append(count, bot)
-			}
-		}
-		t.BotsCount = count
-	}
-
-	return nil
+	return filtered, filteredNum, filteredCount
 }

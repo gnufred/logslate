@@ -65,17 +65,17 @@ func TestBotOptions(t *testing.T) {
 
 func TestAtkrOrder(t *testing.T) {
 	rep := New("screen", "text", "attackers")
-	rep.Attackers["127.0.0.1"] = AttackersRD{10}
-	rep.Attackers["127.0.0.2"] = AttackersRD{100}
+	rep.Attackers["127.0.0.1"] = ListRD{10}
+	rep.Attackers["127.0.0.2"] = ListRD{100}
 	data := NewText(rep)
 
-	err := atkrOrder(data, "")
+	err := atkrOptions(data, Opts{"order": "invalid"})
 	test.ErrorExpected(t, err, "invalid option")
 	if data.AttackersCount != nil {
 		t.Error("attacker count is not nil")
 	}
 
-	err = atkrOrder(data, "count")
+	err = atkrOptions(data, Opts{"order": "count"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -86,17 +86,17 @@ func TestAtkrOrder(t *testing.T) {
 
 func TestAdOrder(t *testing.T) {
 	rep := New("screen", "text", "ads")
-	rep.Ads["goog"] = AdsRD{10}
-	rep.Ads["face"] = AdsRD{100}
+	rep.Ads["goog"] = ListRD{10}
+	rep.Ads["face"] = ListRD{100}
 	data := NewText(rep)
 
-	err := adOrder(data, "")
+	err := adOptions(data, Opts{"order": "invalid"})
 	test.ErrorExpected(t, err, "invalid option")
 	if data.AdsCount != nil {
 		t.Error("ad count is not nil")
 	}
 
-	err = adOrder(data, "count")
+	err = adOptions(data, Opts{"order": "count"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -107,17 +107,17 @@ func TestAdOrder(t *testing.T) {
 
 func TestBotOrder(t *testing.T) {
 	rep := New("screen", "text", "attackers")
-	rep.Bots["one"] = BotsRD{10}
-	rep.Bots["two"] = BotsRD{100}
+	rep.Bots["one"] = ListRD{10}
+	rep.Bots["two"] = ListRD{100}
 	data := NewText(rep)
 
-	err := botOrder(data, "")
+	err := botOptions(data, Opts{"order": "invalid"})
 	test.ErrorExpected(t, err, "invalid option")
 	if data.BotsCount != nil {
 		t.Error("bot count is not nil")
 	}
 
-	err = botOrder(data, "count")
+	err = botOptions(data, Opts{"order": "count"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -145,25 +145,24 @@ func TestAtkrMin(t *testing.T) {
 	}
 
 	rep := New("screen", "text", "attackers")
-	rep.Attackers["127.0.0.0"] = AttackersRD{0}
-	rep.Attackers["127.0.0.1"] = AttackersRD{1}
-	rep.Attackers["127.0.0.2"] = AttackersRD{5}
-	rep.Attackers["127.0.0.3"] = AttackersRD{10}
-	rep.Attackers["127.0.0.4"] = AttackersRD{20}
+	rep.Attackers["127.0.0.0"] = ListRD{0}
+	rep.Attackers["127.0.0.1"] = ListRD{1}
+	rep.Attackers["127.0.0.2"] = ListRD{5}
+	rep.Attackers["127.0.0.3"] = ListRD{10}
+	rep.Attackers["127.0.0.4"] = ListRD{20}
 	data := NewText(rep)
 
-	err := atkrMin(data, "")
+	// Check if a non integer string make it fail
+	err := atkrOptions(data, Opts{"min": "invalid_value"})
 	test.ErrorExpected(t, err, "invalid option")
 
 	// Order the current count, which atrkMin needs to update.
 	// Ignoring error because we test them in it's own test.
-	atkrOrder(data, "count")
+	data.AttackersCount = filterOrder(data.Attackers)
 	// Then, filter by minimum.
-	err = atkrMin(data, "10")
-
-	if err != nil {
-		t.Error(err)
-	}
+	min := 10
+	data.Attackers, data.AttackersFiltered, data.AttackersCount = filterMin(
+		min, data.Attackers, data.AttackersCount)
 
 	testMinimum(t, len(data.Attackers), 2)
 	testMinimum(t, len(data.AttackersCount), 2)
@@ -189,25 +188,24 @@ func TestAdMin(t *testing.T) {
 	}
 
 	rep := New("screen", "text", "ads")
-	rep.Ads["goog"] = AdsRD{1}
-	rep.Ads["face"] = AdsRD{10}
-	rep.Ads["pin"] = AdsRD{20}
-	rep.Ads["x"] = AdsRD{50}
-	rep.Ads["y"] = AdsRD{100}
+	rep.Ads["goog"] = ListRD{1}
+	rep.Ads["face"] = ListRD{10}
+	rep.Ads["pin"] = ListRD{20}
+	rep.Ads["x"] = ListRD{50}
+	rep.Ads["y"] = ListRD{100}
 	data := NewText(rep)
 
-	err := adMin(data, "")
+	// Check if a non integer string make it fail
+	err := adOptions(data, Opts{"min": "invalid_value"})
 	test.ErrorExpected(t, err, "invalid option")
 
 	// Order the current count, which atrkMin needs to update.
 	// Ignoring error because we test them in it's own test.
-	adOrder(data, "count")
+	adOptions(data, Opts{"order": "count"})
 	// Then, filter by minimum.
-	err = adMin(data, "30")
-
-	if err != nil {
-		t.Error(err)
-	}
+	min := 30
+	data.Ads, data.AdsFiltered, data.AdsCount = filterMin(
+		min, data.Ads, data.AdsCount)
 
 	testMinimum(t, len(data.Ads), 2)
 	testMinimum(t, len(data.AdsCount), 2)
@@ -233,25 +231,24 @@ func TestBotMin(t *testing.T) {
 	}
 
 	rep := New("screen", "text", "bots")
-	rep.Bots["zero"] = BotsRD{1}
-	rep.Bots["one"] = BotsRD{10}
-	rep.Bots["two"] = BotsRD{20}
-	rep.Bots["three"] = BotsRD{50}
-	rep.Bots["four"] = BotsRD{100}
+	rep.Bots["zero"] = ListRD{1}
+	rep.Bots["one"] = ListRD{10}
+	rep.Bots["two"] = ListRD{20}
+	rep.Bots["three"] = ListRD{50}
+	rep.Bots["four"] = ListRD{100}
 	data := NewText(rep)
 
-	err := botMin(data, "")
+	// Check if a non integer string make it fail
+	err := botOptions(data, Opts{"min": "invalid_value"})
 	test.ErrorExpected(t, err, "invalid option")
 
 	// Order the current count, which atrkMin needs to update.
 	// Ignoring error because we test them in it's own test.
-	botOrder(data, "count")
+	botOptions(data, Opts{"order": "count"})
 	// Then, filter by minimum.
-	err = botMin(data, "30")
-
-	if err != nil {
-		t.Error(err)
-	}
+	min := 30
+	data.Bots, data.BotsFiltered, data.BotsCount = filterMin(
+		min, data.Bots, data.BotsCount)
 
 	testMinimum(t, len(data.Bots), 2)
 	testMinimum(t, len(data.BotsCount), 2)

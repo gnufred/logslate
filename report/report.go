@@ -12,15 +12,15 @@ type Report struct {
 	layout []section
 
 	// Report Data (RD).
-	Runtime     RuntimeRD              `json:"runtime"`
-	Parsed      ParsedRD               `json:"parsed"`
-	Size        SizeRD                 `json:"size"`
-	TimeArgs    TimeArgsRD             `json:"time_args"`
-	Threats     ThreatsRD              `json:"threats"`
-	Ads         map[string]AdsRD       `json:"ads"`
-	Bots        map[string]BotsRD      `json:"bots"`
-	AttackTypes AttackTypesRD          `json:"attack_types"`
-	Attackers   map[string]AttackersRD `json:"attackers"`
+	Runtime     RuntimeRD         `json:"runtime"`
+	Parsed      ParsedRD          `json:"parsed"`
+	Size        SizeRD            `json:"size"`
+	TimeArgs    TimeArgsRD        `json:"time_args"`
+	Threats     ThreatsRD         `json:"threats"`
+	AttackTypes AttackTypesRD     `json:"attack_types"`
+	Ads         map[string]ListRD `json:"ads"`
+	Bots        map[string]ListRD `json:"bots"`
+	Attackers   map[string]ListRD `json:"attackers"`
 }
 
 type TextReport struct {
@@ -48,9 +48,9 @@ func New(path, format, layout string) *Report {
 		layout = defaultLayout
 	}
 	r.layout = parseLayout(layout)
-	r.Attackers = make(map[string]AttackersRD)
-	r.Ads = make(map[string]AdsRD)
-	r.Bots = make(map[string]BotsRD)
+	r.Attackers = make(map[string]ListRD)
+	r.Ads = make(map[string]ListRD)
+	r.Bots = make(map[string]ListRD)
 	return &r
 }
 
@@ -143,24 +143,14 @@ type Dbs struct {
 
 // Threat counts.
 type ThreatsRD struct {
-	Attacks Cnt `json:"attacks"`
-	Ads     Cnt `json:"ads"`
-	Bots    Cnt `json:"bots"`
+	Attacks PrctRD `json:"attacks"`
+	Ads     PrctRD `json:"ads"`
+	Bots    PrctRD `json:"bots"`
 }
 
-type Cnt struct {
+type PrctRD struct {
 	Its  uint    `json:"count"`
 	Prct float64 `json:"percent"`
-}
-
-// UTM data.
-type AdsRD struct {
-	Cnt uint `json:"count"`
-}
-
-// Bot data.
-type BotsRD struct {
-	Cnt uint `json:"count"`
 }
 
 // Attack data.
@@ -177,7 +167,7 @@ func (a *AttackTypesRD) Total() uint {
 	return a.Unk + a.SQL + a.CMD + a.Dir + a.XSS
 }
 
-// Attacker data.
-type AttackersRD struct {
+// Generic list with count.
+type ListRD struct {
 	Cnt uint `json:"count"`
 }
