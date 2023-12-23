@@ -154,11 +154,23 @@ func prepareData(r *Report) (*TextReport, error) {
 	for _, section := range r.layout {
 		switch section.Name {
 		case "attackers":
-			err = atkrOptions(t, section.Options)
+			fd := filterData{List: t.Attackers}
+			fd, err = execOptions(fd, section.Options)
+			t.Attackers = fd.List
+			t.AttackersFiltered = fd.Filtered
+			t.AttackersCount = fd.Cnt
 		case "ads":
-			err = adOptions(t, section.Options)
+			fd := filterData{List: t.Ads}
+			fd, err = execOptions(fd, section.Options)
+			t.Ads = fd.List
+			t.AdsFiltered = fd.Filtered
+			t.AdsCount = fd.Cnt
 		case "bots":
-			err = botOptions(t, section.Options)
+			fd := filterData{List: t.Bots}
+			fd, err = execOptions(fd, section.Options)
+			t.Bots = fd.List
+			t.BotsFiltered = fd.Filtered
+			t.BotsCount = fd.Cnt
 		}
 	}
 	return t, err

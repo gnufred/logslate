@@ -6,122 +6,92 @@ import (
 	"gitlab.com/gnufred/logslate/test"
 )
 
-func TestAtkrOptions(t *testing.T) {
-	testOptions := func(t *testing.T, d *TextReport, o Opts) {
-		err := atkrOptions(d, o)
+func TestExecOptionsErrors(t *testing.T) {
+	testOptions := func(t *testing.T, fd filterData, o Opts) {
+		_, err := execOptions(fd, o)
 		if err != nil {
 			t.Error(err)
 		}
 	}
 
-	rep := New("screen", "text", "attackers")
-	data := NewText(rep)
-
-	err := atkrOptions(data, Opts{"banana!": ""})
-	test.ErrorExpected(t, err, "invalid option")
-
-	testOptions(t, data, Opts{"order": "name"})
-	testOptions(t, data, Opts{"order": "count"})
-	testOptions(t, data, Opts{"min": "10"})
-}
-
-func TestAdOptions(t *testing.T) {
-	testOptions := func(t *testing.T, d *TextReport, o Opts) {
-		err := adOptions(d, o)
-		if err != nil {
-			t.Error(err)
-		}
-	}
-
+	err := error(nil)
 	rep := New("screen", "text", "ads")
 	data := NewText(rep)
+	fd := filterData{List: data.Ads}
 
-	err := adOptions(data, Opts{"banana!": ""})
+	fd, err = execOptions(fd, Opts{"banana!": ""})
 	test.ErrorExpected(t, err, "invalid option")
 
-	testOptions(t, data, Opts{"order": "name"})
-	testOptions(t, data, Opts{"order": "count"})
-	testOptions(t, data, Opts{"min": "10"})
+	testOptions(t, fd, Opts{"order": "name"})
+	testOptions(t, fd, Opts{"order": "count"})
+	testOptions(t, fd, Opts{"min": "10"})
 }
 
-func TestBotOptions(t *testing.T) {
-	testOptions := func(t *testing.T, d *TextReport, o Opts) {
-		err := botOptions(d, o)
-		if err != nil {
-			t.Error(err)
-		}
-	}
-
-	rep := New("screen", "text", "bots")
-	data := NewText(rep)
-
-	err := botOptions(data, Opts{"banana!": ""})
-	test.ErrorExpected(t, err, "invalid option")
-
-	testOptions(t, data, Opts{"order": "name"})
-	testOptions(t, data, Opts{"order": "count"})
-	testOptions(t, data, Opts{"min": "10"})
-}
-
-func TestAtkrOrder(t *testing.T) {
+func TestAtkrFilterOrder(t *testing.T) {
+	err := error(nil)
 	rep := New("screen", "text", "attackers")
 	rep.Attackers["127.0.0.1"] = ListRD{10}
 	rep.Attackers["127.0.0.2"] = ListRD{100}
 	data := NewText(rep)
+	fd := filterData{List: data.Attackers}
 
-	err := atkrOptions(data, Opts{"order": "invalid"})
+	fd, err = execOptions(fd, Opts{"order": "invalid"})
 	test.ErrorExpected(t, err, "invalid option")
-	if data.AttackersCount != nil {
+	if fd.Cnt != nil {
 		t.Error("attacker count is not nil")
 	}
 
-	err = atkrOptions(data, Opts{"order": "count"})
+	fd, err = execOptions(fd, Opts{"order": "count"})
 	if err != nil {
 		t.Error(err)
 	}
-	if data.AttackersCount[0].Item != "127.0.0.2" {
+	if fd.Cnt[0].Item != "127.0.0.2" {
 		t.Error("attacker order by count data is incorrect")
 	}
 }
 
 func TestAdOrder(t *testing.T) {
+	err := error(nil)
 	rep := New("screen", "text", "ads")
 	rep.Ads["goog"] = ListRD{10}
 	rep.Ads["face"] = ListRD{100}
 	data := NewText(rep)
+	fd := filterData{List: data.Ads}
 
-	err := adOptions(data, Opts{"order": "invalid"})
+	fd, err = execOptions(fd, Opts{"order": "invalid"})
 	test.ErrorExpected(t, err, "invalid option")
-	if data.AdsCount != nil {
+	if fd.Cnt != nil {
 		t.Error("ad count is not nil")
 	}
 
-	err = adOptions(data, Opts{"order": "count"})
+	fd, err = execOptions(fd, Opts{"order": "count"})
 	if err != nil {
 		t.Error(err)
 	}
-	if data.AdsCount[0].Item != "face" {
+	if fd.Cnt[0].Item != "face" {
 		t.Error("ad ordered by count data is incorrect")
 	}
 }
 
 func TestBotOrder(t *testing.T) {
-	rep := New("screen", "text", "attackers")
+	err := error(nil)
+	rep := New("screen", "text", "bots")
 	rep.Bots["one"] = ListRD{10}
 	rep.Bots["two"] = ListRD{100}
 	data := NewText(rep)
+	fd := filterData{List: data.Bots}
 
-	err := botOptions(data, Opts{"order": "invalid"})
+	fd, err = execOptions(fd, Opts{"order": "invalid"})
 	test.ErrorExpected(t, err, "invalid option")
-	if data.BotsCount != nil {
+	if fd.Cnt != nil {
 		t.Error("bot count is not nil")
 	}
 
-	err = botOptions(data, Opts{"order": "count"})
+	fd, err = execOptions(fd, Opts{"order": "count"})
 	if err != nil {
 		t.Error(err)
 	}
-	if data.BotsCount[0].Item != "two" {
+	if fd.Cnt[0].Item != "two" {
 		t.Error("bot ordered by count data is incorrect")
 	}
 }
@@ -144,6 +114,7 @@ func TestAtkrMin(t *testing.T) {
 		}
 	}
 
+	err := error(nil)
 	rep := New("screen", "text", "attackers")
 	rep.Attackers["127.0.0.0"] = ListRD{0}
 	rep.Attackers["127.0.0.1"] = ListRD{1}
@@ -151,22 +122,19 @@ func TestAtkrMin(t *testing.T) {
 	rep.Attackers["127.0.0.3"] = ListRD{10}
 	rep.Attackers["127.0.0.4"] = ListRD{20}
 	data := NewText(rep)
+	fd := filterData{List: data.Attackers}
 
 	// Check if a non integer string make it fail
-	err := atkrOptions(data, Opts{"min": "invalid_value"})
+	fd, err = execOptions(fd, Opts{"min": "invalid_value"})
 	test.ErrorExpected(t, err, "invalid option")
 
-	// Order the current count, which atrkMin needs to update.
-	// Ignoring error because we test them in it's own test.
-	data.AttackersCount = filterOrder(data.Attackers)
-	// Then, filter by minimum.
 	min := 10
-	data.Attackers, data.AttackersFiltered, data.AttackersCount = filterMin(
-		min, data.Attackers, data.AttackersCount)
+	fd = filterOrder(fd)
+	fd = filterMin(min, fd)
 
-	testMinimum(t, len(data.Attackers), 2)
-	testMinimum(t, len(data.AttackersCount), 2)
-	testFiltered(t, data.AttackersFiltered, 3)
+	testMinimum(t, len(fd.List), 2)
+	testMinimum(t, len(fd.Cnt), 2)
+	testFiltered(t, fd.Filtered, 3)
 }
 
 func TestAdMin(t *testing.T) {
@@ -187,6 +155,7 @@ func TestAdMin(t *testing.T) {
 		}
 	}
 
+	err := error(nil)
 	rep := New("screen", "text", "ads")
 	rep.Ads["goog"] = ListRD{1}
 	rep.Ads["face"] = ListRD{10}
@@ -194,22 +163,19 @@ func TestAdMin(t *testing.T) {
 	rep.Ads["x"] = ListRD{50}
 	rep.Ads["y"] = ListRD{100}
 	data := NewText(rep)
+	fd := filterData{List: data.Ads}
 
 	// Check if a non integer string make it fail
-	err := adOptions(data, Opts{"min": "invalid_value"})
+	fd, err = execOptions(fd, Opts{"min": "invalid_value"})
 	test.ErrorExpected(t, err, "invalid option")
 
-	// Order the current count, which atrkMin needs to update.
-	// Ignoring error because we test them in it's own test.
-	adOptions(data, Opts{"order": "count"})
-	// Then, filter by minimum.
 	min := 30
-	data.Ads, data.AdsFiltered, data.AdsCount = filterMin(
-		min, data.Ads, data.AdsCount)
+	fd = filterOrder(fd)
+	fd = filterMin(min, fd)
 
-	testMinimum(t, len(data.Ads), 2)
-	testMinimum(t, len(data.AdsCount), 2)
-	testFiltered(t, data.AdsFiltered, 3)
+	testMinimum(t, len(fd.List), 2)
+	testMinimum(t, len(fd.Cnt), 2)
+	testFiltered(t, fd.Filtered, 3)
 }
 
 func TestBotMin(t *testing.T) {
@@ -230,6 +196,7 @@ func TestBotMin(t *testing.T) {
 		}
 	}
 
+	err := error(nil)
 	rep := New("screen", "text", "bots")
 	rep.Bots["zero"] = ListRD{1}
 	rep.Bots["one"] = ListRD{10}
@@ -237,20 +204,17 @@ func TestBotMin(t *testing.T) {
 	rep.Bots["three"] = ListRD{50}
 	rep.Bots["four"] = ListRD{100}
 	data := NewText(rep)
+	fd := filterData{List: data.Bots}
 
 	// Check if a non integer string make it fail
-	err := botOptions(data, Opts{"min": "invalid_value"})
+	fd, err = execOptions(fd, Opts{"min": "invalid_value"})
 	test.ErrorExpected(t, err, "invalid option")
 
-	// Order the current count, which atrkMin needs to update.
-	// Ignoring error because we test them in it's own test.
-	botOptions(data, Opts{"order": "count"})
-	// Then, filter by minimum.
 	min := 30
-	data.Bots, data.BotsFiltered, data.BotsCount = filterMin(
-		min, data.Bots, data.BotsCount)
+	fd = filterOrder(fd)
+	fd = filterMin(min, fd)
 
-	testMinimum(t, len(data.Bots), 2)
-	testMinimum(t, len(data.BotsCount), 2)
-	testFiltered(t, data.BotsFiltered, 3)
+	testMinimum(t, len(fd.List), 2)
+	testMinimum(t, len(fd.Cnt), 2)
+	testFiltered(t, fd.Filtered, 3)
 }
