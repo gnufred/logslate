@@ -140,10 +140,10 @@ var attackPatterns = []ptrn{
 	{Name: "etc%5c", Type: Dir, Score: 5},
 	{Name: "etc/", Type: Dir, Score: 2},
 	{Name: "etc/passwd", Type: Dir, Score: 5},
-	{Name: "passwd", Type: Dir, Score: 3},
-	{Name: "web-inf", Type: Dir, Score: 5},
+	{Name: "/passwd", Type: Dir, Score: 3},
 	{Name: "file://", Type: Dir, Score: 4},
 	{Name: "file:%2f%2f", Type: Dir, Score: 5},
+	{Name: "WEB-INF", Type: Dir, Score: 5},
 
 	// !!! OS command injection attacks !!! //
 	// https://portswigger.net/web-security/os-command-injection
@@ -212,6 +212,7 @@ var attackPatterns = []ptrn{
 	{Name: "void%280%29", Type: XSS, Score: 5}, // From URL encoded "javascript:void(0)".
 
 	// Config scans.
+	{Name: "/keys.js", Type: Scn, Score: 5},
 	{Name: "Cargo.lock", Type: Scn, Score: 5},
 	{Name: "Cargo.toml", Type: Scn, Score: 5},
 	{Name: "DLPCenter/loginform.sms", Type: Scn, Score: 5},
@@ -235,7 +236,6 @@ var attackPatterns = []ptrn{
 	{Name: "config.inc.php", Type: Scn, Score: 5},
 	// {Name: "config.js", Type: Scn, Score: 5}, // To many legit hits.
 	{Name: "credentials.db", Type: Scn, Score: 5},
-	{Name: "crossdomain.xml", Type: Scn, Score: 5},
 	{Name: "dataOrigin.ashx", Type: Scn, Score: 5},
 	{Name: "databases.yml", Type: Scn, Score: 5},
 	{Name: "debug.log", Type: Scn, Score: 5},
@@ -257,7 +257,6 @@ var attackPatterns = []ptrn{
 	{Name: "karma.conf.js", Type: Scn, Score: 5},
 	{Name: "karma.js", Type: Scn, Score: 5},
 	{Name: "keycloak.json", Type: Scn, Score: 5},
-	{Name: "keys.js", Type: Scn, Score: 5},
 	{Name: "kustomization.yml", Type: Scn, Score: 5},
 	{Name: "login.action", Type: Scn, Score: 5},
 	{Name: "mobile.log", Type: Scn, Score: 5},

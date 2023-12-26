@@ -1,2 +1,2 @@
 {{range $d := .Attacks}}
-{{$d.Time}}  {{printf "%15s" $d.Ip}}  {{printf "%10s" $d.Type}}  {{$d.Path}}{{if $d.Query}}?{{$d.Query}}{{end}}{{end}}
+{{$d.Time}}  {{printf "%15s" $d.Ip}}  {{printf "%11s" $d.Type}}  {{$d.Path}}{{if $d.Query}}?{{$d.Query}}{{end}}{{end}}
