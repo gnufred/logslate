@@ -99,7 +99,7 @@ var attackPatterns = []ptrn{
 	{Name: "'%22", Type: SQL, Score: 5},
 	{Name: "'%bf", Type: SQL, Score: 5},
 	{Name: "'%f0", Type: SQL, Score: 5},
-	{Name: "'%7d", Type: SQL, Score: 5},
+	{Name: "'%7d", Type: SQL, Score: 4},
 	{Name: "!((", Type: SQL, Score: 4},
 	{Name: "'1=0", Type: SQL, Score: 5},
 	{Name: "'1=1", Type: SQL, Score: 5},
@@ -222,11 +222,10 @@ var attackPatterns = []ptrn{
 	{Name: "Pipfile", Type: Scn, Score: 5},
 	{Name: "Pipfile.lock", Type: Scn, Score: 5},
 	{Name: "Procfile", Type: Scn, Score: 5},
-	{Name: ".env", Type: Scn, Score: 5},
+	// {Name: ".env", Type: Scn, Score: 5}, // Too many IPs scanning this.
 	{Name: "apps.tidy.infinity.json", Type: Scn, Score: 5},
 	{Name: "appsettings.", Type: Scn, Score: 5},
 	// {Name: "auth.js", Type: Scn, Score: 5}, // Not sure if that's usually legit or not.
-	{Name: "about.php", Type: Scn, Score: 5},
 	{Name: "aws.sh", Type: Scn, Score: 5},
 	{Name: "awstats.conf", Type: Scn, Score: 5},
 	{Name: "azure-pipelines.yml", Type: Scn, Score: 5},
@@ -254,13 +253,12 @@ var attackPatterns = []ptrn{
 	{Name: "go.mod", Type: Scn, Score: 5},
 	{Name: "htaccess.txt", Type: Scn, Score: 5},
 	{Name: "init.sh", Type: Scn, Score: 5},
-	{Name: "install.php", Type: Scn, Score: 5},
+	// {Name: "install.php", Type: Scn, Score: 5}, // To many IPs scanning this.
 	{Name: "karma.conf.js", Type: Scn, Score: 5},
 	{Name: "karma.js", Type: Scn, Score: 5},
 	{Name: "keycloak.json", Type: Scn, Score: 5},
 	{Name: "keys.js", Type: Scn, Score: 5},
 	{Name: "kustomization.yml", Type: Scn, Score: 5},
-	{Name: "license.php", Type: Scn, Score: 5},
 	{Name: "login.action", Type: Scn, Score: 5},
 	{Name: "mobile.log", Type: Scn, Score: 5},
 	{Name: "parameters.yml", Type: Scn, Score: 5},
@@ -283,7 +281,7 @@ var attackPatterns = []ptrn{
 	// I might change that later, but given the simplist nature of the detectiong logic,
 	// I'm keeping it simple.
 	// In any case, attackers will almost always scan weird paths that nobody uses.
-	{Name: "/cgi-bin", Type: Scn, Score: 5},
+	// {Name: "/cgi-bin", Type: Scn, Score: 5}, // To many legit hits.
 	{Name: "/setup.php", Type: Scn, Score: 5},
 	{Name: "CgiStart", Type: Scn, Score: 5},
 	{Name: "FNDWRR.exe", Type: Scn, Score: 5},
@@ -296,7 +294,7 @@ var attackPatterns = []ptrn{
 	{Name: "backup/auto.php", Type: Scn, Score: 5},
 	{Name: "backup2.cgi", Type: Scn, Score: 5},
 	{Name: "cache/backup", Type: Scn, Score: 5},
-	{Name: "/wp-login.php", Type: Scn, Score: 5}, // To many legit hits.
+	// {Name: "/wp-login.php", Type: Scn, Score: 5}, // Too many IPs scanning this.
 
 	// Data dump scans.
 	{Name: ".sql", Type: Scn, Score: 3},
