@@ -21,6 +21,15 @@ type Report struct {
 	Ads         map[string]ListRD `json:"ads"`
 	Bots        map[string]ListRD `json:"bots"`
 	Attackers   map[string]ListRD `json:"attackers"`
+	Attacks     []AttackRD        `json:"attacks"`
+}
+
+type AttackRD struct {
+	Type  string `json:"type"`
+	Time  string `json:"time"`
+	Ip    string `json:"ip"`
+	Path  string `json:"path"`
+	Query string `json:"query"`
 }
 
 type TextReport struct {
@@ -66,6 +75,7 @@ func NewText(r *Report) *TextReport {
 	t.Threats = r.Threats
 	t.AttackTypes = r.AttackTypes
 	t.Attackers = r.Attackers
+	t.Attacks = r.Attacks
 	t.Ads = r.Ads
 	t.Bots = r.Bots
 

@@ -26,6 +26,9 @@ var attacksTemplate string
 //go:embed templates/attackers
 var attackersTemplate string
 
+//go:embed templates/attacklog
+var attacklogTemplate string
+
 //go:embed templates/ads
 var adsTemplate string
 
@@ -38,6 +41,7 @@ var templateEmbeds = map[string]string{
 	"threats":   threatsTemplate,
 	"attacks":   attacksTemplate,
 	"attackers": attackersTemplate,
+	"attacklog": attacklogTemplate,
 	"ads":       adsTemplate,
 	"bots":      botsTemplate,
 }
@@ -141,11 +145,14 @@ func createTextOutput(r *Report) (bytes.Buffer, error) {
 	return out, nil
 }
 
-func header(s string) string {
-	return fmt.Sprintf(
-		"=== [[ %s ]] ===",
-		strings.ToUpper(s[:1])+s[1:],
-	)
+func header(name string) string {
+	switch name {
+	case "attacklog":
+		name = "Attack Log"
+	default:
+		name = strings.ToUpper(name[:1]) + name[1:]
+	}
+	return fmt.Sprintf("=== [[ %s ]] ===", name)
 }
 
 func prepareData(r *Report) (*TextReport, error) {

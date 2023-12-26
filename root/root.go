@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"time"
 
 	"gitlab.com/gnufred/logslate/args"
@@ -78,6 +79,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Initialize map length with highest attack type constant.
 	atkTypes := make(map[threat.AttackType]uint, threat.XSS)
 	attackers := make(map[string]uint)
+	attacks := make([]report.AttackRD, 0)
 	ads := make(map[string]uint)
 	bots := make(map[string]uint)
 
@@ -142,8 +144,18 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 			// Compile attack type data.
 			if a.ReportPath != "" {
+				ip := ls.Ip.String()
 				atkTypes[ls.Attack.Type]++
-				attackers[ls.Ip.String()]++
+				attackers[ip]++
+				attacks = append(attacks,
+					report.AttackRD{
+						Type:  ls.Attack.Name,
+						Time:  ls.Time.Format("2006-01-02 15:04:05"),
+						Ip:    ip,
+						Path:  ls.Path,
+						Query: ls.Query,
+					},
+				)
 			}
 			par.Atk++
 		}
@@ -236,6 +248,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 				Cnt: cnt,
 			}
 		}
+
+		sort.Slice(attacks, func(i, j int) bool {
+			return attacks[i].Time < attacks[j].Time
+		})
+		rep.Attacks = attacks
 
 		// Print report.
 		rep.Print()

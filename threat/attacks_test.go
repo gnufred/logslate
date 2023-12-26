@@ -68,10 +68,10 @@ func TestAttackTypeString(t *testing.T) {
 		Exp string
 	}{
 		{Nil, ""},
-		{Unk, "generic"},
-		{SQL, "sql_injection"},
-		{CMD, "command_injection"},
-		{Dir, "directory_traversal"},
+		{Unk, "unknown"},
+		{SQL, "sql_inject"},
+		{CMD, "cmd_inject"},
+		{Dir, "dir_travers"},
 		{XSS, "xss"},
 		{Scn, "scan"},
 	}

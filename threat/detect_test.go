@@ -26,7 +26,7 @@ func TestDetect(t *testing.T) {
 			Attack{
 				SQL,
 				5,
-				"sql_injection",
+				"sql_inject",
 			},
 			"",
 			"EdgeScan",

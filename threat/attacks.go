@@ -327,13 +327,13 @@ var attackPatterns = []ptrn{
 func String(atk AttackType) string {
 	switch atk {
 	case Unk:
-		return "generic"
+		return "unknown"
 	case SQL:
-		return "sql_injection"
+		return "sql_inject"
 	case CMD:
-		return "command_injection"
+		return "cmd_inject"
 	case Dir:
-		return "directory_traversal"
+		return "dir_travers"
 	case XSS:
 		return "xss"
 	case Scn:
