@@ -225,7 +225,7 @@ var attackPatterns = []ptrn{
 	{Name: ".env", Type: Scn, Score: 5},
 	{Name: "apps.tidy.infinity.json", Type: Scn, Score: 5},
 	{Name: "appsettings.", Type: Scn, Score: 5},
-	{Name: "auth.js", Type: Scn, Score: 5},
+	// {Name: "auth.js", Type: Scn, Score: 5}, // Not sure if that's usually legit or not.
 	{Name: "about.php", Type: Scn, Score: 5},
 	{Name: "aws.sh", Type: Scn, Score: 5},
 	{Name: "awstats.conf", Type: Scn, Score: 5},
@@ -234,7 +234,7 @@ var attackPatterns = []ptrn{
 	{Name: "bitbucket-pipelines.yml", Type: Scn, Score: 5},
 	{Name: "config.html", Type: Scn, Score: 5},
 	{Name: "config.inc.php", Type: Scn, Score: 5},
-	// {Name: "config.js", Type: Scn, Score: 5}, // To many legit hits
+	// {Name: "config.js", Type: Scn, Score: 5}, // To many legit hits.
 	{Name: "credentials.db", Type: Scn, Score: 5},
 	{Name: "crossdomain.xml", Type: Scn, Score: 5},
 	{Name: "dataOrigin.ashx", Type: Scn, Score: 5},
@@ -296,7 +296,7 @@ var attackPatterns = []ptrn{
 	{Name: "backup/auto.php", Type: Scn, Score: 5},
 	{Name: "backup2.cgi", Type: Scn, Score: 5},
 	{Name: "cache/backup", Type: Scn, Score: 5},
-	{Name: "wp-login.php", Type: Scn, Score: 5},
+	{Name: "/wp-login.php", Type: Scn, Score: 5}, // To many legit hits.
 
 	// Data dump scans.
 	{Name: ".sql", Type: Scn, Score: 3},
@@ -319,8 +319,8 @@ var attackPatterns = []ptrn{
 	{Name: "/public", Type: Scn, Score: 2},
 	{Name: "/release", Type: Scn, Score: 2},
 	{Name: "/root", Type: Scn, Score: 2},
-	{Name: "/test", Type: Scn, Score: 2},
-	{Name: "/www", Type: Scn, Score: 2},
+	// {Name: "/test", Type: Scn, Score: 2}, // Some URLs have lots of "test".
+	// {Name: "/www", Type: Scn, Score: 2}, // Some weird URLs refer to other URLs which starts with https://www.
 }
 
 // String translate an attack type byte to a human readable string
