@@ -50,7 +50,7 @@ func filterOrder(fd filterData) filterData {
 }
 
 func filterMin(min int, fd filterData) filterData {
-	filtered := make(map[string]ListRD)
+	filtered := make(map[string]ListRD, 0)
 	var filteredNum uint
 
 	for name, entry := range fd.List {
