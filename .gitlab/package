@@ -20,7 +20,3 @@ upload_package \
 upload_package \
 	".bin/${DARWIN_AMD64_BINARY}" \
 	"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}"
-
-upload_package \
-	".bin/${WINDOWS_AMD64_BINARY}" \
-	"${PACKAGE_REGISTRY_CURRENT}/${WINDOWS_AMD64_BINARY}"

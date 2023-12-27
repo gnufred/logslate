@@ -17,5 +17,4 @@ release-cli create \
     --description "$RELEASE_BODY" \
     --tag-name $CI_COMMIT_TAG \
     --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}\",\"link_type\":\"package\"}" \
-    --assets-link "{\"name\":\"${DARWIN_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}\",\"link_type\":\"package\"}" \
-    --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_CURRENT}/${WINDOWS_AMD64_BINARY}\",\"link_type\":\"package\"}"
+    --assets-link "{\"name\":\"${DARWIN_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}\",\"link_type\":\"package\"}"

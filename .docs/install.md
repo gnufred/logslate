@@ -10,4 +10,4 @@ brew install logslate
 brew update && brew upgrade logslate
 ```
 
-For **Windows** and other uses cases, head to the [release page](https://gitlab.com/gnufred/logslate/-/releases) and download the binary manually.
+For other uses cases, head to the [release page](https://gitlab.com/gnufred/logslate/-/releases) and download the binary manually.
