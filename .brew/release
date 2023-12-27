@@ -6,15 +6,15 @@ echo "Preparing brew release variables."
 BREW_RELEASE_VERSION=$CI_COMMIT_TAG
 echo "release: ${BREW_RELEASE_VERSION}"
 
-BREW_SHA256_PACKAGE_LINUX=$(sha256sum -z ".bin/${LINUX_AMD64_BINARY}" | cut -d' ' -f1)
-echo "${LINUX_AMD64_BINARY} sha256: $BREW_SHA256_PACKAGE_LINUX"
+BREW_SHA256_PACKAGE_LINUX=$(sha256sum -z ".bin/${LINUX_AMD64_BINARY}.tar.gz" | cut -d' ' -f1)
+echo "${LINUX_AMD64_BINARY}.tar.gz sha256: $BREW_SHA256_PACKAGE_LINUX"
 if [[ -z "$BREW_SHA256_PACKAGE_LINUX" ]]; then
 	echo "fatal: nil sha256sum"
 	exit 1
 fi
 
-BREW_SHA256_PACKAGE_DARWIN=$(sha256sum -z ".bin/${DARWIN_AMD64_BINARY}" | cut -d' ' -f1)
-echo "${DARWIN_AMD64_BINARY} sha256: $BREW_SHA256_PACKAGE_DARWIN"
+BREW_SHA256_PACKAGE_DARWIN=$(sha256sum -z ".bin/${DARWIN_AMD64_BINARY}.tar.gz" | cut -d' ' -f1)
+echo "${DARWIN_AMD64_BINARY}.tar.gz sha256: $BREW_SHA256_PACKAGE_DARWIN"
 if [[ -z "$BREW_SHA256_PACKAGE_DARWIN" ]]; then
 	echo "fatal: nil sha256sum"
 	exit 1
