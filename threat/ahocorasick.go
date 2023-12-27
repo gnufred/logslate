@@ -1,6 +1,8 @@
 package threat
 
-import ac "github.com/petar-dambovaliev/aho-corasick"
+import (
+	ac "github.com/petar-dambovaliev/aho-corasick"
+)
 
 // Holds the AhoCorasick finders.
 var attackAC, botAC *ac.AhoCorasick
@@ -21,6 +23,12 @@ var botOpts = ac.Opts{
 
 // init creates "to be used" AhoCorasick builders.
 func init() {
+	// add DataDumpPatterns to attackPatterns
+	apts := attackPatterns
+	dpts := DataDumpPatterns()
+	pts := append(apts, dpts...)
+	attackPatterns = pts
+
 	bStr := attackBuilderString(attackPatterns)
 	attackAC = newAhoCorasickBuilder(bStr, attackOpts)
 	botAC = newAhoCorasickBuilder(botPatterns, botOpts)

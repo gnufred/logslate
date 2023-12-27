@@ -295,29 +295,53 @@ var attackPatterns = []ptrn{
 	{Name: "cache/backup", Type: Scn, Score: 5},
 	// {Name: "/wp-login.php", Type: Scn, Score: 5}, // Too many IPs scanning this.
 
-	// Data dump scans.
-	{Name: ".sql", Type: Scn, Score: 3},
-	{Name: ".7z", Type: Scn, Score: 3},
-	{Name: ".bz2", Type: Scn, Score: 3},
-	{Name: ".gz", Type: Scn, Score: 3},
-	{Name: ".lz", Type: Scn, Score: 3},
-	{Name: ".rar", Type: Scn, Score: 3},
-	{Name: ".tar", Type: Scn, Score: 3},
-	{Name: ".zip", Type: Scn, Score: 3},
+}
 
-	{Name: "/backup", Type: Scn, Score: 2},
-	{Name: "/bak", Type: Scn, Score: 2},
-	{Name: "/db", Type: Scn, Score: 2},
-	{Name: "/db_backup", Type: Scn, Score: 2},
-	{Name: "/dbdump", Type: Scn, Score: 2},
-	{Name: "/dump", Type: Scn, Score: 2},
-	{Name: "/html", Type: Scn, Score: 2},
-	{Name: "/old", Type: Scn, Score: 2},
-	{Name: "/public", Type: Scn, Score: 2},
-	{Name: "/release", Type: Scn, Score: 2},
-	{Name: "/root", Type: Scn, Score: 2},
-	// {Name: "/test", Type: Scn, Score: 2}, // Some URLs have lots of "test".
-	// {Name: "/www", Type: Scn, Score: 2}, // Some weird URLs refer to other URLs which starts with https://www.
+// DataDumpPatterns create the pattern list to detect data dumps.
+// Added to attackPatterns in ahocorasick.init().
+func DataDumpPatterns() []ptrn {
+	file := []string{
+		"api",
+		"backup",
+		"bak",
+		"bin",
+		"db",
+		"db_backup",
+		"dbdump",
+		"dump",
+		"html",
+		"html",
+		"old",
+		"public",
+		"release",
+		"root",
+		"site",
+		"test",
+		"www",
+	}
+	ext := []string{
+		"sql",
+		"7z",
+		"bz2",
+		"gz",
+		"lz",
+		"rar",
+		"tar",
+		"zip",
+	}
+
+	dump := make([]ptrn, 0)
+	for _, f := range file {
+		for _, e := range ext {
+			dump = append(dump, ptrn{
+				Name:  f + "." + e,
+				Type:  Scn,
+				Score: 5,
+			})
+		}
+	}
+
+	return dump
 }
 
 // String translate an attack type byte to a human readable string

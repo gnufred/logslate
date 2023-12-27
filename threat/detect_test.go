@@ -113,7 +113,7 @@ func TestAttacks(t *testing.T) {
 		{"./././././././././././././././././././././././././././././././././", result{66, Dir}},
 		{"/phpmyadmin", result{5, Scn}},
 		{"/db.sql", result{5, Scn}},
-		{"/ROOT.tar.gz", result{8, Scn}},
+		{"/ROOT.tar.gz", result{5, Scn}},
 		{"/html.zip", result{5, Scn}},
 	}
 

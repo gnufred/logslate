@@ -82,3 +82,18 @@ func TestAttackTypeString(t *testing.T) {
 		testMatch(t, d.In, d.Exp)
 	}
 }
+
+func TestDataDumpPatterns(t *testing.T) {
+	pts := DataDumpPatterns()
+	found := false
+	search := "www.zip"
+
+	for _, v := range pts {
+		if v.Name == search {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("did not find %s", search)
+	}
+}
