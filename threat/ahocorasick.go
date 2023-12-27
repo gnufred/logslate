@@ -23,12 +23,9 @@ var botOpts = ac.Opts{
 
 // init creates "to be used" AhoCorasick builders.
 func init() {
-	// add DataDumpPatterns to attackPatterns
-	apts := attackPatterns
-	dpts := DataDumpPatterns()
-	pts := append(apts, dpts...)
-	attackPatterns = pts
-
+	// DataDumpPatterns() slice is a generated list. We need to
+	// add it to the hardcoded attack list before we can use it.
+	attackPatterns = append(attackPatterns, DataDumpPatterns()...)
 	bStr := attackBuilderString(attackPatterns)
 	attackAC = newAhoCorasickBuilder(bStr, attackOpts)
 	botAC = newAhoCorasickBuilder(botPatterns, botOpts)
