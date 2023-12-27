@@ -7,6 +7,8 @@ ver=$(git describe --tags --always)
 
 mkdir -p .bin
 rm -fr .bin/logslate
+
+# -ldflags "-s -w" remove debug information from built binary
 CGO_ENABLED=0 go build \
-    -ldflags="-X 'main.Version=${ver}'" \
+    -ldflags="-s -w -X 'main.Version=${ver}'" \
     -o .bin/logslate
