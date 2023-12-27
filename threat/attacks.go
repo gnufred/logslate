@@ -73,8 +73,8 @@ var attackPatterns = []ptrn{
 	{Name: "sleep+", Type: SQL, Score: 2},
 	{Name: "sleep(", Type: SQL, Score: 5},
 	// {Name: "benchmark", Type: SQL, Score: 0},
+	{Name: "benchmark%", Type: SQL, Score: 4},
 	{Name: "benchmark(", Type: SQL, Score: 5},
-	{Name: "benchmark%", Type: SQL, Score: 5},
 	{Name: "benchmark+", Type: SQL, Score: 5},
 
 	// DNS lookup.
