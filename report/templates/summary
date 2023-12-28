@@ -1,10 +1,5 @@
 
 Runtime: {{HumanDuration .Runtime.Total}}
-Data size: {{BytesToMB .Size.Byte}} MB
-Parsed: {{AddCommas .Parsed.Total}}{{if ne .Parsed.Ok .Parsed.Total}}
-  * Ok: {{AddCommas .Parsed.Ok}}{{end}}{{if .Parsed.Skip}}
-  * Skipped: {{AddCommas .Parsed.Skip}}{{end}}{{if .Parsed.Error}}
-  * Errors: {{AddCommas .Parsed.Error}}{{end}}
-Per second:
-  * {{BytesToMB .BytesPerSec}} MB
-  * {{AddCommas .LinesPerSec}} lines
+Size (MB): {{BytesToMB .Size.Byte}} ({{BytesToMB .BytesPerSec}}/s)
+Lines: {{AddCommas .Parsed.Total}} ({{AddCommas .LinesPerSec}}/s){{if ne .Parsed.Ok .Parsed.Total}}
+ok [{{AddCommas .Parsed.Ok}}]{{end}}{{if .Parsed.Skip}} skip [{{AddCommas .Parsed.Skip}}]{{end}}{{if .Parsed.Error}} error [{{AddCommas .Parsed.Error}}]{{end}}
