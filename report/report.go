@@ -124,9 +124,11 @@ func (r *RuntimeRD) Total() time.Duration {
 
 // Parsed data.
 type ParsedRD struct {
-	Ok    uint `json:"ok"`
-	Skip  uint `json:"skip"`
-	Error uint `json:"error"`
+	Ok    uint      `json:"ok"`
+	Skip  uint      `json:"skip"`
+	Error uint      `json:"error"`
+	First time.Time `json:"first"`
+	Last  time.Time `json:"last"`
 }
 
 func (l *ParsedRD) Total() uint {

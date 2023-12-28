@@ -44,6 +44,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		return par, ErrNoInputData
 	}
 
+	// Initialize database
 	d := db.Singleton()
 	if a.Db != "" {
 		err := d.Create(a.Db)
@@ -51,15 +52,14 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			return par, err
 		}
 		d.ApplyDefaults()
-	}
 
-	if a.Db != "" {
 		d.Begin()
 		defer func(d *db.Dber) {
 			d.Commit()
 		}(d)
 	}
 
+	// Create runtime progress bar
 	bar := createBar()
 
 	// Reporting data starts here.
@@ -82,6 +82,9 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	attacks := make([]report.AttackRD, 0)
 	ads := make(map[string]uint)
 	bots := make(map[string]uint)
+	// "Zero" values for first/last entry must be, infinitely in the future/past.
+	first, _ := time.Parse("2006-01-02", "9999-01-02")
+	last := time.Time{}
 
 	// Parser loop.
 	for {
@@ -124,6 +127,13 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		if !timeMatch(ls.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
 			continue
+		}
+
+		if ls.Time.Before(first) {
+			first = ls.Time
+		}
+		if ls.Time.After(last) {
+			last = ls.Time
 		}
 
 		if a.Db != "" {
@@ -207,9 +217,18 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Runtime.Start = runStartedAt
 		rep.Runtime.End = runEndedAt
 		rep.Size.Byte = bytesTotal
+
 		rep.Parsed.Ok = par.Ok
 		rep.Parsed.Skip = par.Skip
 		rep.Parsed.Error = par.Err
+		// "Zero" value for report first/last is "0001-01-01 00:00:00 UTC"
+		if first.Equal(a.EndTime()) || first.Before(a.EndTime()) {
+			rep.Parsed.First = first
+		}
+		rep.Parsed.Last = last
+
+		// If the time entries didn't change, we set them to
+		// what the user specified.
 		rep.TimeArgs.Since = a.Since()
 		rep.TimeArgs.Until = a.Until()
 		rep.TimeArgs.Start = a.StartTime()

@@ -1,0 +1,4 @@
+
+Lines: {{AddCommas .Parsed.Ok}}
+First: {{HumanTime .Parsed.First}}
+Last:  {{HumanTime .Parsed.Last}}

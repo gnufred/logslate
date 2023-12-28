@@ -1,5 +1,5 @@
 {{if .TimeArgs.Since}}
-Since: {{.TimeArgs.Since}}{{end}}
-Start: {{HumanTime .TimeArgs.Start}}{{if .TimeArgs.Until}}
+Since: {{.TimeArgs.Since}}{{end}}{{if .TimeArgs.Until}}
 Until: {{.TimeArgs.Until}}{{end}}
+Start: {{HumanTime .TimeArgs.Start}}
 End:   {{HumanTime .TimeArgs.End}}
