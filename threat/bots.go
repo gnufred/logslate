@@ -86,6 +86,7 @@ var botPatterns = []string{
 	"msnbot/",
 
 	// Other search engine indexers.
+	"Applebot",                // https://support.apple.com/en-us/HT204683
 	"DuckDuckBot",             // https://duckduckgo.com/duckduckbot
 	"DuckDuckGo-Favicons-Bot", // https://duckduckgo.com/duckduckbot
 	"FemtosearchBot",          // http://femtosearch.com
@@ -96,6 +97,8 @@ var botPatterns = []string{
 	"SeekportBot",             // https://bot.seekport.com
 	"SeekportBot",             // https://bot.seekport.com
 	"SeznamBot",               // https://napoveda-seznam-cz.translate.goog/cz/seznamcz-web-search/?_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp
+	"Sogou web spider",        // https://www.vntweb.co.uk/sogou-web-spider-web-robot/
+	"Yahoo! Slurp",            // https://help.yahoo.com/kb/SLN22600.html
 	"Yeti",                    // https://naver.me/spd
 	"YisouSpider",
 
@@ -124,6 +127,7 @@ var botPatterns = []string{
 	"MJ12bot",                   // http://mj12bot.com/
 	"MailChimp",                 // https://mailchimp.com/
 	"Monsidobot",                // https://monsido.com/bot-html
+	"Optimizer",                 // https://www.sistrix.com/faq/what-is-the-optimizer-crawler-called/
 	"Productsup",                // http://productsup.io
 	"Screaming Frog SEO Spider", // https://www.screamingfrog.co.uk/seo-spider/
 	"SemrushBot",                // https://www.semrush.com/bot/
