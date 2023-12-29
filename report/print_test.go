@@ -59,11 +59,11 @@ func TestPrintTest(t *testing.T) {
 	err := printText(r)
 	test.ErrorExpected(t, err, "report error")
 
-	r = New("/invalid/path/fail/please", "text", "summary")
+	r = New("/invalid/path/fail/please", "text", "parsed")
 	err = printText(r)
 	test.ErrorExpected(t, err, "no such file")
 
-	r = New("/invalid/path/fail/please", "json", "summary")
+	r = New("/invalid/path/fail/please", "json", "parsed")
 	err = printJson(r)
 	test.ErrorExpected(t, err, "no such file")
 }
@@ -91,8 +91,8 @@ func validTextOutput(t *testing.T) {
 	data := []struct {
 		Layout, Exp string
 	}{
-		{"summary", header("summary")},
-		{"summary", "Runtime:"},
+		{"parsed", header("parsed")},
+		{"parsed", "Runtime:"},
 		{"time", header("time")},
 		{"time", "Start: 0001-01-01 00:00:00 UTC"},
 		{"threats", header("threats")},
@@ -125,7 +125,7 @@ func TestHeader(t *testing.T) {
 	data := []struct {
 		In, Exp string
 	}{
-		{"summary", "=== [[ Summary ]] ==="},
+		{"parsed", "=== [[ Parsed ]] ==="},
 		{"test", "=== [[ Test ]] ==="},
 	}
 

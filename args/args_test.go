@@ -62,7 +62,7 @@ func invalidLayout(t *testing.T) {
 func customReportWithJsonFormat(t *testing.T) {
 	args.ReportPath = "report.json"
 	args.ReportFormat = "json"
-	args.ReportLayout = "summary"
+	args.ReportLayout = "parsed"
 	validate(0)
 	args.ReportPath = ""
 	args.ReportFormat = ""

@@ -1,4 +1,4 @@
 
-Size (MB): {{BytesToMB .Size.Byte}} ({{BytesToMB .BytesPerSec}}/s)
 Lines: {{AddCommas .Parsed.Total}} ({{AddCommas .LinesPerSec}}/s)
+Size (MB): {{BytesToMB .Size.Byte}} ({{BytesToMB .BytesPerSec}}/s)
 Runtime: {{HumanDuration .Runtime.Total}}

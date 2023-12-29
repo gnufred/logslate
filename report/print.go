@@ -11,8 +11,8 @@ import (
 	"strings"
 )
 
-//go:embed templates/summary
-var summaryTemplate string
+//go:embed templates/parsed
+var parsedTemplate string
 
 //go:embed templates/time
 var timeTemplate string
@@ -39,7 +39,7 @@ var adsTemplate string
 var botsTemplate string
 
 var templateEmbeds = map[string]string{
-	"summary":   summaryTemplate,
+	"parsed":    parsedTemplate,
 	"time":      timeTemplate,
 	"scanned":   scannedTemplate,
 	"threats":   threatsTemplate,

@@ -29,9 +29,9 @@ func TestParseReportLayout(t *testing.T) {
 				}},
 			},
 		},
-		{"summary",
+		{"parsed",
 			[]section{
-				{"summary", Opts{}},
+				{"parsed", Opts{}},
 			},
 		},
 	}
@@ -57,8 +57,8 @@ func TestParseSection(t *testing.T) {
 			section{"section",
 				Opts{"opt1": "val1", "opt2": "val2"}},
 		},
-		{"summary",
-			section{"summary",
+		{"parsed",
+			section{"parsed",
 				Opts{}},
 		},
 		{"attacklog",
