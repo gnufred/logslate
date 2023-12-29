@@ -101,7 +101,7 @@ func validate(narg int) error {
 
 	// --debug argument is invalid.
 	if args.Debug < 0 || args.Debug > 3 {
-		fmt.Printf("Error: debug args must be -v or --debug=[1,3]\n\n")
+		fmt.Printf("\nError: debug args must be -v or --debug=[1,3].\n\n")
 		return showHelp()
 	}
 
@@ -109,26 +109,29 @@ func validate(narg int) error {
 	regex := "[^a-z0-9:,\\_]"
 	match, _ := regexp.MatchString(regex, args.ReportLayout)
 	if match {
-		fmt.Printf("Error: invalid characters in layout format.\n\n")
+		fmt.Printf("\nError: invalid characters in layout format.\n\n")
 		return showHelp()
 	}
 
 	// --layout is not used with JSON format reports.
 	if args.ReportFormat == "json" && args.ReportLayout != "" {
-		fmt.Printf("Error: report layout is only available for screen and text reports.\n\n")
+		fmt.Printf("\nError: report layout is only available for screen and text reports.\n\n")
 		return showHelp()
 	}
 
 	// There are extra unknown arguments or params.
 	if narg != 0 {
-		fmt.Printf("Error: unknown argument(s) found\n\n")
+		fmt.Printf("\nError: unknown argument(s) found\n\n")
 		return showHelp()
 	}
 
 	// Report format is invalid.
 	if args.ReportPath != "" {
 		if f := args.ReportFormat; f != "json" && f != "text" {
-			fmt.Printf("Error: --format value must end with .json or .txt\n\n")
+			fmt.Printf(
+				"\nError: value '%s' is invalid for --format.\nValue must be 'screen' or end with '.txt', or '.json'.\n\n",
+				args.ReportPath,
+			)
 			return showHelp()
 		}
 	}
