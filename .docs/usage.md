@@ -36,6 +36,7 @@ Possible values are:
 ```
 summary
 time
+scanned
 threats
 attacks
 attackers
