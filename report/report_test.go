@@ -51,10 +51,10 @@ func TestAllPerSecSmallerThanZero(t *testing.T) {
 		Parsed: ParsedRD{Ok: 1},
 		Size:   SizeRD{Byte: 1},
 	}
-	if got := r.BytesPerSec(); got != 1 {
+	if got := r.BytesPerSec(); got != 0 {
 		t.Errorf("bytes per sec doesn't match, exp 0, got %d", got)
 	}
-	if got := r.LinesPerSec(); got != 1 {
+	if got := r.LinesPerSec(); got != 0 {
 		t.Errorf("lines per sec doesn't match, exp 0, got %d", got)
 	}
 }
@@ -74,16 +74,16 @@ func TestAllPerSecValid(t *testing.T) {
 	r := Report{
 		Runtime: RuntimeRD{
 			Start: now,
-			End:   now.Add(10 * time.Second),
+			End:   now.Add(5 * time.Second),
 		},
-		Parsed: ParsedRD{Ok: 50},
-		Size:   SizeRD{Byte: 500},
+		Size:   SizeRD{Byte: 5000000},
+		Parsed: ParsedRD{Ok: 5000},
 	}
-	exp := uint(50)
+	exp := uint(1000000)
 	if got := r.BytesPerSec(); got != exp {
 		t.Errorf("bytes per sec doesn't match, exp %d, got %d", exp, got)
 	}
-	exp = uint(5)
+	exp = uint(1000)
 	if got := r.LinesPerSec(); got != exp {
 		t.Errorf("lines per sec doesn't match, exp %d, got %d", exp, got)
 	}

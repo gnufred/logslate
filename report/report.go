@@ -88,11 +88,11 @@ func (r *Report) BytesPerSec() uint {
 	if rt == 0 {
 		return 0
 	}
-	sec := int64(rt) / 1000000000
-	if sec <= 0 {
-		return r.Size.Byte
+	msec := int64(rt) / 1000
+	if msec <= 0 {
+		return 0
 	}
-	bps := int64(r.Size.Byte) / sec
+	bps := int64(r.Size.Byte) / msec * 1000000
 	return uint(bps)
 }
 
@@ -101,12 +101,12 @@ func (r *Report) LinesPerSec() uint {
 	if rt == 0 {
 		return 0
 	}
-	sec := int64(rt) / 1000000000
+	msec := int64(rt) / 1000000
 	rlt := int64(r.Parsed.Total())
-	if sec <= 0 {
-		return uint(rlt)
+	if msec <= 0 {
+		return 0
 	}
-	return uint(rlt / sec)
+	return uint(rlt / msec * 1000)
 }
 
 // Runtime data.
