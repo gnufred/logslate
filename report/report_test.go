@@ -46,7 +46,7 @@ func TestAllPerSecSmallerThanZero(t *testing.T) {
 	r := Report{
 		Runtime: RuntimeRD{
 			Start: now,
-			End:   now.Add(10 * time.Millisecond),
+			End:   now.Add(1 * time.Nanosecond),
 		},
 		Parsed: ParsedRD{Ok: 1},
 		Size:   SizeRD{Byte: 1},
