@@ -86,6 +86,7 @@ var botPatterns = []string{
 	"msnbot/",
 
 	// Other search engine indexers.
+	"Amazonbot",               // https://developer.amazon.com/support/amazonbot
 	"Applebot",                // https://support.apple.com/en-us/HT204683
 	"DuckDuckBot",             // https://duckduckgo.com/duckduckbot
 	"DuckDuckGo-Favicons-Bot", // https://duckduckgo.com/duckduckbot
