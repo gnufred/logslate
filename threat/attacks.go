@@ -248,7 +248,6 @@ var attackPatterns = []ptrn{
 	{Name: "env.sh", Type: Scn, Score: 5},
 	{Name: "error.log", Type: Scn, Score: 5},
 	{Name: "errors.log", Type: Scn, Score: 5},
-	{Name: "ftp.js", Type: Scn, Score: 5},
 	{Name: "firewall.log", Type: Scn, Score: 5},
 	{Name: "go.mod", Type: Scn, Score: 5},
 	{Name: "htaccess.txt", Type: Scn, Score: 5},
@@ -270,7 +269,8 @@ var attackPatterns = []ptrn{
 	{Name: "sendgrid.ev", Type: Scn, Score: 5},
 	{Name: "settings.py", Type: Scn, Score: 5},
 	{Name: "settings.yml", Type: Scn, Score: 5},
-	{Name: "sftp-config.json", Type: Scn, Score: 5},
+	// {Name: "sftp-config.json", Type: Scn, Score: 5}, // Sublime scans from dev workstations. Malicious actors also.
+	// {Name: "sftp.json", Type: Scn, Score: 5}, // VSCode scans from dev workstations. Malicous actors also.
 	{Name: "user.xml", Type: Scn, Score: 5},
 	{Name: "vpn.log", Type: Scn, Score: 5},
 
