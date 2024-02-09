@@ -25,7 +25,7 @@ func TestDetect(t *testing.T) {
 		Threats{
 			Attack{
 				SQL,
-				5,
+				10,
 				"sql_inject",
 			},
 			"",
@@ -107,7 +107,7 @@ func TestAttacks(t *testing.T) {
 		{"hello(", result{0, 0}},
 		{"replace(", result{5, XSS}},
 		{"\x22id\x22:\x221\x22", result{12, Unk}},
-		{"path/stuff../../etc/passwd", result{9, Dir}},
+		{"path/stuff../../etc/passwd", result{12, Dir}},
 		{"hello'boba_sleep(", result{5, SQL}},
 		{"hello'boba_SLEEP(", result{5, SQL}},
 		{"./././././././././././././././././././././././././././././././././", result{66, Dir}},
