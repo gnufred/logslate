@@ -151,7 +151,7 @@ func benchDbInsert(b *testing.B, rows int, prepare []int, pragmas []string) {
 				}
 
 				// bulk insert loop
-				for j := 0; j < rows; j++ {
+				for j := range rows {
 					err = db.InsertLog(sl)
 
 					// Commit every "v" lines.
