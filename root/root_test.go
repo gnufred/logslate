@@ -275,16 +275,17 @@ func BenchmarkAttackDetections(b *testing.B) {
 	a := args.Get()
 	a.LogFrmt = nginx.Combined
 	test.DisableOutput()
+
+	input, _ := os.ReadFile("testdata/attacks10.log")
+	test.MockStdin(input)
+
 	for i := 0; i < b.N; i++ {
-		benchInputData(b, a, "testdata/attacks10.log")
+		benchInputData(b, a)
 	}
 	test.EnableOutput()
 }
 
-func benchInputData(b *testing.B, a args.Args, file string) {
-	input, _ := os.ReadFile(file)
-	test.MockStdin(input)
-
+func benchInputData(b *testing.B, a args.Args) {
 	_, err := ParseStdin(a)
 	if err != nil {
 		b.Error(err)
