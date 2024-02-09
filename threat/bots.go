@@ -92,6 +92,7 @@ var botPatterns = []string{
 	"DuckDuckGo-Favicons-Bot", // https://duckduckgo.com/duckduckbot
 	"FemtosearchBot",          // http://femtosearch.com
 	"GPTBot",                  // https://platform.openai.com/docs/gptbot
+	"GraphConnectors",         // https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview
 	"MegaIndex.ru",            // http://megaindex.com/crawler
 	"PetalBot",                // https://webmaster.petalsearch.com/site/petalbot
 	"Pinterestbot",            // http://www.pinterest.com/bot.html
