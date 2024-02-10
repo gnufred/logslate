@@ -32,93 +32,103 @@ var attackPatterns = []ptrn{
 
 	// !!! Unknown attacks patterns !!! //
 	// Patterns I've seen mixed in with other attacks.
-	{Name: "%40%40", Type: Unk, Score: 2},
-	{Name: ",,", Type: Unk, Score: 2},
+
 	// {Name: "***", Type: Unk, Score: 1}, // False positive: w2.02, can be used in "hidden" credit card numbers
+	// {Name: "{{", Type: Unk, Score: 0}, // False positive: w1.01
+	// {Name: "}}", Type: Unk, Score: 0}, // False positive: w1.01
+	{Name: "%40%40", Type: Unk, Score: 2},
+	{Name: "'+", Type: SQL, Score: 2}, // In XSS, SQL, and legit URLs.
 	{Name: "(((", Type: Unk, Score: 5},
 	{Name: ")))", Type: Unk, Score: 5},
-	// {Name: "}}", Type: Unk, Score: 0}, // False positive: w1.01
-	// {Name: "{{", Type: Unk, Score: 0}, // False positive: w1.01
-	{Name: "'+", Type: SQL, Score: 2},   // In XSS, SQL, and legit URLs.
+	{Name: ",,", Type: Unk, Score: 2},
 	{Name: "\x22", Type: Unk, Score: 3}, // All over the place and never alone.
 
 	// !!! SQL injection attacks !!! //
 	// https://portswigger.net/web-security/sql-injection/cheat-sheet
 
 	// Generic select.
-	// "select%" is all over the place in GraphQL queries.
-	// {Name: "select%", Type: SQL, Score: 0},
+
+	// {Name: "select%", Type: SQL, Score: 0}, "select%" is all over the place in GraphQL queries.
 	{Name: "select+", Type: SQL, Score: 2}, // Some legit hits.
 	{Name: "select ", Type: SQL, Score: 5},
 	{Name: "select(", Type: SQL, Score: 5},
 
 	// Substring.
+
 	{Name: "substr(", Type: SQL, Score: 5},
 	{Name: "substr%", Type: SQL, Score: 5},
 	{Name: "substring(", Type: SQL, Score: 5},
 	{Name: "substring%", Type: SQL, Score: 5},
 
 	// Time delays.
-	{Name: "receive_message", Type: CMD, Score: 5},
-	{Name: "waitfor%", Type: SQL, Score: 5},
-	{Name: "waitfor(", Type: SQL, Score: 5},
-	{Name: "waitfor+", Type: SQL, Score: 5},
-	// {Name: "delay", Type: SQL, Score: 0},
-	{Name: "delay+", Type: SQL, Score: 2},
-	{Name: "delay%", Type: SQL, Score: 4},
-	{Name: "delay(", Type: SQL, Score: 5},
-	{Name: "pg_sleep", Type: SQL, Score: 5},
-	// {Name: "sleep", Type: SQL, Score: 0},
-	{Name: "sleep%", Type: SQL, Score: 2},
-	{Name: "sleep+", Type: SQL, Score: 2},
-	{Name: "sleep(", Type: SQL, Score: 5},
+
 	// {Name: "benchmark", Type: SQL, Score: 0},
+	// {Name: "delay", Type: SQL, Score: 0},
+	// {Name: "sleep", Type: SQL, Score: 0},
 	{Name: "benchmark%", Type: SQL, Score: 4},
 	{Name: "benchmark(", Type: SQL, Score: 5},
 	{Name: "benchmark+", Type: SQL, Score: 5},
+	{Name: "delay%", Type: SQL, Score: 4},
+	{Name: "delay(", Type: SQL, Score: 5},
+	{Name: "delay+", Type: SQL, Score: 2},
+	{Name: "pg_sleep", Type: SQL, Score: 5},
+	{Name: "receive_message", Type: CMD, Score: 5},
+	{Name: "sleep%", Type: SQL, Score: 2},
+	{Name: "sleep(", Type: SQL, Score: 5},
+	{Name: "sleep+", Type: SQL, Score: 2},
+	{Name: "waitfor%", Type: SQL, Score: 5},
+	{Name: "waitfor(", Type: SQL, Score: 5},
+	{Name: "waitfor+", Type: SQL, Score: 5},
 
 	// DNS lookup.
+
+	{Name: "exec master", Type: SQL, Score: 5},
 	{Name: "extractvalue", Type: SQL, Score: 5},
 	{Name: "get_host_address", Type: SQL, Score: 5},
-	{Name: "exec master", Type: SQL, Score: 5},
-	{Name: "load_file(", Type: SQL, Score: 5},
 	{Name: "load_file%28", Type: SQL, Score: 5},
+	{Name: "load_file(", Type: SQL, Score: 5},
 
 	// Uncategorized.
-	{Name: "--+", Type: SQL, Score: 5},
-	{Name: "' ", Type: SQL, Score: 5},
-	{Name: "')", Type: SQL, Score: 5},
-	{Name: "'|", Type: SQL, Score: 5},
-	{Name: "''", Type: SQL, Score: 4},
-	{Name: "'=", Type: SQL, Score: 5},
-	{Name: "!='", Type: SQL, Score: 5},
-	{Name: "!+!", Type: SQL, Score: 5},
+
 	{Name: "!%2b!", Type: SQL, Score: 5},
+	{Name: "!((", Type: SQL, Score: 4},
+	{Name: "!+!", Type: SQL, Score: 5},
+	{Name: "!='", Type: SQL, Score: 5},
 	{Name: "%21+%21", Type: SQL, Score: 5},
+	{Name: "' ", Type: SQL, Score: 5},
 	{Name: "'%", Type: SQL, Score: 2},
+	{Name: "'%20and", Type: SQL, Score: 5},
+	{Name: "'%20or", Type: SQL, Score: 5},
 	{Name: "'%22", Type: SQL, Score: 5},
+	{Name: "'%7d", Type: SQL, Score: 4},
 	{Name: "'%bf", Type: SQL, Score: 5},
 	{Name: "'%f0", Type: SQL, Score: 5},
-	{Name: "'%7d", Type: SQL, Score: 4},
-	{Name: "!((", Type: SQL, Score: 4},
+	{Name: "''", Type: SQL, Score: 4},
+	{Name: "')", Type: SQL, Score: 5},
 	{Name: "'1=0", Type: SQL, Score: 5},
 	{Name: "'1=1", Type: SQL, Score: 5},
+	{Name: "'=", Type: SQL, Score: 5},
 	{Name: "'and", Type: SQL, Score: 5},
-	{Name: "and%20'", Type: SQL, Score: 5},
-	{Name: "'%20and", Type: SQL, Score: 5},
 	{Name: "'or", Type: SQL, Score: 5},
-	{Name: "or%20'", Type: SQL, Score: 5},
-	{Name: "'%20or", Type: SQL, Score: 5},
 	{Name: "'xor", Type: SQL, Score: 5},
-	{Name: "xor\\", Type: SQL, Score: 5},
+	{Name: "'|", Type: SQL, Score: 5},
 	{Name: ",null", Type: SQL, Score: 5},
+	{Name: "--+", Type: SQL, Score: 5},
+	{Name: "and%20'", Type: SQL, Score: 5},
 	{Name: "null:null", Type: SQL, Score: 5},
+	{Name: "or%20'", Type: SQL, Score: 5},
 	{Name: "qsqli_", Type: SQL, Score: 5},
+	{Name: "xor\\", Type: SQL, Score: 5},
 
 	// !!! Directory traversal attacks !!! //
 	// https://portswigger.net/web-security/file-path-traversal
-	{Name: "%252e", Type: Dir, Score: 2}, // Some legit hits.
+
 	// {Name: "%252f", Type: Dir, Score: 0},
+	// {Name: "\x5c", Type: Dir, Score: 0},
+	{Name: "%252e", Type: Dir, Score: 2}, // Some legit hits.
+	{Name: "%2557EB-INF", Type: Dir, Score: 5},
+	{Name: "%2e%2e/%2e%2e", Type: Dir, Score: 5},
+	{Name: "%2e%2e//%2e%2e", Type: Dir, Score: 5},
 	{Name: "%2e%2f", Type: Dir, Score: 4},
 	{Name: "%2e%5c", Type: Dir, Score: 4},
 	{Name: ".%10c", Type: Dir, Score: 4},
@@ -131,51 +141,56 @@ var attackPatterns = []ptrn{
 	{Name: ".%ef%bc%8f", Type: Dir, Score: 4},
 	{Name: "./", Type: Dir, Score: 2},
 	{Name: ".0x5c", Type: Dir, Score: 4},
-	// {Name: "\x5c", Type: Dir, Score: 0},
 	{Name: ".ini", Type: Dir, Score: 2},
-	{Name: "win.ini", Type: Dir, Score: 5},
-	{Name: "webadmin.ini", Type: Dir, Score: 5},
+	{Name: "/passwd", Type: Dir, Score: 3},
+	{Name: "WEB-INF", Type: Dir, Score: 5},
 	{Name: "c:%", Type: Dir, Score: 5},
+	{Name: "etc%252fpass", Type: Dir, Score: 5},
 	{Name: "etc%2f", Type: Dir, Score: 5},
 	{Name: "etc%5c", Type: Dir, Score: 5},
 	{Name: "etc/", Type: Dir, Score: 2},
 	{Name: "etc/passwd", Type: Dir, Score: 5},
-	{Name: "/passwd", Type: Dir, Score: 3},
-	{Name: "file://", Type: Dir, Score: 4},
 	{Name: "file:%2f%2f", Type: Dir, Score: 5},
-	{Name: "WEB-INF", Type: Dir, Score: 5},
+	{Name: "file://", Type: Dir, Score: 4},
+	{Name: "unix:A", Type: Dir, Score: 5},
+	{Name: "webadmin.ini", Type: Dir, Score: 5},
+	{Name: "win.ini", Type: Dir, Score: 5},
 
 	// !!! OS command injection attacks !!! //
 	// https://portswigger.net/web-security/os-command-injection
-	{Name: "concat(", Type: CMD, Score: 5}, // In SQL injec but mostly in OS inject.
-	{Name: "concat%", Type: CMD, Score: 5},
+
+	{Name: "%00{.", Type: CMD, Score: 5}, // CVE-2014-6287 https://packetstormsecurity.com/files/128243/HttpFileServer-2.3.x-Remote-Command-Execution.html
+	{Name: "chr%", Type: CMD, Score: 1},  // Can match German "spiegelschr".
 	{Name: "chr(", Type: CMD, Score: 5},
-	{Name: "chr%", Type: CMD, Score: 1}, // Can match German "spiegelschr".
-	{Name: "hex(", Type: CMD, Score: 5},
-	{Name: "echo", Type: CMD, Score: 1}, // In legit URLs and attacks.
+	{Name: "concat%", Type: CMD, Score: 5},
+	{Name: "concat(", Type: CMD, Score: 5}, // In SQL injec but mostly in OS inject.
+	{Name: "echo", Type: CMD, Score: 1},    // In legit URLs and attacks.
 	{Name: "gethostbyname", Type: CMD, Score: 5},
+	{Name: "hex(", Type: CMD, Score: 5},
 	{Name: "ipconfig", Type: CMD, Score: 5},
 	{Name: "netstat", Type: CMD, Score: 5},
 	{Name: "nslookup", Type: CMD, Score: 5},
 	{Name: "ps -", Type: CMD, Score: 5},
 	{Name: "ps%20%2D", Type: CMD, Score: 5},
-	{Name: "tasklist", Type: CMD, Score: 2},
-	// "uname" matches lots of words.
-	{Name: "uname", Type: CMD, Score: 1},
-	{Name: "whoami", Type: CMD, Score: 5},
 	{Name: "socket", Type: CMD, Score: 1}, // Legit word. In attacks, with other triggers.
-	{Name: "%00{.", Type: CMD, Score: 5},  // CVE-2014-6287 https://packetstormsecurity.com/files/128243/HttpFileServer-2.3.x-Remote-Command-Execution.html
+	{Name: "tasklist", Type: CMD, Score: 2},
+	{Name: "uname", Type: CMD, Score: 1}, // "uname" matches lots of words.
+	{Name: "whoami", Type: CMD, Score: 5},
 
 	// !!! Cross site scripting attacks !!! //
 	// https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
 	// Wasn't nearly as complete as what I've seen. Added my observations.
 
 	// JS and browser function injections.
+
+	// {Name: "log", Type: XSS, Score: 0}, // Hits "blog", "catalog", and such.
 	{Name: "alert%", Type: XSS, Score: 2}, // In legit URLs.
 	{Name: "alert(", Type: XSS, Score: 5},
 	{Name: "assert%", Type: XSS, Score: 5},
 	{Name: "assert(", Type: XSS, Score: 5},
-	// {Name: "log", Type: XSS, Score: 0}, // Hits "blog", "catalog", and such.
+	{Name: "function(", Type: XSS, Score: 4},
+	{Name: "genxor.close()", Type: XSS, Score: 5},
+	{Name: "interact.sh", Type: XSS, Score: 5}, // https://github.com/projectdiscovery/interactsh
 	{Name: "log%28", Type: XSS, Score: 1},
 	{Name: "log(", Type: XSS, Score: 5},
 	{Name: "md5%", Type: XSS, Score: 2},
@@ -183,6 +198,7 @@ var attackPatterns = []ptrn{
 	{Name: "print%", Type: XSS, Score: 2},
 	{Name: "print'", Type: XSS, Score: 5},
 	{Name: "print(", Type: XSS, Score: 4}, // Has some legit uses.
+	{Name: "random(", Type: XSS, Score: 4},
 	{Name: "replace(", Type: XSS, Score: 5},
 	{Name: "replace;", Type: XSS, Score: 5},
 	{Name: "replace\\", Type: XSS, Score: 5},
@@ -190,10 +206,9 @@ var attackPatterns = []ptrn{
 	{Name: "sendBeacon(", Type: XSS, Score: 5},
 	{Name: "write%", Type: XSS, Score: 2}, // Has legit uses.
 	{Name: "write(", Type: XSS, Score: 4},
-	{Name: "random(", Type: XSS, Score: 4},
-	{Name: "function(", Type: XSS, Score: 4},
 
 	// HTML, JS tag injection.
+
 	{Name: "<!--", Type: XSS, Score: 5},
 	{Name: "=)(", Type: XSS, Score: 5},
 	{Name: "%3D%29%28", Type: XSS, Score: 5},
@@ -212,6 +227,13 @@ var attackPatterns = []ptrn{
 	{Name: "void%280%29", Type: XSS, Score: 5}, // From URL encoded "javascript:void(0)".
 
 	// Config scans.
+
+	// {Name: ".env", Type: Scn, Score: 5}, // Too many IPs scanning this.
+	// {Name: "auth.js", Type: Scn, Score: 5}, // Not sure if that's usually legit or not.
+	// {Name: "config.js", Type: Scn, Score: 5}, // To many legit hits.
+	// {Name: "install.php", Type: Scn, Score: 5}, // To many IPs scanning this.
+	// {Name: "sftp-config.json", Type: Scn, Score: 5}, // Sublime scans from dev workstations. Malicious actors also.
+	// {Name: "sftp.json", Type: Scn, Score: 5}, // VSCode scans from dev workstations. Malicous actors also.
 	{Name: "/keys.js", Type: Scn, Score: 5},
 	{Name: "Cargo.lock", Type: Scn, Score: 5},
 	{Name: "Cargo.toml", Type: Scn, Score: 5},
@@ -223,10 +245,8 @@ var attackPatterns = []ptrn{
 	{Name: "Pipfile", Type: Scn, Score: 5},
 	{Name: "Pipfile.lock", Type: Scn, Score: 5},
 	{Name: "Procfile", Type: Scn, Score: 5},
-	// {Name: ".env", Type: Scn, Score: 5}, // Too many IPs scanning this.
 	{Name: "apps.tidy.infinity.json", Type: Scn, Score: 5},
 	{Name: "appsettings.", Type: Scn, Score: 5},
-	// {Name: "auth.js", Type: Scn, Score: 5}, // Not sure if that's usually legit or not.
 	{Name: "aws.sh", Type: Scn, Score: 5},
 	{Name: "awstats.conf", Type: Scn, Score: 5},
 	{Name: "azure-pipelines.yml", Type: Scn, Score: 5},
@@ -234,7 +254,6 @@ var attackPatterns = []ptrn{
 	{Name: "bitbucket-pipelines.yml", Type: Scn, Score: 5},
 	{Name: "config.html", Type: Scn, Score: 5},
 	{Name: "config.inc.php", Type: Scn, Score: 5},
-	// {Name: "config.js", Type: Scn, Score: 5}, // To many legit hits.
 	{Name: "credentials.db", Type: Scn, Score: 5},
 	{Name: "dataOrigin.ashx", Type: Scn, Score: 5},
 	{Name: "databases.yml", Type: Scn, Score: 5},
@@ -252,7 +271,6 @@ var attackPatterns = []ptrn{
 	{Name: "go.mod", Type: Scn, Score: 5},
 	{Name: "htaccess.txt", Type: Scn, Score: 5},
 	{Name: "init.sh", Type: Scn, Score: 5},
-	// {Name: "install.php", Type: Scn, Score: 5}, // To many IPs scanning this.
 	{Name: "karma.conf.js", Type: Scn, Score: 5},
 	{Name: "karma.js", Type: Scn, Score: 5},
 	{Name: "keycloak.json", Type: Scn, Score: 5},
@@ -269,8 +287,6 @@ var attackPatterns = []ptrn{
 	{Name: "sendgrid.ev", Type: Scn, Score: 5},
 	{Name: "settings.py", Type: Scn, Score: 5},
 	{Name: "settings.yml", Type: Scn, Score: 5},
-	// {Name: "sftp-config.json", Type: Scn, Score: 5}, // Sublime scans from dev workstations. Malicious actors also.
-	// {Name: "sftp.json", Type: Scn, Score: 5}, // VSCode scans from dev workstations. Malicous actors also.
 	{Name: "user.xml", Type: Scn, Score: 5},
 	{Name: "vpn.log", Type: Scn, Score: 5},
 
@@ -280,21 +296,25 @@ var attackPatterns = []ptrn{
 	// I might change that later, but given the simplist nature of the detectiong logic,
 	// I'm keeping it simple.
 	// In any case, attackers will almost always scan weird paths that nobody uses.
+
 	// {Name: "/cgi-bin", Type: Scn, Score: 5}, // To many legit hits.
+	// {Name: "/wp-login.php", Type: Scn, Score: 5}, // Too many IPs scanning this.
 	{Name: "/setup.php", Type: Scn, Score: 5},
 	{Name: "CgiStart", Type: Scn, Score: 5},
 	{Name: "FNDWRR.exe", Type: Scn, Score: 5},
 	{Name: "Telerik.Web.UI.DialogHandler", Type: Scn, Score: 5},
+	{Name: "_adminer/index.php", Type: Scn, Score: 5},
+	{Name: "adminer.php", Type: Scn, Score: 5},
+	{Name: "adminer/adminer.php", Type: Scn, Score: 5},
 	{Name: "b9dmx.php", Type: Scn, Score: 5},
-	{Name: "carbon/admin/login.jsp", Type: Scn, Score: 5},
-	{Name: "cfg/login", Type: Scn, Score: 5},
-	{Name: "phpmyadmin", Type: Scn, Score: 5},
-	{Name: "qmailadmin.cgi", Type: Scn, Score: 5},
 	{Name: "backup/auto.php", Type: Scn, Score: 5},
 	{Name: "backup2.cgi", Type: Scn, Score: 5},
 	{Name: "cache/backup", Type: Scn, Score: 5},
-	// {Name: "/wp-login.php", Type: Scn, Score: 5}, // Too many IPs scanning this.
-
+	{Name: "carbon/admin/login.jsp", Type: Scn, Score: 5},
+	{Name: "cfg/login", Type: Scn, Score: 5},
+	{Name: "passwordrecovered.cgi", Type: Scn, Score: 5},
+	{Name: "phpmyadmin", Type: Scn, Score: 5},
+	{Name: "qmailadmin.cgi", Type: Scn, Score: 5},
 }
 
 // DataDumpPatterns create the pattern list to detect data dumps.
