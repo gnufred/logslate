@@ -253,34 +253,41 @@ func TestAdScan(t *testing.T) {
 
 // === benchmarks ===
 
-type bUrl struct {
-	Path  string
-	Query string
-}
-
-func BenchmarkAttackA(b *testing.B) {
-	u := bUrl{"/filemanagement.php", "action=dl&f=../../../../../../../../../../../etc/passwd%00"}
+func BenchmarkDetect(b *testing.B) {
+	path := "/filemanagement.php"
+	query := "utm_source=pinterest&utm_medium=cpc&utm_campaign=black_friday&utm_id=007&utm_term=vaccum_cleaner&utm_content=ultra_clean_my_house_2k1"
+	agent := "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
 
 	// benchmark loop
 	for i := 0; i < b.N; i++ {
-		attackScan(u.Path, u.Query)
+		Detect(query, path, agent)
 	}
 }
 
-func BenchmarkAttackB(b *testing.B) {
-	u := bUrl{"/zimbra/h/search", "action&csi=1&cso=0&id=%22%22%3E%3C%2Fscript%3E%3Cscript%3Ealert%28document.domain%29%3C%2Fscript%3E&sfi=4&si=1&so=0&st=message"}
+func BenchmarkDetectAttack(b *testing.B) {
+	path := "/filemanagement.php"
+	query := "action=dl&f=../../../../../../../../../../../etc/passwd%00"
 
 	// benchmark loop
 	for i := 0; i < b.N; i++ {
-		attackScan(u.Path, u.Query)
+		attackScan(query, path)
 	}
 }
 
-func BenchmarkAttackLegit(b *testing.B) {
-	u := bUrl{"/api/v1/user/account/info", "id=001&info=age:name:sport"}
+func BenchmarkDetectBot(b *testing.B) {
+	agent := "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
 
 	// benchmark loop
 	for i := 0; i < b.N; i++ {
-		attackScan(u.Path, u.Query)
+		botScan(agent)
+	}
+}
+
+func BenchmarkDetectAd(b *testing.B) {
+	query := "utm_source=pinterest&utm_medium=cpc&utm_campaign=black_friday&utm_id=007&utm_term=vaccum_cleaner&utm_content=ultra_clean_my_house_2k1"
+
+	// benchmark loop
+	for i := 0; i < b.N; i++ {
+		adScan(query)
 	}
 }
