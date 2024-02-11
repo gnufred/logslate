@@ -13,7 +13,7 @@ mkdir -p .bench
 # list packages
 pkg="$1"
 if [[ -z "$1" ]]; then
-	pkg=$(rg 'testing.B' -l|cut -d/ -f1)
+	pkg=$(rg 'testing.B' -l|cut -d/ -f1|sort|uniq)
 fi
 
 # run package benchmark

@@ -350,7 +350,7 @@ func DataDumpPatterns() []ptrn {
 		"zip",
 	}
 
-	dump := make([]ptrn, 0, len(file)+len(ext))
+	dump := make([]ptrn, 0, len(file)*len(ext))
 	for _, f := range file {
 		for _, e := range ext {
 			dump = append(dump, ptrn{

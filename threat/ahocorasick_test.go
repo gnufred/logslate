@@ -54,6 +54,8 @@ func benchAho(b *testing.B, opts ac.Opts, pts []ptrn, s string) {
 	}
 }
 
+// Benchmark DFA true/false
+// Result: DFA true is faster
 func BenchmarkAhoDfaTrue(b *testing.B) {
 	opts := attackOpts
 	opts.DFA = true
@@ -66,6 +68,8 @@ func BenchmarkAhoDfaFalse(b *testing.B) {
 	benchAho(b, opts, attackPatterns, bHay)
 }
 
+// Benchmark match left/standard
+// Result: LeftMostLongestMatch is faster
 func BenchmarkAhoMatchLeft(b *testing.B) {
 	opts := attackOpts
 	opts.MatchKind = ac.LeftMostLongestMatch
@@ -79,16 +83,28 @@ func BenchmarkAhoMatchStandard(b *testing.B) {
 }
 
 // https://gitlab.com/gnufred/logslate/-/issues/176
+//
 // See if it's worth changing how we detect data dump `scan` attacks.
 // Run with
 // go test "./threat/..." --test.bench BenchmarkDumpScan
+//
+// Result
+//
+// cpu: 12th Gen Intel(R) Core(TM) i7-12700H
+// BenchmarkDumpScanLeft-20        	 2670974	       438.9 ns/op
+// BenchmarkDumpScanStandard-20    	 2517352	       471.5 ns/op
+//
+// Conclusion
+//
+// LeftMost search is so much faster than standard search, than it's
+// still faster to have a lot of patterns, then to try and combine
+// matches togheter, in a small list.
 
-func BenchmarkDumpScan(b *testing.B) {
+func BenchmarkDumpScanLeft(b *testing.B) {
+	file := []string{"api", "backup", "bak", "bin", "db", "db_backup", "dbdump", "dump", "html", "html", "old", "public", "release", "root", "site", "test", "www", "admin", "archive", "dump", "another", "file", "type", "because"}
+	ext := []string{"sql", "7z", "bz2", "gz", "lz", "rar", "tar", "zip", "targz", "gzzz", "zx", "zx2", "zx3"}
 
-	file := []string{"api", "backup", "bak", "bin", "db", "db_backup", "dbdump", "dump", "html", "html", "old", "public", "release", "root", "site", "test", "www"}
-	ext := []string{"sql", "7z", "bz2", "gz", "lz", "rar", "tar", "zip"}
-
-	dump := make([]ptrn, 0, len(file)+len(ext))
+	dump := make([]ptrn, 0, len(file)*len(ext))
 	for _, f := range file {
 		for _, e := range ext {
 			dump = append(dump, ptrn{
@@ -100,5 +116,30 @@ func BenchmarkDumpScan(b *testing.B) {
 	}
 
 	opts := attackOpts
+	benchAho(b, opts, dump, bHay)
+}
+
+func BenchmarkDumpScanStandard(b *testing.B) {
+	file := []string{"api", "backup", "bak", "bin", "db", "db_backup", "dbdump", "dump", "html", "html", "old", "public", "release", "root", "site", "test", "www", "admin", "archive", "dump", "another", "file", "type", "because"}
+	ext := []string{"sql", "7z", "bz2", "gz", "lz", "rar", "tar", "zip", "targz", "gzzz", "zx", "zx2", "zx3"}
+
+	dump := make([]ptrn, 0, len(file)+len(ext))
+	for _, f := range file {
+		dump = append(dump, ptrn{
+			Name:  f,
+			Type:  Scn,
+			Score: 3,
+		})
+	}
+	for _, f := range ext {
+		dump = append(dump, ptrn{
+			Name:  f,
+			Type:  Scn,
+			Score: 3,
+		})
+	}
+
+	opts := attackOpts
+	opts.MatchKind = ac.StandardMatch
 	benchAho(b, opts, dump, bHay)
 }
