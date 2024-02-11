@@ -9,6 +9,9 @@ import (
 	"gitlab.com/gnufred/logslate/debug"
 )
 
+// Advertising compiled regexp
+var adRegexp *regexp.Regexp
+
 // Holds the score that we need to flag a searches as an attack.
 var Threshold = uint32(5)
 
@@ -24,15 +27,25 @@ type Attack struct {
 	Name  string
 }
 
+func init() {
+	// MustCompile() cost about 90% of the execution time.
+	// We need to run this outside of the detection loop.
+	adRegexp = regexp.MustCompile(`utm_source=(\w*)`)
+}
+
 // Detect threats and return information about them.
 func Detect(path, query, agent string) (Threats, error) {
 	attack, score := attackScan(path, query)
 
+	// If it's an attack, obviously, it not an advertising campaign.
 	ad := ""
 	if attack == Nil {
 		ad = adScan(query)
 	}
 
+	// We always want to know if it's a bot.
+	// Some attacks comes from legit bots, like security scanners.
+	// Advertisement, are also sometimes from bots.
 	bot, err := botScan(agent)
 
 	return Threats{
@@ -124,9 +137,7 @@ func botAhoSearch(AC *ac.AhoCorasick, haystack string) (string, error) {
 
 // adScan search a query string for "utm_source" query param and returns the value.
 func adScan(query string) string {
-	adRegex := `utm_source=(\w*)`
-	re := regexp.MustCompile(adRegex)
-	matches := re.FindStringSubmatch(query)
+	matches := adRegexp.FindStringSubmatch(query)
 
 	if len(matches) == 0 {
 		return ""
