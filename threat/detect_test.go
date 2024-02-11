@@ -250,3 +250,37 @@ func TestAdScan(t *testing.T) {
 		testMatch(t, d.Query, d.Exp)
 	}
 }
+
+// === benchmarks ===
+
+type bUrl struct {
+	Path  string
+	Query string
+}
+
+func BenchmarkAttackOne(b *testing.B) {
+	u := bUrl{"/filemanagement.php", "action=dl&f=../../../../../../../../../../../etc/passwd%00"}
+
+	// benchmark loop
+	for i := 0; i < b.N; i++ {
+		attackScan(u.Path, u.Query)
+	}
+}
+
+func BenchmarkAttackTwo(b *testing.B) {
+	u := bUrl{"/zimbra/h/search", "action&csi=1&cso=0&id=%22%22%3E%3C%2Fscript%3E%3Cscript%3Ealert%28document.domain%29%3C%2Fscript%3E&sfi=4&si=1&so=0&st=message"}
+
+	// benchmark loop
+	for i := 0; i < b.N; i++ {
+		attackScan(u.Path, u.Query)
+	}
+}
+
+func BenchmarkLegitUrl(b *testing.B) {
+	u := bUrl{"/api/v1/user/account/info", "id=001&info=age:name:sport"}
+
+	// benchmark loop
+	for i := 0; i < b.N; i++ {
+		attackScan(u.Path, u.Query)
+	}
+}
