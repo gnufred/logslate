@@ -47,54 +47,58 @@ func TestACMatches(t *testing.T) {
 
 var bHay = "action&csi=1&cso=0&id=%22%22%3E%3C%2Fscript%3E%3Cscript%3Ealert%28document.domain%29%3C%2Fscript%3E&sfi=4&si=1&so=0&st=message"
 
-func BenchmarkAhoDfaTrue(b *testing.B) {
-	testOpts := attackOpts
-	testOpts.DFA = true
-	aho := newAhoCorasickBuilder(
-		attackBuilderString(testPatterns),
-		testOpts,
-	)
-	// benchmark loop
+func benchAho(b *testing.B, opts ac.Opts, pts []ptrn, s string) {
+	aho := newAhoCorasickBuilder(attackBuilderString(pts), opts)
 	for i := 0; i < b.N; i++ {
-		aho.FindAll(bHay)
+		aho.FindAll(s)
 	}
+}
+
+func BenchmarkAhoDfaTrue(b *testing.B) {
+	opts := attackOpts
+	opts.DFA = true
+	benchAho(b, opts, attackPatterns, bHay)
 }
 
 func BenchmarkAhoDfaFalse(b *testing.B) {
-	testOpts := attackOpts
-	testOpts.DFA = false
-	aho := newAhoCorasickBuilder(
-		attackBuilderString(testPatterns),
-		testOpts,
-	)
-	// benchmark loop
-	for i := 0; i < b.N; i++ {
-		aho.FindAll(bHay)
-	}
+	opts := attackOpts
+	opts.DFA = false
+	benchAho(b, opts, attackPatterns, bHay)
 }
 
 func BenchmarkAhoMatchLeft(b *testing.B) {
-	testOpts := attackOpts
-	testOpts.MatchKind = ac.LeftMostLongestMatch
-	aho := newAhoCorasickBuilder(
-		attackBuilderString(testPatterns),
-		testOpts,
-	)
-	// benchmark loop
-	for i := 0; i < b.N; i++ {
-		aho.FindAll(bHay)
-	}
+	opts := attackOpts
+	opts.MatchKind = ac.LeftMostLongestMatch
+	benchAho(b, opts, attackPatterns, bHay)
 }
 
 func BenchmarkAhoMatchStandard(b *testing.B) {
-	testOpts := attackOpts
-	testOpts.MatchKind = ac.StandardMatch
-	aho := newAhoCorasickBuilder(
-		attackBuilderString(testPatterns),
-		testOpts,
-	)
-	// benchmark loop
-	for i := 0; i < b.N; i++ {
-		aho.FindAll(bHay)
+	opts := attackOpts
+	opts.MatchKind = ac.StandardMatch
+	benchAho(b, opts, attackPatterns, bHay)
+}
+
+// https://gitlab.com/gnufred/logslate/-/issues/176
+// See if it's worth changing how we detect data dump `scan` attacks.
+// Run with
+// go test "./threat/..." --test.bench BenchmarkDumpScan
+
+func BenchmarkDumpScan(b *testing.B) {
+
+	file := []string{"api", "backup", "bak", "bin", "db", "db_backup", "dbdump", "dump", "html", "html", "old", "public", "release", "root", "site", "test", "www"}
+	ext := []string{"sql", "7z", "bz2", "gz", "lz", "rar", "tar", "zip"}
+
+	dump := make([]ptrn, 0, len(file)+len(ext))
+	for _, f := range file {
+		for _, e := range ext {
+			dump = append(dump, ptrn{
+				Name:  f + "." + e,
+				Type:  Scn,
+				Score: 5,
+			})
+		}
 	}
+
+	opts := attackOpts
+	benchAho(b, opts, dump, bHay)
 }
