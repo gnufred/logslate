@@ -1,9 +1,7 @@
 package threat
 
 import (
-	"fmt"
 	"regexp"
-	"strings"
 
 	ac "github.com/petar-dambovaliev/aho-corasick"
 	"gitlab.com/gnufred/logslate/debug"
@@ -96,13 +94,6 @@ func attackAhoSearch(AC *ac.AhoCorasick, pts []ptrn, haystack string) (ptrn, uin
 // botScan for bot patterns in the user agent string.
 func botScan(agent string) (string, error) {
 	bot, err := botAhoSearch(botAC, agent)
-
-	// The default bot format is "botname/v9.9.9" and some patterns need to match
-	// this character. '/' is byte(47).
-	if strings.HasSuffix(bot, "/") {
-		return bot[:len(bot)-1], err
-	}
-
 	return bot, err
 }
 
@@ -113,24 +104,15 @@ func botAhoSearch(AC *ac.AhoCorasick, haystack string) (string, error) {
 	if len(matches) == 0 {
 		return "", nil
 	}
-
+	// Bot names are usually duplicated in the user agent string.
+	// Ex.: (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)
+	// It's perfectly normal to find more than one match.
+	// Only the first match is used.
 	m := matches[0]
+
 	// As we can see in the benchmarks, it's two time faster to get the bot name
 	// from the substring than from the pattern []string.
 	bot := haystack[m.Start():m.End()]
-
-	// If the user agent string is "real", the shouldn't be more than one match.
-	// That being said, the AhoSearch can return more than one matches, so we
-	// kinda need to handle that case.
-	// The other matches should be safe to ignore in 99.99% of the cases.
-	// I can only think of problem with "fake" user agents.
-	if len(matches) > 1 {
-		var bots string
-		for _, m := range matches {
-			bots += haystack[m.Start():m.End()] + " "
-		}
-		return bot, fmt.Errorf("found more than one bot: %s", bots)
-	}
 
 	return bot, nil
 }

@@ -15,7 +15,7 @@ var attackOpts = ac.Opts{
 	DFA:                  true,
 }
 var botOpts = ac.Opts{
-	AsciiCaseInsensitive: false,
+	AsciiCaseInsensitive: true,
 	MatchOnlyWholeWords:  false,
 	MatchKind:            ac.LeftMostLongestMatch,
 	DFA:                  true,
