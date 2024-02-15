@@ -50,6 +50,7 @@ func TestFalsePositives(t *testing.T) {
 		{6, "/graphqlquery", "{cart(cart_id:%22711q234%22){id,total_quantity,translate{items_in_cart,more_items,cart_subtotal,checkout}items{quantity,prices{row_total_including_tax{value,currency},row_total{value,currency}}product{sku,name,price_range{maximum_price{final_price{currency,value}}}small_image{url,label}}buy_page_url,additional_message}prices{subtotal_including_tax{value,currency},subtotal_excluding_tax{value,currency}}checkout_url}}"},
 		{7, "/testo/accessories/test-leads-probes-clips/test-lead-sets/index.htm", ""},
 		{8, "/index.htm", "%20http://www.testequipmentdepot.com/ridgid/video-inspection/reels-and-cameras/index.htm,%20http://www.testequipmentdepot.com/ridgid/drain-cleaning/index.htm,%20http://www.testequipmentdepot.com/ridgid/drain-maintenance/pumps/sump/index.htm"},
+		{9, "/c/p/v/id/12345", "'%20+%20p.key%20+%20(p.suffix%20%7C%7C%20'')"},
 	}
 
 	for _, d := range falsePositives {
