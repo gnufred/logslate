@@ -103,8 +103,8 @@ var attackPatterns = []ptrn{
 	{Name: "'%7d", Type: SQL, Score: 4},
 	{Name: "'%bf", Type: SQL, Score: 5},
 	{Name: "'%f0", Type: SQL, Score: 5},
-	{Name: "''", Type: SQL, Score: 4},
-	{Name: "')", Type: SQL, Score: 5},
+	{Name: "''", Type: SQL, Score: 1}, // False positive: 9
+	{Name: "')", Type: SQL, Score: 1}, // False positive: 9
 	{Name: "'1=0", Type: SQL, Score: 5},
 	{Name: "'1=1", Type: SQL, Score: 5},
 	{Name: "'=", Type: SQL, Score: 5},
