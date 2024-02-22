@@ -200,6 +200,7 @@ var botPatterns = []string{
 	"algolia crawler",     // https://www.algolia.com/doc/tools/crawler/getting-started/overview/
 	"alumio",              // https://www.alumio.com/
 	"azure-logic-apps",    // https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview
+	"bazaarvoice",         // https://knowledge.bazaarvoice.com/wp-content/conversations/en_US/Collect/DCC.html
 	"barkrowler",          // https://babbar.tech/crawler
 	"ccbot",               // https://commoncrawl.org/faq/
 	"celigo",              // https://www.celigo.com/
