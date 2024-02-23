@@ -3,57 +3,40 @@ package translate
 import (
 	"net"
 	"time"
+
+	"gitlab.com/gnufred/logslate/threat"
 )
 
 type ThreatLog struct {
-	Time time.Time
-	Ip   net.IP
-	Type string
-	Info string
+	Time   time.Time
+	Ip     net.IP
+	Attack threat.AttackType
+	Bot    string
+	Ad     string
+	Path   string
+	Query  string
 }
 
 func SlateToThreat(sl SlateLog) ThreatLog {
-	if sl.Attack.Name != "" {
-		return attackToThreat(sl)
-	} else if sl.Bot != "" {
-		return botToThreat(sl)
-	} else if sl.Ad != "" {
-		return adToThreat(sl)
-	}
-	return ThreatLog{}
-}
 
-func attackToThreat(sl SlateLog) ThreatLog {
-	return ThreatLog{
-		Time: sl.Time,
-		Ip:   sl.Ip,
-		Type: sl.Attack.Name,
-		Info: attackInfo(sl.Path, sl.Query),
+	tl := ThreatLog{
+		Time:   sl.Time,
+		Attack: sl.Attack.Type,
+		Bot:    sl.Bot,
+		Ad:     sl.Ad,
 	}
-}
 
-func attackInfo(p, q string) string {
-	if p != "" && q != "" {
-		return p + "?" + q
+	if tl.Ad != "" {
+		// Anonymise the IP
+		tl.Ip = net.IP{}
 	} else {
-		return p + q
+		tl.Ip = sl.Ip
 	}
-}
 
-func botToThreat(sl SlateLog) ThreatLog {
-	return ThreatLog{
-		Time: sl.Time,
-		Ip:   sl.Ip,
-		Type: "bot",
-		Info: sl.Bot,
+	if tl.Attack != threat.Nil {
+		tl.Path = sl.Path
+		tl.Query = sl.Query
 	}
-}
 
-func adToThreat(sl SlateLog) ThreatLog {
-	return ThreatLog{
-		Time: sl.Time,
-		Ip:   net.IP{},
-		Type: "ad",
-		Info: sl.Ad,
-	}
+	return tl
 }

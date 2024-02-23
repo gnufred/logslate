@@ -230,7 +230,7 @@ func testInputDataLoop(t *testing.T, a args.Args, d []testData) {
 	}
 }
 
-func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
+func testInputData(t *testing.T, a args.Args, file string, exp Parsed) {
 	input, err := os.ReadFile(file)
 	if err != nil {
 		t.Error(err)
@@ -244,28 +244,28 @@ func testInputData(t *testing.T, a args.Args, file string, expect Parsed) {
 		t.Error(err)
 	}
 
-	if expect.Ok != got.Ok {
-		t.Errorf("ok: expect %d, got %d", expect.Ok, got.Ok)
+	if exp.Ok != got.Ok {
+		t.Errorf("ok: %s, exp %d, got %d", file, exp.Ok, got.Ok)
 	}
 
-	if expect.Skip != got.Skip {
-		t.Errorf("skip: expect %d, got %d", expect.Skip, got.Skip)
+	if exp.Skip != got.Skip {
+		t.Errorf("skip: %s, exp %d, got %d", file, exp.Skip, got.Skip)
 	}
 
-	if expect.Err != got.Err {
-		t.Errorf("err: expect %d, got %d", expect.Err, got.Err)
+	if exp.Err != got.Err {
+		t.Errorf("err: %s, exp %d, got %d", file, exp.Err, got.Err)
 	}
 
-	if expect.Atk != got.Atk {
-		t.Errorf("atk: expect %d, got %d", expect.Atk, got.Atk)
+	if exp.Atk != got.Atk {
+		t.Errorf("atk: %s, exp %d, got %d", file, exp.Atk, got.Atk)
 	}
 
-	if expect.Ad != got.Ad {
-		t.Errorf("ad: expect %d, got %d", expect.Ad, got.Ad)
+	if exp.Ad != got.Ad {
+		t.Errorf("ad: %s, exp %d, got %d", file, exp.Ad, got.Ad)
 	}
 
-	if expect.Bot != got.Bot {
-		t.Errorf("bot: expect %d, got %d", expect.Bot, got.Bot)
+	if exp.Bot != got.Bot {
+		t.Errorf("bot: %s, exp %d, got %d", file, exp.Bot, got.Bot)
 	}
 }
 

@@ -76,6 +76,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Initialize parser loop variables.
 	var bytesTotal uint
+	// Initialize the threat log.
+	var tl []translate.ThreatLog
 	// Initialize map length with highest attack type constant.
 	atkTypes := make(map[threat.AttackType]uint, threat.XSS)
 	attackers := make(map[string]uint)
@@ -122,6 +124,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			// For now there's a single error that can bubble up and we can safely
 			// ignore it. Counting and logging is fine for now.
 		}
+		tl = append(tl, translate.SlateToThreat(sl))
+		z := len(tl) - 1
 
 		if !timeMatch(sl.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
@@ -148,39 +152,34 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			last = sl.Time
 		}
 
-		if sl.Attack.Type != threat.Nil {
+		if tl[z].Attack != threat.Nil {
+			par.Atk++
+
 			debug.Log(debug.VVV, "flagged", sl.Attack.Name+" | "+sl.Path+sl.Query)
 
-			// Compile attack type data.
-			if a.ReportPath != "" {
-				ip := sl.Ip.String()
-				atkTypes[sl.Attack.Type]++
-				attackers[ip]++
-				attacks = append(attacks,
-					report.AttackRD{
-						Type:  sl.Attack.Name,
-						Time:  sl.Time.Format("2006-01-02 15:04:05"),
-						Ip:    ip,
-						Path:  sl.Path,
-						Query: sl.Query,
-					},
-				)
-			}
-			par.Atk++
+			// Report data
+			ip := tl[z].Ip.String()
+			atkTypes[tl[z].Attack]++
+			attackers[ip]++
+			attacks = append(attacks,
+				report.AttackRD{
+					Type:  threat.String(tl[z].Attack),
+					Time:  tl[z].Time.Format("2006-01-02 15:04:05"),
+					Ip:    ip,
+					Path:  tl[z].Path,
+					Query: tl[z].Query,
+				},
+			)
 		}
 
-		if sl.Ad != "" {
-			if a.ReportPath != "" {
-				ads[sl.Ad]++
-			}
+		if tl[z].Ad != "" {
 			par.Ad++
+			ads[tl[z].Ad]++
 		}
 
-		if sl.Bot != "" {
-			if a.ReportPath != "" {
-				bots[sl.Bot]++
-			}
+		if tl[z].Bot != "" {
 			par.Bot++
+			bots[tl[z].Bot]++
 		}
 
 		par.Ok++

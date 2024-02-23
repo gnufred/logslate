@@ -13,120 +13,115 @@ func TestSTTnil(t *testing.T) {
 	sl := SlateLog{}
 	tl := SlateToThreat(sl)
 
-	if tl.Type != "" {
-		t.Errorf("threat type miss match, got %s, exp %s", tl.Type, "")
+	if tl.Attack != threat.Nil {
+		t.Errorf("threat type miss match, got %d, exp %d", tl.Attack, threat.Nil)
 	}
 }
 
 func TestSTTattack(t *testing.T) {
 	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "12/Dec/2023:14:04:39 +0000")
-	ip := net.ParseIP("94.131.101.127")
-	path := "/b/g-t/a.html"
-	query := "item[price][]=1-1661&p=6&price=1-1661&product=desc-1%20waitfor%20delay%20'0:0:15'%20--%20&mode=list&ajax=1"
-	attack := "sql_inject"
 	sl := SlateLog{
-		Ip:    ip,
+		Ip:    net.ParseIP("94.131.101.127"),
 		Time:  timeEct,
-		Path:  path,
-		Query: query,
+		Path:  "/b/g-t/a.html",
+		Query: "item[price][]=1-1661&p=6&price=1-1661&product=desc-1%20waitfor%20delay%20'0:0:15'%20--%20&mode=list&ajax=1",
 		Attack: threat.Attack{
-			Name: attack,
+			Type: threat.SQL,
 		},
 	}
 
 	tl := SlateToThreat(sl)
 
-	if tl.Time != timeEct {
-		t.Errorf("time miss match, got %s, exp %s", tl.Time, timeEct)
+	if tl.Time != sl.Time {
+		t.Errorf("time miss match, got %s, exp %s", tl.Time, sl.Time)
 	}
-	if tl.Ip.String() != ip.String() {
-		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), ip.String())
+	if tl.Ip.String() != sl.Ip.String() {
+		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), sl.Ip.String())
 	}
-	if tl.Type != attack {
-		t.Errorf("threat type miss match, got %s, exp %s", tl.Type, attack)
+	if tl.Attack != sl.Attack.Type {
+		t.Errorf("attack miss match, got %d, exp %d", tl.Attack, sl.Attack.Type)
 	}
-	exp := path + "?" + query
-	if tl.Info != exp {
-		t.Errorf("info miss match, got %s, exp %s", tl.Type, exp)
+	if tl.Bot != sl.Bot {
+		t.Errorf("bot miss match, got %s, exp %s", tl.Bot, sl.Bot)
 	}
-}
-
-func TestAttackInfo(t *testing.T) {
-	var got, exp, q, p string
-	q = "index.html"
-	p = "hello=world"
-
-	got = attackInfo(q, p)
-	exp = q + "?" + p
-	if got != exp {
-		t.Errorf("attack info miss match, got %s, exp %s", got, exp)
+	if tl.Ad != sl.Ad {
+		t.Errorf("ad miss match, got %s, exp %s", tl.Ad, sl.Ad)
 	}
-
-	got = attackInfo("", p)
-	exp = p
-	if got != exp {
-		t.Errorf("attack info miss match, got %s, exp %s", got, exp)
+	if tl.Path != sl.Path {
+		t.Errorf("path miss match, got %s, exp %s", tl.Path, sl.Path)
 	}
-
-	got = attackInfo(q, "")
-	exp = q
-	if got != exp {
-		t.Errorf("attack info miss match, got %s, exp %s", got, exp)
+	if tl.Query != sl.Query {
+		t.Errorf("query miss match, got %s, exp %s", tl.Query, sl.Query)
 	}
 }
 
 func TestSTTbot(t *testing.T) {
 	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "26/Dec/2023:14:38:02 +0000")
-	ip := net.ParseIP("52.167.144.25")
-	bot := "Google"
 	sl := SlateLog{
-		Ip:   ip,
-		Time: timeEct,
-		Bot:  bot,
+		Ip:    net.ParseIP("52.167.144.25"),
+		Time:  timeEct,
+		Bot:   "Google",
+		Path:  "/robots.txt",
+		Query: "",
 	}
 
 	tl := SlateToThreat(sl)
 
-	if tl.Time != timeEct {
-		t.Errorf("time miss match, got %s, exp %s", tl.Time, timeEct)
+	if tl.Time != sl.Time {
+		t.Errorf("time miss match, got %s, exp %s", tl.Time, sl.Time)
 	}
-	if tl.Ip.String() != ip.String() {
-		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), ip.String())
+	if tl.Ip.String() != sl.Ip.String() {
+		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), sl.Ip.String())
 	}
-	if tl.Type != "bot" {
-		t.Errorf("threat type miss match, got %s, exp %s", tl.Type, "bot")
+	if tl.Attack != sl.Attack.Type {
+		t.Errorf("attack miss match, got %d, exp %d", tl.Attack, sl.Attack.Type)
 	}
-	if tl.Info != bot {
-		t.Errorf("info miss match, got %s, exp %s", tl.Type, bot)
+	if tl.Bot != sl.Bot {
+		t.Errorf("bot miss match, got %s, exp %s", tl.Bot, sl.Bot)
+	}
+	if tl.Ad != sl.Ad {
+		t.Errorf("ad miss match, got %s, exp %s", tl.Ad, sl.Ad)
+	}
+	if tl.Path != "" {
+		t.Errorf("path miss match, got %s, exp %s", tl.Path, "")
+	}
+	if tl.Query != "" {
+		t.Errorf("query miss match, got %s, exp %s", tl.Query, "")
 	}
 }
 
 func TestSTTad(t *testing.T) {
 	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "26/Dec/2023:14:38:02 +0000")
-	ip := net.IP{}
-	path := "/index.html"
-	query := "utm_source=facebook"
-	ad := "facebook"
 	sl := SlateLog{
-		Ip:    ip,
+		Ip:    net.ParseIP("12.45.192.3"),
 		Time:  timeEct,
-		Path:  path,
-		Query: query,
-		Ad:    ad,
+		Path:  "/product/18230/blue",
+		Query: "utm_source=facebook",
+		Ad:    "facebook",
 	}
 
 	tl := SlateToThreat(sl)
 
-	if tl.Time != timeEct {
-		t.Errorf("time miss match, got %s, exp %s", tl.Time, timeEct)
+	if tl.Time != sl.Time {
+		t.Errorf("time miss match, got %s, exp %s", tl.Time, sl.Time)
 	}
-	if tl.Ip.String() != ip.String() {
-		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), ip.String())
+	nilIp := net.IP{}
+	if tl.Ip.String() != nilIp.String() {
+		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), sl.Ip.String())
 	}
-	if tl.Type != "ad" {
-		t.Errorf("threat type miss match, got %s, exp %s", tl.Type, "ad")
+	if tl.Attack != sl.Attack.Type {
+		t.Errorf("attack miss match, got %d, exp %d", tl.Attack, sl.Attack.Type)
 	}
-	if tl.Info != ad {
-		t.Errorf("info miss match, got %s, exp %s", tl.Type, ad)
+	if tl.Bot != sl.Bot {
+		t.Errorf("bot miss match, got %s, exp %s", tl.Bot, sl.Bot)
+	}
+	if tl.Ad != sl.Ad {
+		t.Errorf("ad miss match, got %s, exp %s", tl.Ad, sl.Ad)
+	}
+	if tl.Path != "" {
+		t.Errorf("path miss match, got %s, exp %s", tl.Path, "")
+	}
+	if tl.Query != "" {
+		t.Errorf("query miss match, got %s, exp %s", tl.Query, "")
 	}
 }
