@@ -158,7 +158,7 @@ func (d *Dber) Commit() error {
 	return d.tx.Commit()
 }
 
-func (d *Dber) InsertLog(e translate.Log) error {
+func (d *Dber) Insert(e translate.SlateLog) error {
 	if !d.open {
 		return fmt.Errorf("database closed")
 	}

@@ -103,7 +103,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		if err != nil {
 			return par, fmt.Errorf("%s: %w", ErrReadPipe, err)
 		}
-
 		if line == "" {
 			par.Err++
 			continue
@@ -116,7 +115,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			continue
 		}
 
-		ls, err := translate.Nginx(nx)
+		sl, err := translate.NginxToSlate(nx)
 		if err != nil {
 			par.Err++
 			debug.Log(debug.VVV, "translateError", err)
@@ -124,20 +123,13 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			// ignore it. Counting and logging is fine for now.
 		}
 
-		if !timeMatch(ls.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
+		if !timeMatch(sl.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
 			continue
 		}
 
-		if ls.Time.Before(first) {
-			first = ls.Time
-		}
-		if ls.Time.After(last) {
-			last = ls.Time
-		}
-
 		if a.Db != "" {
-			err = d.InsertLog(ls)
+			err = d.Insert(sl)
 			if err != nil {
 				return par, err
 			}
@@ -149,37 +141,44 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		if ls.Attack.Type != threat.Nil {
-			debug.Log(debug.VVV, "flagged", ls.Attack.Name+" | "+ls.Path+ls.Query)
+		if sl.Time.Before(first) {
+			first = sl.Time
+		}
+		if sl.Time.After(last) {
+			last = sl.Time
+		}
+
+		if sl.Attack.Type != threat.Nil {
+			debug.Log(debug.VVV, "flagged", sl.Attack.Name+" | "+sl.Path+sl.Query)
 
 			// Compile attack type data.
 			if a.ReportPath != "" {
-				ip := ls.Ip.String()
-				atkTypes[ls.Attack.Type]++
+				ip := sl.Ip.String()
+				atkTypes[sl.Attack.Type]++
 				attackers[ip]++
 				attacks = append(attacks,
 					report.AttackRD{
-						Type:  ls.Attack.Name,
-						Time:  ls.Time.Format("2006-01-02 15:04:05"),
+						Type:  sl.Attack.Name,
+						Time:  sl.Time.Format("2006-01-02 15:04:05"),
 						Ip:    ip,
-						Path:  ls.Path,
-						Query: ls.Query,
+						Path:  sl.Path,
+						Query: sl.Query,
 					},
 				)
 			}
 			par.Atk++
 		}
 
-		if ls.Ad != "" {
+		if sl.Ad != "" {
 			if a.ReportPath != "" {
-				ads[ls.Ad]++
+				ads[sl.Ad]++
 			}
 			par.Ad++
 		}
 
-		if ls.Bot != "" {
+		if sl.Bot != "" {
 			if a.ReportPath != "" {
-				bots[ls.Bot]++
+				bots[sl.Bot]++
 			}
 			par.Bot++
 		}

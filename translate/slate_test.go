@@ -13,7 +13,7 @@ func TestNginxCombined(t *testing.T) {
 	lineCombined := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
 
 	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "05/Jan/2023:07:07:54 +0000")
-	exp := Log{
+	exp := SlateLog{
 		Ip:      net.ParseIP("208.115.199.20"),
 		User:    "-",
 		Time:    timeEct,
@@ -31,7 +31,7 @@ func TestNginxCombined(t *testing.T) {
 	if err != nil {
 		t.Errorf("Parse() error %s", err)
 	}
-	got, err := Nginx(ngxLog)
+	got, err := NginxToSlate(ngxLog)
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,7 +43,7 @@ func TestNginxIso8601(t *testing.T) {
 	lineCombIso8601 := "82.100.10.100 - - [2023-05-15T09:25:22+00:00] \"POST /locator/index/ HTTP/1.1\" 302 31 \"https://www.example.com/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\""
 
 	timeEct, _ := time.Parse(nginx.TimeLayoutIso8601, "2023-05-15T09:25:22+00:00")
-	exp := Log{
+	exp := SlateLog{
 		Ip:      net.ParseIP("82.100.10.100"),
 		User:    "-",
 		Time:    timeEct,
@@ -61,7 +61,7 @@ func TestNginxIso8601(t *testing.T) {
 	if err != nil {
 		t.Errorf("Parse() error %s", err)
 	}
-	got, err := Nginx(ngxLog)
+	got, err := NginxToSlate(ngxLog)
 	if err != nil {
 		t.Error(err)
 	}
@@ -73,7 +73,7 @@ func TestBytesSent(t *testing.T) {
 	lineBytesSent := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobot HTTP/1.1\" 200 40 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
 
 	timeEct, _ := time.Parse(nginx.TimeLayoutLocal, "05/Jan/2023:07:07:54 +0000")
-	exp := Log{
+	exp := SlateLog{
 		Ip:      net.ParseIP("208.115.199.20"),
 		User:    "-",
 		Time:    timeEct,
@@ -91,7 +91,7 @@ func TestBytesSent(t *testing.T) {
 	if err != nil {
 		t.Errorf("Parse() error %s", err)
 	}
-	got, err := Nginx(ngxLog)
+	got, err := NginxToSlate(ngxLog)
 	if err != nil {
 		t.Error(err)
 	}
@@ -100,13 +100,13 @@ func TestBytesSent(t *testing.T) {
 
 func TestNginxTranslateError(t *testing.T) {
 	lineCombined := "208.115.199.20 - - [05/Jan/2023:07:07:54 +0000] \"HEAD /?monitoring=uptimerobotTP/1.1\" 200 0 \"https://moovadapt.fr/?monitoring=uptimerobot\" \"Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)\" \"2.80\""
-	exp := Log{}
+	exp := SlateLog{}
 
 	ngxLog, err := nginx.Parse(nginx.Combined, lineCombined)
 	if err != nil {
 		t.Errorf("Parse() error %s", err)
 	}
-	got, err := Nginx(ngxLog)
+	got, err := NginxToSlate(ngxLog)
 	test.ErrorExpected(t, err, "malformed NGINX request")
 	compareStruct(t, got, exp)
 }
@@ -118,7 +118,7 @@ func TestIssue92Fix(t *testing.T) {
 	test.ErrorExpected(t, err, "malformed NGINX request")
 }
 
-func compareStruct(t *testing.T, got, exp Log) {
+func compareStruct(t *testing.T, got, exp SlateLog) {
 	checkMatch(t, got.Ip.String(), exp.Ip.String())
 	checkMatch(t, got.User, exp.User)
 	checkMatch(t, got.Time, exp.Time)

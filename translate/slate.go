@@ -11,7 +11,7 @@ import (
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
-type Log struct {
+type SlateLog struct {
 	Ip      net.IP
 	User    string
 	Time    time.Time
@@ -35,9 +35,9 @@ type request struct {
 	Proto  string
 }
 
-// Nginx translate an nxparse.Entry to the format `logslate` wants.
-func Nginx(nx nginx.Entry) (Log, error) {
-	ls := Log{
+// Translate an nxparse.Entry to the format `logslate` wants.
+func NginxToSlate(nx nginx.Entry) (SlateLog, error) {
+	sl := SlateLog{
 		Ip:      nx.RemoteAddr,
 		User:    nx.RemoteUser,
 		Status:  nx.Status,
@@ -48,39 +48,39 @@ func Nginx(nx nginx.Entry) (Log, error) {
 	// Assigned the parsed time.
 	// Given we'll have TimeLocal most of the time, we test it first.
 	if !nx.TimeLocal.IsZero() {
-		ls.Time = nx.TimeLocal
+		sl.Time = nx.TimeLocal
 	} else if !nx.TimeIso8601.IsZero() {
-		ls.Time = nx.TimeIso8601
+		sl.Time = nx.TimeIso8601
 	}
 
 	// Assign bytes set.
 	// Here, we want BytesSent, if available, otherwise BodyBytesSent.
 	if nx.BytesSent > 0 {
-		ls.Sent = nx.BytesSent
+		sl.Sent = nx.BytesSent
 	} else {
-		ls.Sent = nx.BodyBytesSent
+		sl.Sent = nx.BodyBytesSent
 	}
 
 	// Splint NGINX request into 4 different parts.
 	rq, err := splitNginxRequest(nx.Request)
 	if err != nil {
-		return Log{}, err
+		return SlateLog{}, err
 	}
-	ls.Method = rq.Method
-	ls.Path = rq.Path
-	ls.Query = rq.Query
-	ls.Proto = rq.Proto
+	sl.Method = rq.Method
+	sl.Path = rq.Path
+	sl.Query = rq.Query
+	sl.Proto = rq.Proto
 
 	// Get attack detection results.
-	thr, err := threat.Detect(ls.Path, ls.Query, ls.Agent)
-	ls.Attack.Type = thr.Attack.Type
-	ls.Attack.Name = thr.Attack.Name
-	ls.Attack.Score = thr.Attack.Score
-	ls.Ad = thr.Ad
-	ls.Bot = thr.Bot
+	thr, err := threat.Detect(sl.Path, sl.Query, sl.Agent)
+	sl.Attack.Type = thr.Attack.Type
+	sl.Attack.Name = thr.Attack.Name
+	sl.Attack.Score = thr.Attack.Score
+	sl.Ad = thr.Ad
+	sl.Bot = thr.Bot
 
 	// Done.
-	return ls, err
+	return sl, err
 }
 
 func splitNginxPathQuery(pq string) (string, string) {
