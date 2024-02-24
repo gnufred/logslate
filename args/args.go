@@ -12,7 +12,17 @@ import (
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
+type LogFormat byte
+
+const (
+	NILFMT LogFormat = 0
+	SCREEN LogFormat = 1
+	TEXT   LogFormat = 2
+	JSON   LogFormat = 3
+)
+
 type Args struct {
+	Version string
 	Help    bool
 	Debug   int
 	CpuProf string
@@ -20,16 +30,20 @@ type Args struct {
 	Db      string
 	LogFrmt string
 
-	// Time arguments (time.go)
+	// Time arguments.
 	// Set with .SetSinceUntil()
 	since     string    // Geter .Since()
 	until     string    // Geter .Until()
 	startTime time.Time // Geter .StartTime()
 	endTime   time.Time // Geter .EndTime()
 
-	// Report arguments (report.go)
+	// Threat log arguments.
+	ThreatPath   string
+	ThreatFormat LogFormat
+
+	// Report arguments.
 	ReportPath   string
-	ReportFormat string
+	ReportFormat LogFormat
 	ReportLayout string
 }
 
@@ -73,9 +87,13 @@ DATABASE
   -d, --db
     SQLite3 DB file path.
 
+THREAT
+  -t, --threats
+    Threat log file path. Must be screen, or a .(txt|json) file.
+
 REPORT
   -r, --report
-    Report file path. Must end with .txt or .json.
+    Report file path. Must be screen, or a .(txt|json) file.
 
   -l, --layout
     Custom report layout for screen and text reports.
@@ -114,7 +132,7 @@ func validate(narg int) error {
 	}
 
 	// --layout is not used with JSON format reports.
-	if args.ReportFormat == "json" && args.ReportLayout != "" {
+	if args.ReportFormat == JSON && args.ReportLayout != "" {
 		fmt.Printf("\nError: report layout is only available for screen and text reports.\n\n")
 		return showHelp()
 	}
@@ -125,11 +143,22 @@ func validate(narg int) error {
 		return showHelp()
 	}
 
+	// ThreatLog format is invalid.
+	if args.ThreatPath != "" {
+		if f := args.ThreatFormat; f != SCREEN && f != JSON && f != TEXT {
+			fmt.Printf(
+				"\nError: '%s' invalid for --threat.\nMust be 'screen' or end with '.txt', '.text', or '.json'.\n\n",
+				args.ThreatPath,
+			)
+			return showHelp()
+		}
+	}
+
 	// Report format is invalid.
 	if args.ReportPath != "" {
-		if f := args.ReportFormat; f != "json" && f != "text" {
+		if f := args.ReportFormat; f != SCREEN && f != JSON && f != TEXT {
 			fmt.Printf(
-				"\nError: value '%s' is invalid for --format.\nValue must be 'screen' or end with '.txt', or '.json'.\n\n",
+				"\nError: '%s' invalid for --format.\nMust be 'screen' or end with '.txt', '.text', or '.json'.\n\n",
 				args.ReportPath,
 			)
 			return showHelp()
@@ -180,6 +209,9 @@ func parse() error {
 	logfrmtFlag := flags.StringP("log_format", "f", nginx.Combined, "")
 
 	// Report flags.
+	threatLogFlag := flags.StringP("threats", "t", "", "")
+
+	// Report flags.
 	reportFlag := flags.StringP("report", "r", "", "")
 
 	// Report layout flag.
@@ -207,25 +239,27 @@ func parse() error {
 
 	args.LogFrmt = string(*logfrmtFlag)
 
+	args.ThreatPath = string(*threatLogFlag)
+	args.ThreatFormat = parseLogFormat(string(*threatLogFlag))
+
 	args.ReportPath = string(*reportFlag)
-
-	args.ReportFormat = parseReportPath(string(*reportFlag))
-
+	args.ReportFormat = parseLogFormat(string(*reportFlag))
 	args.ReportLayout = string(*reportLayoutFlag)
 
 	return nil
 }
 
-// parseReportPath check the path file extension to determine if it's
-// in a supported format. Supported formats are "txt", and "json".
-func parseReportPath(path string) string {
+func parseLogFormat(path string) LogFormat {
 	lpath := strings.ToLower(path)
 	if path == "screen" {
-		return "text"
-	} else if strings.HasSuffix(lpath, ".txt") {
-		return "text"
-	} else if strings.HasSuffix(lpath, ".json") {
-		return "json"
+		return SCREEN
 	}
-	return ""
+	if strings.HasSuffix(lpath, ".txt") {
+		return TEXT
+	} else if strings.HasSuffix(lpath, ".text") {
+		return TEXT
+	} else if strings.HasSuffix(lpath, ".json") {
+		return JSON
+	}
+	return NILFMT
 }

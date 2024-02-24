@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"gitlab.com/gnufred/logslate/args"
 )
 
 //go:embed templates/parsed
@@ -29,9 +31,6 @@ var attacksTemplate string
 //go:embed templates/attackers
 var attackersTemplate string
 
-//go:embed templates/attacklog
-var attacklogTemplate string
-
 //go:embed templates/ads
 var adsTemplate string
 
@@ -45,16 +44,17 @@ var templateEmbeds = map[string]string{
 	"threats":   threatsTemplate,
 	"attacks":   attacksTemplate,
 	"attackers": attackersTemplate,
-	"attacklog": attacklogTemplate,
 	"ads":       adsTemplate,
 	"bots":      botsTemplate,
 }
 
 func (r *Report) Print() {
 	switch r.format {
-	case "text":
+	case args.SCREEN:
+		printScreen(r)
+	case args.TEXT:
 		printText(r)
-	case "json":
+	case args.JSON:
 		printJson(r)
 	}
 }
@@ -84,16 +84,25 @@ func printText(r *Report) error {
 		return err
 	}
 
-	if r.path == "screen" {
-		fmt.Print(out.String())
-		return nil
-	}
-
 	err = writeReport(r.path, out.Bytes())
 	if err != nil {
 		lerr.Println(err)
 		return err
 	}
+	return nil
+}
+
+func printScreen(r *Report) error {
+	lerr := log.New(os.Stderr, "", 0)
+
+	out, err := createTextOutput(r)
+	if err != nil {
+		err := fmt.Errorf("report error: %w", err)
+		lerr.Println(err)
+		return err
+	}
+
+	fmt.Print(out.String())
 	return nil
 }
 
@@ -150,12 +159,7 @@ func createTextOutput(r *Report) (bytes.Buffer, error) {
 }
 
 func header(name string) string {
-	switch name {
-	case "attacklog":
-		name = "Attack Log"
-	default:
-		name = strings.ToUpper(name[:1]) + name[1:]
-	}
+	name = strings.ToUpper(name[:1]) + name[1:]
 	return fmt.Sprintf("=== [[ %s ]] ===", name)
 }
 

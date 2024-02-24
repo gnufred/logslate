@@ -6,8 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"gitlab.com/gnufred/logslate/translate"
-
+	"gitlab.com/gnufred/logslate/log"
 	_ "modernc.org/sqlite"
 )
 
@@ -158,7 +157,7 @@ func (d *Dber) Commit() error {
 	return d.tx.Commit()
 }
 
-func (d *Dber) Insert(e translate.SlateLog) error {
+func (d *Dber) Insert(e log.SlateLog) error {
 	if !d.open {
 		return fmt.Errorf("database closed")
 	}
@@ -201,7 +200,7 @@ func (d *Dber) Insert(e translate.SlateLog) error {
 		e.Ip.String(),
 		e.User,
 		e.Time,
-		e.Attack.Name,
+		e.AttackName(),
 		e.Method,
 		e.Path,
 		e.Query,

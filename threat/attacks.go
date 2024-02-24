@@ -1,16 +1,15 @@
 package threat
 
-// I use bytes over strings because I want to use the smallest possible values.
-type Attacks byte
+type AttackType byte
 
 const (
-	Nil Attacks = iota
-	Unk         // Unknown or uncategorized.
-	SQL         // SQL injection.
-	CMD         // Command injection.
-	Dir         // Directory traversal.
-	XSS         // Cross site scripting.
-	Scn         // Leak & portal scanning.
+	NIL AttackType = iota
+	UNK            // Unknown or uncategorized.
+	SQL            // SQL injection.
+	CMD            // Command injection.
+	DIR            // Directory traversal.
+	XSS            // Cross site scripting.
+	SCN            // Leak & portal scanning.
 )
 
 // Attack pattern structure.
@@ -21,7 +20,7 @@ const (
 // * 6+: not used.
 type ptrn struct {
 	Name  string
-	Type  Attacks
+	Type  AttackType
 	Score byte
 }
 
@@ -33,15 +32,15 @@ var attackPatterns = []ptrn{
 	// !!! Unknown attacks patterns !!! //
 	// Patterns I've seen mixed in with other attacks.
 
-	// {Name: "***", Type: Unk, Score: 1}, // False positive: w2.02, can be used in "hidden" credit card numbers
-	// {Name: "{{", Type: Unk, Score: 0}, // False positive: w1.01
-	// {Name: "}}", Type: Unk, Score: 0}, // False positive: w1.01
-	{Name: "%40%40", Type: Unk, Score: 2},
+	// {Name: "***", Type: UNK, Score: 1}, // False positive: w2.02, can be used in "hidden" credit card numbers
+	// {Name: "{{", Type: UNK, Score: 0}, // False positive: w1.01
+	// {Name: "}}", Type: UNK, Score: 0}, // False positive: w1.01
+	{Name: "%40%40", Type: UNK, Score: 2},
 	{Name: "'+", Type: SQL, Score: 2}, // In XSS, SQL, and legit URLs.
-	{Name: "(((", Type: Unk, Score: 5},
-	{Name: ")))", Type: Unk, Score: 5},
-	{Name: ",,", Type: Unk, Score: 2},
-	{Name: "\x22", Type: Unk, Score: 3}, // All over the place and never alone.
+	{Name: "(((", Type: UNK, Score: 5},
+	{Name: ")))", Type: UNK, Score: 5},
+	{Name: ",,", Type: UNK, Score: 2},
+	{Name: "\x22", Type: UNK, Score: 3}, // All over the place and never alone.
 
 	// !!! SQL injection attacks !!! //
 	// https://portswigger.net/web-security/sql-injection/cheat-sheet
@@ -125,36 +124,36 @@ var attackPatterns = []ptrn{
 
 	// {Name: "%252f", Type: Dir, Score: 0},
 	// {Name: "\x5c", Type: Dir, Score: 0},
-	{Name: "%252e", Type: Dir, Score: 2}, // Some legit hits.
-	{Name: "%2557EB-INF", Type: Dir, Score: 5},
-	{Name: "%2e%2e/%2e%2e", Type: Dir, Score: 5},
-	{Name: "%2e%2e//%2e%2e", Type: Dir, Score: 5},
-	{Name: "%2e%2f", Type: Dir, Score: 4},
-	{Name: "%2e%5c", Type: Dir, Score: 4},
-	{Name: ".%10c", Type: Dir, Score: 4},
-	{Name: ".%2550", Type: Dir, Score: 4},
-	{Name: ".%25c0", Type: Dir, Score: 4},
-	{Name: ".%2f", Type: Dir, Score: 4},
-	{Name: ".%5c", Type: Dir, Score: 4},
-	{Name: ".%c0%af", Type: Dir, Score: 4},
-	{Name: ".%c1%9c", Type: Dir, Score: 4},
-	{Name: ".%ef%bc%8f", Type: Dir, Score: 4},
-	{Name: "./", Type: Dir, Score: 2},
-	{Name: ".0x5c", Type: Dir, Score: 4},
-	{Name: ".ini", Type: Dir, Score: 2},
-	{Name: "/passwd", Type: Dir, Score: 3},
-	{Name: "WEB-INF", Type: Dir, Score: 5},
-	{Name: "c:%", Type: Dir, Score: 5},
-	{Name: "etc%252fpass", Type: Dir, Score: 5},
-	{Name: "etc%2f", Type: Dir, Score: 5},
-	{Name: "etc%5c", Type: Dir, Score: 5},
-	{Name: "etc/", Type: Dir, Score: 2},
-	{Name: "etc/passwd", Type: Dir, Score: 5},
-	{Name: "file:%2f%2f", Type: Dir, Score: 5},
-	{Name: "file://", Type: Dir, Score: 4},
-	{Name: "unix:A", Type: Dir, Score: 5},
-	{Name: "webadmin.ini", Type: Dir, Score: 5},
-	{Name: "win.ini", Type: Dir, Score: 5},
+	{Name: "%252e", Type: DIR, Score: 2}, // Some legit hits.
+	{Name: "%2557EB-INF", Type: DIR, Score: 5},
+	{Name: "%2e%2e/%2e%2e", Type: DIR, Score: 5},
+	{Name: "%2e%2e//%2e%2e", Type: DIR, Score: 5},
+	{Name: "%2e%2f", Type: DIR, Score: 4},
+	{Name: "%2e%5c", Type: DIR, Score: 4},
+	{Name: ".%10c", Type: DIR, Score: 4},
+	{Name: ".%2550", Type: DIR, Score: 4},
+	{Name: ".%25c0", Type: DIR, Score: 4},
+	{Name: ".%2f", Type: DIR, Score: 4},
+	{Name: ".%5c", Type: DIR, Score: 4},
+	{Name: ".%c0%af", Type: DIR, Score: 4},
+	{Name: ".%c1%9c", Type: DIR, Score: 4},
+	{Name: ".%ef%bc%8f", Type: DIR, Score: 4},
+	{Name: "./", Type: DIR, Score: 2},
+	{Name: ".0x5c", Type: DIR, Score: 4},
+	{Name: ".ini", Type: DIR, Score: 2},
+	{Name: "/passwd", Type: DIR, Score: 3},
+	{Name: "WEB-INF", Type: DIR, Score: 5},
+	{Name: "c:%", Type: DIR, Score: 5},
+	{Name: "etc%252fpass", Type: DIR, Score: 5},
+	{Name: "etc%2f", Type: DIR, Score: 5},
+	{Name: "etc%5c", Type: DIR, Score: 5},
+	{Name: "etc/", Type: DIR, Score: 2},
+	{Name: "etc/passwd", Type: DIR, Score: 5},
+	{Name: "file:%2f%2f", Type: DIR, Score: 5},
+	{Name: "file://", Type: DIR, Score: 4},
+	{Name: "unix:A", Type: DIR, Score: 5},
+	{Name: "webadmin.ini", Type: DIR, Score: 5},
+	{Name: "win.ini", Type: DIR, Score: 5},
 
 	// !!! OS command injection attacks !!! //
 	// https://portswigger.net/web-security/os-command-injection
@@ -234,61 +233,61 @@ var attackPatterns = []ptrn{
 	// {Name: "install.php", Type: Scn, Score: 5}, // To many IPs scanning this.
 	// {Name: "sftp-config.json", Type: Scn, Score: 5}, // Sublime scans from dev workstations. Malicious actors also.
 	// {Name: "sftp.json", Type: Scn, Score: 5}, // VSCode scans from dev workstations. Malicous actors also.
-	{Name: "/keys.js", Type: Scn, Score: 5},
-	{Name: "Cargo.lock", Type: Scn, Score: 5},
-	{Name: "Cargo.toml", Type: Scn, Score: 5},
-	{Name: "DLPCenter/loginform.sms", Type: Scn, Score: 5},
-	{Name: "Dockerrun.aws.json", Type: Scn, Score: 5},
-	{Name: "Gemfile", Type: Scn, Score: 5},
-	{Name: "Guardfile", Type: Scn, Score: 5},
-	{Name: "Login.action", Type: Scn, Score: 5},
-	{Name: "Pipfile", Type: Scn, Score: 5},
-	{Name: "Pipfile.lock", Type: Scn, Score: 5},
-	{Name: "Procfile", Type: Scn, Score: 5},
-	{Name: "apps.tidy.infinity.json", Type: Scn, Score: 5},
-	{Name: "appsettings.", Type: Scn, Score: 5},
-	{Name: "aws.sh", Type: Scn, Score: 5},
-	{Name: "awstats.conf", Type: Scn, Score: 5},
-	{Name: "azure-pipelines.yml", Type: Scn, Score: 5},
-	{Name: "azuredeploy.json", Type: Scn, Score: 5},
-	{Name: "bitbucket-pipelines.yml", Type: Scn, Score: 5},
-	{Name: "config.html", Type: Scn, Score: 5},
-	{Name: "config.inc.php", Type: Scn, Score: 5},
-	{Name: "credentials.db", Type: Scn, Score: 5},
-	{Name: "dataOrigin.ashx", Type: Scn, Score: 5},
-	{Name: "databases.yml", Type: Scn, Score: 5},
-	{Name: "debug.log", Type: Scn, Score: 5},
-	{Name: "default.json", Type: Scn, Score: 5},
-	{Name: "deploy.sh", Type: Scn, Score: 5},
-	{Name: "desktop.ini", Type: Scn, Score: 5},
-	{Name: "development.log", Type: Scn, Score: 5},
-	{Name: "development.log", Type: Scn, Score: 5},
-	{Name: "env.js", Type: Scn, Score: 5},
-	{Name: "env.sh", Type: Scn, Score: 5},
-	{Name: "error.log", Type: Scn, Score: 5},
-	{Name: "errors.log", Type: Scn, Score: 5},
-	{Name: "firewall.log", Type: Scn, Score: 5},
-	{Name: "go.mod", Type: Scn, Score: 5},
-	{Name: "htaccess.txt", Type: Scn, Score: 5},
-	{Name: "init.sh", Type: Scn, Score: 5},
-	{Name: "karma.conf.js", Type: Scn, Score: 5},
-	{Name: "karma.js", Type: Scn, Score: 5},
-	{Name: "keycloak.json", Type: Scn, Score: 5},
-	{Name: "kustomization.yml", Type: Scn, Score: 5},
-	{Name: "login.action", Type: Scn, Score: 5},
-	{Name: "mobile.log", Type: Scn, Score: 5},
-	{Name: "parameters.yml", Type: Scn, Score: 5},
-	{Name: "privatekey.key", Type: Scn, Score: 5},
-	{Name: "production.log", Type: Scn, Score: 5},
-	{Name: "run.sh", Type: Scn, Score: 5},
-	{Name: "secret_token.rb", Type: Scn, Score: 5},
-	{Name: "secrets.yml", Type: Scn, Score: 5},
-	{Name: "security.yaml", Type: Scn, Score: 5},
-	{Name: "sendgrid.ev", Type: Scn, Score: 5},
-	{Name: "settings.py", Type: Scn, Score: 5},
-	{Name: "settings.yml", Type: Scn, Score: 5},
-	{Name: "user.xml", Type: Scn, Score: 5},
-	{Name: "vpn.log", Type: Scn, Score: 5},
+	{Name: "/keys.js", Type: SCN, Score: 5},
+	{Name: "Cargo.lock", Type: SCN, Score: 5},
+	{Name: "Cargo.toml", Type: SCN, Score: 5},
+	{Name: "DLPCenter/loginform.sms", Type: SCN, Score: 5},
+	{Name: "Dockerrun.aws.json", Type: SCN, Score: 5},
+	{Name: "Gemfile", Type: SCN, Score: 5},
+	{Name: "Guardfile", Type: SCN, Score: 5},
+	{Name: "Login.action", Type: SCN, Score: 5},
+	{Name: "Pipfile", Type: SCN, Score: 5},
+	{Name: "Pipfile.lock", Type: SCN, Score: 5},
+	{Name: "Procfile", Type: SCN, Score: 5},
+	{Name: "apps.tidy.infinity.json", Type: SCN, Score: 5},
+	{Name: "appsettings.", Type: SCN, Score: 5},
+	{Name: "aws.sh", Type: SCN, Score: 5},
+	{Name: "awstats.conf", Type: SCN, Score: 5},
+	{Name: "azure-pipelines.yml", Type: SCN, Score: 5},
+	{Name: "azuredeploy.json", Type: SCN, Score: 5},
+	{Name: "bitbucket-pipelines.yml", Type: SCN, Score: 5},
+	{Name: "config.html", Type: SCN, Score: 5},
+	{Name: "config.inc.php", Type: SCN, Score: 5},
+	{Name: "credentials.db", Type: SCN, Score: 5},
+	{Name: "dataOrigin.ashx", Type: SCN, Score: 5},
+	{Name: "databases.yml", Type: SCN, Score: 5},
+	{Name: "debug.log", Type: SCN, Score: 5},
+	{Name: "default.json", Type: SCN, Score: 5},
+	{Name: "deploy.sh", Type: SCN, Score: 5},
+	{Name: "desktop.ini", Type: SCN, Score: 5},
+	{Name: "development.log", Type: SCN, Score: 5},
+	{Name: "development.log", Type: SCN, Score: 5},
+	{Name: "env.js", Type: SCN, Score: 5},
+	{Name: "env.sh", Type: SCN, Score: 5},
+	{Name: "error.log", Type: SCN, Score: 5},
+	{Name: "errors.log", Type: SCN, Score: 5},
+	{Name: "firewall.log", Type: SCN, Score: 5},
+	{Name: "go.mod", Type: SCN, Score: 5},
+	{Name: "htaccess.txt", Type: SCN, Score: 5},
+	{Name: "init.sh", Type: SCN, Score: 5},
+	{Name: "karma.conf.js", Type: SCN, Score: 5},
+	{Name: "karma.js", Type: SCN, Score: 5},
+	{Name: "keycloak.json", Type: SCN, Score: 5},
+	{Name: "kustomization.yml", Type: SCN, Score: 5},
+	{Name: "login.action", Type: SCN, Score: 5},
+	{Name: "mobile.log", Type: SCN, Score: 5},
+	{Name: "parameters.yml", Type: SCN, Score: 5},
+	{Name: "privatekey.key", Type: SCN, Score: 5},
+	{Name: "production.log", Type: SCN, Score: 5},
+	{Name: "run.sh", Type: SCN, Score: 5},
+	{Name: "secret_token.rb", Type: SCN, Score: 5},
+	{Name: "secrets.yml", Type: SCN, Score: 5},
+	{Name: "security.yaml", Type: SCN, Score: 5},
+	{Name: "sendgrid.ev", Type: SCN, Score: 5},
+	{Name: "settings.py", Type: SCN, Score: 5},
+	{Name: "settings.yml", Type: SCN, Score: 5},
+	{Name: "user.xml", Type: SCN, Score: 5},
+	{Name: "vpn.log", Type: SCN, Score: 5},
 
 	// Admin panel scans.
 	// As of right now, I'm conservative.
@@ -299,22 +298,22 @@ var attackPatterns = []ptrn{
 
 	// {Name: "/cgi-bin", Type: Scn, Score: 5}, // To many legit hits.
 	// {Name: "/wp-login.php", Type: Scn, Score: 5}, // Too many IPs scanning this.
-	{Name: "/setup.php", Type: Scn, Score: 5},
-	{Name: "CgiStart", Type: Scn, Score: 5},
-	{Name: "FNDWRR.exe", Type: Scn, Score: 5},
-	{Name: "Telerik.Web.UI.DialogHandler", Type: Scn, Score: 5},
-	{Name: "_adminer/index.php", Type: Scn, Score: 5},
-	{Name: "adminer.php", Type: Scn, Score: 5},
-	{Name: "adminer/adminer.php", Type: Scn, Score: 5},
-	{Name: "b9dmx.php", Type: Scn, Score: 5},
-	{Name: "backup/auto.php", Type: Scn, Score: 5},
-	{Name: "backup2.cgi", Type: Scn, Score: 5},
-	{Name: "cache/backup", Type: Scn, Score: 5},
-	{Name: "carbon/admin/login.jsp", Type: Scn, Score: 5},
-	{Name: "cfg/login", Type: Scn, Score: 5},
-	{Name: "passwordrecovered.cgi", Type: Scn, Score: 5},
-	{Name: "phpmyadmin", Type: Scn, Score: 5},
-	{Name: "qmailadmin.cgi", Type: Scn, Score: 5},
+	{Name: "/setup.php", Type: SCN, Score: 5},
+	{Name: "CgiStart", Type: SCN, Score: 5},
+	{Name: "FNDWRR.exe", Type: SCN, Score: 5},
+	{Name: "Telerik.Web.UI.DialogHandler", Type: SCN, Score: 5},
+	{Name: "_adminer/index.php", Type: SCN, Score: 5},
+	{Name: "adminer.php", Type: SCN, Score: 5},
+	{Name: "adminer/adminer.php", Type: SCN, Score: 5},
+	{Name: "b9dmx.php", Type: SCN, Score: 5},
+	{Name: "backup/auto.php", Type: SCN, Score: 5},
+	{Name: "backup2.cgi", Type: SCN, Score: 5},
+	{Name: "cache/backup", Type: SCN, Score: 5},
+	{Name: "carbon/admin/login.jsp", Type: SCN, Score: 5},
+	{Name: "cfg/login", Type: SCN, Score: 5},
+	{Name: "passwordrecovered.cgi", Type: SCN, Score: 5},
+	{Name: "phpmyadmin", Type: SCN, Score: 5},
+	{Name: "qmailadmin.cgi", Type: SCN, Score: 5},
 }
 
 // DataDumpPatterns create the pattern list to detect data dumps.
@@ -355,7 +354,7 @@ func DataDumpPatterns() []ptrn {
 		for _, e := range ext {
 			dump = append(dump, ptrn{
 				Name:  f + "." + e,
-				Type:  Scn,
+				Type:  SCN,
 				Score: 5,
 			})
 		}
@@ -365,20 +364,20 @@ func DataDumpPatterns() []ptrn {
 }
 
 // String translate an attack type byte to a human readable string
-func String(atk Attacks) string {
+func String(atk AttackType) string {
 	switch atk {
-	case Unk:
-		return "unknown"
+	case UNK:
+		return "???"
 	case SQL:
-		return "sql_inject"
+		return "sql"
 	case CMD:
-		return "cmd_inject"
-	case Dir:
-		return "dir_travers"
+		return "cmd"
+	case DIR:
+		return "dir"
 	case XSS:
 		return "xss"
-	case Scn:
-		return "scan"
+	case SCN:
+		return "scn"
 	default:
 		return ""
 	}

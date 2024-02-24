@@ -6,28 +6,119 @@ import (
 
 type result struct {
 	To uint32
-	Ty Attacks
+	Ty AttackType
+}
+
+func TestIsAd(t *testing.T) {
+	testMatch := func(t *testing.T, in string, exp bool) {
+		dl := Detection{Ad: in}
+		got := dl.IsAd()
+		if got != exp {
+			t.Errorf("ad %s miss match, got %t, exp %t", in, got, exp)
+		}
+	}
+	data := []struct {
+		In  string
+		Exp bool
+	}{
+		{"", false},
+		{"Adwords", true},
+		{"Facebook", true},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
+	}
+}
+
+func TestIsBot(t *testing.T) {
+	testMatch := func(t *testing.T, in string, exp bool) {
+		dl := Detection{Bot: in}
+		got := dl.IsBot()
+		if got != exp {
+			t.Errorf("bot %s miss match, got %t, exp %t", in, got, exp)
+		}
+	}
+	data := []struct {
+		In  string
+		Exp bool
+	}{
+		{"", false},
+		{"Google", true},
+		{"Bing", true},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
+	}
+}
+
+func TestIsAttack(t *testing.T) {
+	testMatch := func(t *testing.T, in *Attack, exp bool) {
+		dl := Detection{Attack: in}
+		got := dl.IsAttack()
+		if got != exp {
+			t.Errorf("attack %v miss match, got %t, exp %t", in, got, exp)
+		}
+	}
+	data := []struct {
+		In  *Attack
+		Exp bool
+	}{
+		{nil, false},
+		{&Attack{Type: NIL}, false},
+		{&Attack{Type: XSS}, true},
+		{&Attack{Type: CMD}, true},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
+	}
+}
+
+func TestIsThreat(t *testing.T) {
+	testMatch := func(t *testing.T, in Detection, exp bool) {
+		got := in.IsThreat()
+		if got != exp {
+			t.Errorf("attack %v miss match, got %t, exp %t", in, got, exp)
+		}
+	}
+	data := []struct {
+		In  Detection
+		Exp bool
+	}{
+		{Detection{}, false},
+		{Detection{Ad: ""}, false},
+		{Detection{Bot: ""}, false},
+		{Detection{Attack: nil}, false},
+		{Detection{Attack: &Attack{Type: NIL}}, false},
+		{Detection{Ad: "", Bot: "", Attack: nil}, false},
+		{Detection{Ad: "a"}, true},
+		{Detection{Bot: "a"}, true},
+		{Detection{Attack: &Attack{Type: SQL}}, true},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
+	}
 }
 
 func TestDetect(t *testing.T) {
 	// Just testing one result. Multiple results tested in sub functions.
+	att := &Attack{SQL, 10, "sql"}
 	td := struct {
 		Path  string
 		Query string
 		Agent string
-		Exp   Threats
+		Exp   Detection
 	}{
 		"user/",
 		"id=1'PG_SLEEP(1000)",
 		"EdgeScan/1.1 (+https://www.edgescan.com/)",
-		Threats{
-			Attack{
-				SQL,
-				10,
-				"sql_inject",
-			},
+		Detection{
 			"",
 			"EdgeScan",
+			att,
 		},
 	}
 
@@ -70,8 +161,8 @@ func TestMonoFlag(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if got.Attack.Name != "" && got.Ad != "" {
-			t.Errorf("got both an attack and ad flag: %s, %s", got.Attack.Name, got.Ad)
+		if got.AttackName() != "" && got.Ad != "" {
+			t.Errorf("got both an attack and ad flag: %s, %s", got.AttackName(), got.Ad)
 		}
 	}
 
@@ -104,15 +195,15 @@ func TestAttacks(t *testing.T) {
 	}{
 		{"hello(", result{0, 0}},
 		{"replace(", result{5, XSS}},
-		{"\x22id\x22:\x221\x22", result{12, Unk}},
-		{"path/stuff../../etc/passwd", result{12, Dir}},
+		{"\x22id\x22:\x221\x22", result{12, UNK}},
+		{"path/stuff../../etc/passwd", result{12, DIR}},
 		{"hello'boba_sleep(", result{5, SQL}},
 		{"hello'boba_SLEEP(", result{5, SQL}},
-		{"./././././././././././././././././././././././././././././././././", result{66, Dir}},
-		{"/phpmyadmin", result{5, Scn}},
-		{"/db.sql", result{5, Scn}},
-		{"/ROOT.tar.gz", result{5, Scn}},
-		{"/html.zip", result{5, Scn}},
+		{"./././././././././././././././././././././././././././././././././", result{66, DIR}},
+		{"/phpmyadmin", result{5, SCN}},
+		{"/db.sql", result{5, SCN}},
+		{"/ROOT.tar.gz", result{5, SCN}},
+		{"/html.zip", result{5, SCN}},
 	}
 
 	for _, d := range data {
@@ -135,12 +226,12 @@ func TestSearchAttackPts(t *testing.T) {
 		In  string
 		Exp result
 	}{
-		{"\x99()", result{255, Unk}},
+		{"\x99()", result{255, UNK}},
 		{"'SLEEP(0)", result{255, SQL}},
 		{"socket.hitmycommandcenter", result{255, CMD}},
-		{"../etc/passwd", result{255, Dir}},
+		{"../etc/passwd", result{255, DIR}},
 		{"<script>", result{255, XSS}},
-		{"/phpmyadmin/dump.sql", result{255, Scn}},
+		{"/phpmyadmin/dump.sql", result{255, SCN}},
 	}
 
 	for _, d := range data {

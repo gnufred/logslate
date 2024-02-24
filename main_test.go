@@ -24,10 +24,6 @@ func TestInit(t *testing.T) {
 	Init()
 }
 
-func TestBanner(t *testing.T) {
-	Banner()
-}
-
 func TestRun(t *testing.T) {
 	testRunOk(t)
 	// TODO: fix test.MockStdin() to get 100% coverage.

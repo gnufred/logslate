@@ -13,16 +13,28 @@ var adRegexp *regexp.Regexp
 // Holds the score that we need to flag a searches as an attack.
 var Threshold = uint32(5)
 
-type Threats struct {
-	Attack Attack
-	Ad     string
-	Bot    string
+type Detection struct {
+	Ad     string  `json:"ad,omitempty"`
+	Bot    string  `json:"bot,omitempty"`
+	Attack *Attack `json:"attack,omitempty"`
+}
+
+func (d *Detection) IsAd() bool     { return d.Ad != "" }
+func (d *Detection) IsBot() bool    { return d.Bot != "" }
+func (d *Detection) IsAttack() bool { return d.Attack != nil && d.Attack.Type != NIL }
+func (d *Detection) IsThreat() bool { return d.IsBot() || d.IsAttack() || d.IsAd() }
+
+func (d *Detection) AttackName() string {
+	if d.IsAttack() {
+		return d.Attack.Name
+	}
+	return ""
 }
 
 type Attack struct {
-	Type  Attacks
-	Score uint32
-	Name  string
+	Type  AttackType `json:"-"`
+	Score uint32     `json:"-"`
+	Name  string     `json:"name"`
 }
 
 func init() {
@@ -32,12 +44,20 @@ func init() {
 }
 
 // Detect threats and return information about them.
-func Detect(path, query, agent string) (Threats, error) {
+func Detect(path, query, agent string) (Detection, error) {
+	var attackPtr *Attack
 	attack, score := attackScan(path, query)
+	if attack != NIL {
+		attackPtr = &Attack{
+			Type:  attack,
+			Score: score,
+			Name:  String(attack),
+		}
+	}
 
 	// If it's an attack, obviously, it not an advertising campaign.
 	ad := ""
-	if attack == Nil {
+	if attack == NIL {
 		ad = adScan(query)
 	}
 
@@ -46,19 +66,15 @@ func Detect(path, query, agent string) (Threats, error) {
 	// Advertisement, are also sometimes from bots.
 	bot, err := botScan(agent)
 
-	return Threats{
-		Attack: Attack{
-			Type:  attack,
-			Score: score,
-			Name:  String(attack),
-		},
-		Ad:  ad,
-		Bot: bot,
+	return Detection{
+		Ad:     ad,
+		Bot:    bot,
+		Attack: attackPtr,
 	}, err
 }
 
 // attackScan searches for attack patterns in the URL query string and URL path.
-func attackScan(path, query string) (Attacks, uint32) {
+func attackScan(path, query string) (AttackType, uint32) {
 	// Important: It's faster to scan longer strings than searching twice.
 	// See https://gitlab.com/gnufred/logslate/-/issues/71 for details.
 	attack, total := attackAhoSearch(attackAC, attackPatterns, path+query)

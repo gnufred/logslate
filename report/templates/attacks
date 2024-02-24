@@ -1,7 +1,7 @@
-{{if .Attacks.Unk}}
-Unknown:    {{AddCommas .Attacks.Unk}}{{end}}{{if .Attacks.SQL}}
+{{if .Attacks.UNK}}
+Unknown:    {{AddCommas .Attacks.UNK}}{{end}}{{if .Attacks.SQL}}
 SQL inject: {{AddCommas .Attacks.SQL}}{{end}}{{if .Attacks.CMD}}
-CMD inject: {{AddCommas .Attacks.CMD}}{{end}}{{if .Attacks.Dir}}
-Dir trav:   {{AddCommas .Attacks.Dir}}{{end}}{{if .Attacks.XSS}}
-Cross site: {{AddCommas .Attacks.XSS}}{{end}}{{if .Attacks.Scn}}
-Leak scan:  {{AddCommas .Attacks.Scn}}{{end}}
+CMD inject: {{AddCommas .Attacks.CMD}}{{end}}{{if .Attacks.DIR}}
+Dir trav:   {{AddCommas .Attacks.DIR}}{{end}}{{if .Attacks.XSS}}
+Cross site: {{AddCommas .Attacks.XSS}}{{end}}{{if .Attacks.SCN}}
+Leak scan:  {{AddCommas .Attacks.SCN}}{{end}}

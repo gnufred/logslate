@@ -1,4 +1,4 @@
-package translate
+package log
 
 import (
 	"fmt"
@@ -12,6 +12,7 @@ import (
 )
 
 type SlateLog struct {
+	threat.Detection
 	Ip      net.IP
 	User    string
 	Time    time.Time
@@ -23,9 +24,6 @@ type SlateLog struct {
 	Sent    int
 	Referer string
 	Agent   string
-	Attack  threat.Attack
-	Ad      string
-	Bot     string
 }
 
 type request struct {
@@ -73,11 +71,9 @@ func NginxToSlate(nx nginx.Entry) (SlateLog, error) {
 
 	// Get attack detection results.
 	thr, err := threat.Detect(sl.Path, sl.Query, sl.Agent)
-	sl.Attack.Type = thr.Attack.Type
-	sl.Attack.Name = thr.Attack.Name
-	sl.Attack.Score = thr.Attack.Score
 	sl.Ad = thr.Ad
 	sl.Bot = thr.Bot
+	sl.Attack = thr.Attack
 
 	// Done.
 	return sl, err

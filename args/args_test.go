@@ -13,6 +13,7 @@ func TestValidate(t *testing.T) {
 	test.DisableOutput()
 	validateHelp(t)
 	invalidDebugArg(t)
+	invalidThreatPath(t)
 	invalidReportPath(t)
 	invalidNargs(t)
 	invalidLayout(t)
@@ -36,14 +37,24 @@ func invalidDebugArg(t *testing.T) {
 	args.Debug = 0
 }
 
+func invalidThreatPath(t *testing.T) {
+	narg := 0
+	args.ThreatPath = "report.invalid"
+	args.ThreatFormat = NILFMT
+	err := validate(narg)
+	test.ErrorExpected(t, err, "help shown")
+	args.ThreatPath = ""
+	args.ThreatFormat = NILFMT
+}
+
 func invalidReportPath(t *testing.T) {
 	narg := 0
 	args.ReportPath = "report.invalid"
-	args.ReportFormat = "invalid"
+	args.ReportFormat = NILFMT
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
 	args.ReportPath = ""
-	args.ReportFormat = ""
+	args.ReportFormat = NILFMT
 }
 
 func invalidNargs(t *testing.T) {
@@ -61,11 +72,11 @@ func invalidLayout(t *testing.T) {
 
 func customReportWithJsonFormat(t *testing.T) {
 	args.ReportPath = "report.json"
-	args.ReportFormat = "json"
+	args.ReportFormat = JSON
 	args.ReportLayout = "parsed"
 	validate(0)
 	args.ReportPath = ""
-	args.ReportFormat = ""
+	args.ReportFormat = NILFMT
 	args.ReportLayout = ""
 }
 
@@ -102,7 +113,7 @@ func TestDefaultArgs(t *testing.T) {
 
 	if args.LogFrmt != nginx.Combined {
 		fmt.Println(args)
-		t.Error("log_format flag is different then nxparse.Combined")
+		t.Error("log_format flag is different than nxparse.Combined")
 	}
 
 	nilTime := time.Time{}
@@ -112,27 +123,48 @@ func TestDefaultArgs(t *testing.T) {
 	if args.endTime == nilTime {
 		t.Error("endTime flag is time.Time{}")
 	}
+
+	if args.ThreatPath != "" {
+		t.Error("ThreatPath is not an empty string")
+	}
+	if args.ThreatFormat != NILFMT {
+		t.Error("ThreatFormat is not NILFMT")
+	}
+
+	if args.ReportPath != "" {
+		t.Error("ReportPath is not an empty string")
+	}
+	if args.ReportFormat != NILFMT {
+		t.Error("ReportFormat is not NILFMT")
+	}
+	if args.ReportLayout != "" {
+		t.Error("ReportLayout is not an empty string")
+	}
 }
 
-func TestParseReportPath(t *testing.T) {
+func TestParseLogFormat(t *testing.T) {
 	// Test screen report
-	frmt := parseReportPath("screen")
-	if frmt != "text" {
-		t.Errorf("unexpected format %s", frmt)
+	frmt := parseLogFormat("screen")
+	if frmt != SCREEN {
+		t.Errorf("unexpected format %d", frmt)
 	}
 	// Test .json report format.
-	frmt = parseReportPath("/user/run/1000/example.com/report.json")
-	if frmt != "json" {
-		t.Errorf("unexpected format %s", frmt)
+	frmt = parseLogFormat("/user/run/1000/example.com/report.json")
+	if frmt != JSON {
+		t.Errorf("unexpected format %d", frmt)
 	}
 	// Test .txt report format.
-	frmt = parseReportPath("/user/run/1000/example.com/report.txt")
-	if frmt != "text" {
-		t.Errorf("unexpected format %s", frmt)
+	frmt = parseLogFormat("/user/run/1000/example.com/report.txt")
+	if frmt != TEXT {
+		t.Errorf("unexpected format %d", frmt)
+	}
+	frmt = parseLogFormat("/user/run/1000/example.com/report.text")
+	if frmt != TEXT {
+		t.Errorf("unexpected format %d", frmt)
 	}
 	// Test unknown report format.
-	frmt = parseReportPath("/user/run/1000/example.com/report.csv")
-	if frmt != "" {
-		t.Errorf("unexpected format %s", frmt)
+	frmt = parseLogFormat("/user/run/1000/example.com/report.csv")
+	if frmt != NILFMT {
+		t.Errorf("unexpected format %d", frmt)
 	}
 }

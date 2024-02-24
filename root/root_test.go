@@ -199,7 +199,7 @@ func TestTimeArgs(t *testing.T) {
 func TestReport(t *testing.T) {
 	a := args.Get()
 	a.ReportPath = "testdata/report.txt"
-	a.ReportFormat = "text"
+	a.ReportFormat = 2
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
@@ -212,6 +212,50 @@ func TestReport(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestThreatsScreen(t *testing.T) {
+	a := args.Get()
+	a.ThreatPath = "screen"
+	a.ThreatFormat = 1
+	a.LogFrmt = nginx.Combined
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 0, 20}},
+		},
+	)
+}
+
+func TestThreatsText(t *testing.T) {
+	a := args.Get()
+	a.ThreatPath = "testdata/threat.text"
+	a.ThreatFormat = 2
+	a.LogFrmt = nginx.Combined
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 0, 20}},
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 6, 0, 20}},
+			{"testdata/utm.log", Parsed{6, 0, 0, 0, 6, 0}},
+		},
+	)
+	err := os.Remove(a.ThreatPath)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestThreatsDebug(t *testing.T) {
+	a := args.Get()
+	a.Debug = 3
+	a.ThreatPath = "screen"
+	a.ThreatFormat = 1
+	a.LogFrmt = nginx.Combined
+	testInputDataLoop(t, a,
+		[]testData{
+			{"testdata/20ok.log", Parsed{20, 0, 0, 0, 0, 20}},
+			{"testdata/attacks10.log", Parsed{20, 0, 0, 12, 0, 20}},
+		},
+	)
 }
 
 func TestTranslateError(t *testing.T) {

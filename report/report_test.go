@@ -6,14 +6,14 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	got := New("", "", "")
+	got := New("", 0, "")
 	if got.Parsed.Ok != 0 {
 		t.Error("empty report has non empty values")
 	}
 }
 
 func TestNewText(t *testing.T) {
-	got := NewText(New("", "", ""))
+	got := NewText(New("", 0, ""))
 	if got.Parsed.Ok != 0 {
 		t.Error("empty report has non empty values")
 	}
@@ -95,5 +95,38 @@ func TestAttackTotal(t *testing.T) {
 	exp := uint(5)
 	if got != exp {
 		t.Errorf("total doesn't match, got %d, exp %d", got, exp)
+	}
+}
+
+func TestParseFirstLast(t *testing.T) {
+	timefmt := "2006-01-02"
+	r := Report{
+		Parsed: ParsedRD{},
+	}
+	r.Parsed.First, _ = time.Parse(timefmt, "9999-01-02")
+
+	firstTS, lastTS := "2001-01-01", "2020-01-01"
+	data := []string{
+		"2005-01-01",
+		"2010-01-01",
+		lastTS,
+		"2010-01-01",
+		firstTS,
+	}
+
+	for _, ts := range data {
+		t, _ := time.Parse(timefmt, ts)
+		r.Parsed.ParseFirstLast(t)
+	}
+
+	first, _ := time.Parse(timefmt, firstTS)
+	last, _ := time.Parse(timefmt, lastTS)
+
+	if r.Parsed.First != first {
+		t.Errorf("first miss match, got %s, exp %s", r.Parsed.First.String(), first.String())
+	}
+
+	if r.Parsed.Last != last {
+		t.Errorf("first miss match, got %s, exp %s", r.Parsed.Last.String(), last.String())
 	}
 }

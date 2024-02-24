@@ -65,7 +65,7 @@ All advertisting platform add the `utm_source` URL query parametters to identify
 ## In action
 
 ```
-$ cat access.log | logslate --report screen --layout threats,bots:order_count:min_5000,attacks,attacklog
+$ cat access.log | logslate --threats threat.log --report screen --layout threats,bots:order_count:min_5000,attacks
 Logslate 0.6.0 @ https://gitlab.com/gnufred/logslate
 ⠙ parsing (238 MB, 57 MB/s) [4s]
 Parsed: ok [478342] skip [0] error [0]
@@ -86,9 +86,4 @@ CMD inject: 525
 Dir trav:   10,416
 Cross site: 11,531
 Leak scan:  626
-=== [[ Attack Log ]] ===
-2024-01-01 00:00:00  12.12.123.123  sql_inject  /api/v1/?%20(select%20sleep(6))
-2024-01-01 00:00:00  12.12.123.123         xss  /ProcessWait.aspx?alert(document.domain)
-2024-01-01 00:00:00  12.12.123.123  dir_traver  /etc/passwd
-2024-01-01 00:00:00  12.12.123.123        scan  /phpmyadmin/
 ```
