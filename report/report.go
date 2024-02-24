@@ -12,19 +12,20 @@ type Report struct {
 	layout []section
 
 	// Report Data (RD).
-	Runtime     RuntimeRD         `json:"runtime"`
-	Parsed      ParsedRD          `json:"parsed"`
-	Size        SizeRD            `json:"size"`
-	TimeArgs    TimeArgsRD        `json:"time_args"`
-	Threats     ThreatsRD         `json:"threats"`
-	AttackTypes AttackTypesRD     `json:"attack_types"`
-	Ads         map[string]ListRD `json:"ads"`
-	Bots        map[string]ListRD `json:"bots"`
-	Attackers   map[string]ListRD `json:"attackers"`
-	Attacks     []AttackRD        `json:"attacks"`
+	Runtime   RuntimeRD  `json:"runtime"`
+	Parsed    ParsedRD   `json:"parsed"`
+	Size      SizeRD     `json:"size"`
+	TimeArgs  TimeArgsRD `json:"time_args"`
+	Threats   ThreatsRD  `json:"threats"`
+	ThreatLog ThreatLogRD
+	Ads       map[string]ListRD `json:"ads"`
+	Bots      map[string]ListRD `json:"bots"`
+	Attacks   AttacksRD         `json:"attacks"`
+	Attackers map[string]ListRD `json:"attackers"`
+	AttackLog []AttackLogRD     `json:"attacks"`
 }
 
-type AttackRD struct {
+type AttackLogRD struct {
 	Type  string `json:"type"`
 	Time  string `json:"time"`
 	Ip    string `json:"ip"`
@@ -57,9 +58,9 @@ func New(path, format, layout string) *Report {
 		layout = defaultLayout
 	}
 	r.layout = parseLayout(layout)
-	r.Attackers = make(map[string]ListRD)
 	r.Ads = make(map[string]ListRD)
 	r.Bots = make(map[string]ListRD)
+	r.Attackers = make(map[string]ListRD)
 	return &r
 }
 
@@ -73,9 +74,9 @@ func NewText(r *Report) *TextReport {
 	t.Size = r.Size
 	t.TimeArgs = r.TimeArgs
 	t.Threats = r.Threats
-	t.AttackTypes = r.AttackTypes
-	t.Attackers = r.Attackers
 	t.Attacks = r.Attacks
+	t.Attackers = r.Attackers
+	t.AttackLog = r.AttackLog
 	t.Ads = r.Ads
 	t.Bots = r.Bots
 
@@ -166,7 +167,7 @@ type PrctRD struct {
 }
 
 // Attack data.
-type AttackTypesRD struct {
+type AttacksRD struct {
 	Unk uint `json:"gen"`
 	SQL uint `json:"sql"`
 	CMD uint `json:"cmd"`
@@ -175,7 +176,7 @@ type AttackTypesRD struct {
 	Scn uint `json:"scn"`
 }
 
-func (a *AttackTypesRD) Total() uint {
+func (a *AttacksRD) Total() uint {
 	return a.Unk + a.SQL + a.CMD + a.Dir + a.XSS
 }
 

@@ -20,7 +20,8 @@ minCov[test/test.go]=72
 minCov[threat/ahocorasick.go]=100
 minCov[threat/attacks.go]=100
 minCov[threat/detect.go]=100
-minCov[translate/translate.go]=100
+minCov[translate/slate.go]=100
+minCov[translate/threat.go]=100
 
 # prepare script execution
 root_dir=$(git rev-parse --show-toplevel)

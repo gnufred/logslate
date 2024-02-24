@@ -1,2 +1,2 @@
-{{range $d := .Attacks}}
+{{range $d := .AttackLog}}
 {{$d.Time}}  {{printf "%15s" $d.Ip}}  {{printf "%11s" $d.Type}}  {{$d.Path}}{{if $d.Query}}?{{$d.Query}}{{end}}{{end}}

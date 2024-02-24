@@ -44,6 +44,15 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		return par, ErrNoInputData
 	}
 
+	// Start CPU profiling if argument is set.
+	cpuf, err := prof.StartCpuProfile(a)
+	if err != nil {
+		return par, err
+	}
+	// The defer stop profiling in case the function exit before the profiling
+	// stops when specifically requested.
+	defer prof.StopCpuProfile(a, cpuf)
+
 	// Initialize database
 	d := db.Singleton()
 	if a.Db != "" {
@@ -62,31 +71,13 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Create runtime progress bar
 	bar := createBar()
 
-	// Reporting data starts here.
-	runStartedAt := time.Now()
-
-	// Start CPU profiling if argument is set.
-	cpuf, err := prof.StartCpuProfile(a)
-	if err != nil {
-		return par, err
-	}
-	// The defer stop profiling in case the function exit before the profiling
-	// stops when specifically requested.
-	defer prof.StopCpuProfile(a, cpuf)
-
 	// Initialize parser loop variables.
 	var bytesTotal uint
 	// Initialize the threat log.
 	var tl []translate.ThreatLog
-	// Initialize map length with highest attack type constant.
-	atkTypes := make(map[threat.AttackType]uint, threat.XSS)
-	attackers := make(map[string]uint)
-	attacks := make([]report.AttackRD, 0)
-	ads := make(map[string]uint)
-	bots := make(map[string]uint)
-	// "Zero" values for first/last entry must be, infinitely in the future/past.
-	first, _ := time.Parse("2006-01-02", "9999-01-02")
-	last := time.Time{}
+
+	// Runtime counter start here.
+	runStartedAt := time.Now()
 
 	// Parser loop.
 	for {
@@ -125,7 +116,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			// ignore it. Counting and logging is fine for now.
 		}
 		tl = append(tl, translate.SlateToThreat(sl))
-		z := len(tl) - 1
 
 		if !timeMatch(sl.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
@@ -145,45 +135,24 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		if sl.Time.Before(first) {
-			first = sl.Time
-		}
-		if sl.Time.After(last) {
-			last = sl.Time
-		}
-
-		if tl[z].Attack != threat.Nil {
+		if sl.Attack.Type != threat.Nil {
 			par.Atk++
-
 			debug.Log(debug.VVV, "flagged", sl.Attack.Name+" | "+sl.Path+sl.Query)
-
-			// Report data
-			ip := tl[z].Ip.String()
-			atkTypes[tl[z].Attack]++
-			attackers[ip]++
-			attacks = append(attacks,
-				report.AttackRD{
-					Type:  threat.String(tl[z].Attack),
-					Time:  tl[z].Time.Format("2006-01-02 15:04:05"),
-					Ip:    ip,
-					Path:  tl[z].Path,
-					Query: tl[z].Query,
-				},
-			)
 		}
 
-		if tl[z].Ad != "" {
+		if sl.Ad != "" {
 			par.Ad++
-			ads[tl[z].Ad]++
 		}
 
-		if tl[z].Bot != "" {
+		if sl.Bot != "" {
 			par.Bot++
-			bots[tl[z].Bot]++
 		}
 
 		par.Ok++
 	}
+
+	// Runtime counter stop here.
+	runEndedAt := time.Now()
 
 	// Need to print a return character after the last progress bar terminal update.
 	fmt.Print("\n")
@@ -191,18 +160,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// Print parsed line data.
 	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
 	fmt.Printf("Threats: attack [%d], ad [%d], bots [%d]\n", par.Atk, par.Ad, par.Bot)
-
-	// Stop CPU profiling.
-	prof.StopCpuProfile(a, cpuf)
-
-	// Write memory heap if argument is set.
-	err = prof.MemProfile(a)
-	if err != nil {
-		return par, err
-	}
-
-	// Reporting data stops here.
-	runEndedAt := time.Now()
 
 	// Process report data if requested.
 	if a.ReportPath != "" {
@@ -212,6 +169,9 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			a.ReportLayout,
 		)
 
+		// Parse the ThreatLog.
+		rep.ThreatLog.Parse(tl)
+
 		rep.Runtime.Start = runStartedAt
 		rep.Runtime.End = runEndedAt
 		rep.Size.Byte = bytesTotal
@@ -219,11 +179,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Parsed.Ok = par.Ok
 		rep.Parsed.Skip = par.Skip
 		rep.Parsed.Error = par.Err
-		// "Zero" value for report first/last is "0001-01-01 00:00:00 UTC"
-		if first.Equal(a.EndTime()) || first.Before(a.EndTime()) {
-			rep.Parsed.First = first
+
+		if rep.ThreatLog.First.Equal(a.EndTime()) || rep.ThreatLog.First.Before(a.EndTime()) {
+			rep.Parsed.First = rep.ThreatLog.First
 		}
-		rep.Parsed.Last = last
+		rep.Parsed.Last = rep.ThreatLog.Last
 
 		// If the time entries didn't change, we set them to
 		// what the user specified.
@@ -232,47 +192,62 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.TimeArgs.Start = a.StartTime()
 		rep.TimeArgs.End = a.EndTime()
 
-		rep.Threats.Attacks.Its = par.Atk
-		rep.Threats.Attacks.Prct = report.Prct(par.Atk, par.Ok)
+		// Compile advertising data.
 		rep.Threats.Ads.Its = par.Ad
 		rep.Threats.Ads.Prct = report.Prct(par.Ad, par.Ok)
-		rep.Threats.Bots.Its = par.Bot
-		rep.Threats.Bots.Prct = report.Prct(par.Bot, par.Ok)
 
-		rep.AttackTypes = report.AttackTypesRD{
-			Unk: atkTypes[threat.Unk],
-			SQL: atkTypes[threat.SQL],
-			CMD: atkTypes[threat.CMD],
-			Dir: atkTypes[threat.Dir],
-			XSS: atkTypes[threat.XSS],
-			Scn: atkTypes[threat.Scn],
-		}
-
-		for ip, cnt := range attackers {
-			rep.Attackers[ip] = report.ListRD{
-				Cnt: cnt,
-			}
-		}
-
-		for name, cnt := range ads {
+		for name, cnt := range rep.ThreatLog.Ads {
 			rep.Ads[name] = report.ListRD{
 				Cnt: cnt,
 			}
 		}
 
-		for name, cnt := range bots {
+		// Compile bot data.
+		rep.Threats.Bots.Its = par.Bot
+		rep.Threats.Bots.Prct = report.Prct(par.Bot, par.Ok)
+
+		for name, cnt := range rep.ThreatLog.Bots {
 			rep.Bots[name] = report.ListRD{
 				Cnt: cnt,
 			}
 		}
 
-		sort.Slice(attacks, func(i, j int) bool {
-			return attacks[i].Time < attacks[j].Time
+		// Compile attack data.
+		rep.Threats.Attacks.Its = par.Atk
+		rep.Threats.Attacks.Prct = report.Prct(par.Atk, par.Ok)
+
+		rep.Attacks = report.AttacksRD{
+			Unk: rep.ThreatLog.Attacks[threat.Unk],
+			SQL: rep.ThreatLog.Attacks[threat.SQL],
+			CMD: rep.ThreatLog.Attacks[threat.CMD],
+			Dir: rep.ThreatLog.Attacks[threat.Dir],
+			XSS: rep.ThreatLog.Attacks[threat.XSS],
+			Scn: rep.ThreatLog.Attacks[threat.Scn],
+		}
+
+		for ip, cnt := range rep.ThreatLog.Attackers {
+			rep.Attackers[ip] = report.ListRD{
+				Cnt: cnt,
+			}
+		}
+
+		al := rep.ThreatLog.AttackLog
+		sort.Slice(al, func(i, j int) bool {
+			return al[i].Time < al[j].Time
 		})
-		rep.Attacks = attacks
+		rep.AttackLog = al
 
 		// Print report.
 		rep.Print()
+	}
+
+	// Stop CPU profiling.
+	prof.StopCpuProfile(a, cpuf)
+
+	// Write memory heap if argument is set.
+	err = prof.MemProfile(a)
+	if err != nil {
+		return par, err
 	}
 
 	return par, nil

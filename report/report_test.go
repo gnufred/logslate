@@ -90,7 +90,7 @@ func TestAllPerSecValid(t *testing.T) {
 }
 
 func TestAttackTotal(t *testing.T) {
-	at := AttackTypesRD{1, 1, 1, 1, 1, 1}
+	at := AttacksRD{1, 1, 1, 1, 1, 1}
 	got := at.Total()
 	exp := uint(5)
 	if got != exp {
