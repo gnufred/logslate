@@ -115,7 +115,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			// For now there's a single error that can bubble up and we can safely
 			// ignore it. Counting and logging is fine for now.
 		}
-		tl = append(tl, translate.SlateToThreat(sl))
 
 		if !timeMatch(sl.Time, bool(a.Since() != ""), bool(a.Until() != ""), a.StartTime(), a.EndTime()) {
 			par.Skip++
@@ -147,6 +146,8 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		if sl.Bot != "" {
 			par.Bot++
 		}
+
+		tl = append(tl, translate.SlateToThreat(sl))
 
 		par.Ok++
 	}
