@@ -5,15 +5,12 @@ type AttackType byte
 
 const (
 	Nil AttackType = iota
-	Adv            // Advertising campaign visit.
-	Bot            // An Internet robot.
-	Att            // A malicous attack.
-	Unk            // Attack: Unknown or uncategorized.
-	SQL            // Attack: SQL injection.
-	CMD            // Attack: Command injection.
-	Dir            // Attack: Directory traversal.
-	XSS            // Attack: Cross site scripting.
-	Scn            // Attack: Leak & portal scanning.
+	Unk            // Unknown or uncategorized.
+	SQL            // SQL injection.
+	CMD            // Command injection.
+	Dir            // Directory traversal.
+	XSS            // Cross site scripting.
+	Scn            // Leak & portal scanning.
 )
 
 // Attack pattern structure.
