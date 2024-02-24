@@ -200,8 +200,8 @@ var botPatterns = []string{
 	"algolia crawler",     // https://www.algolia.com/doc/tools/crawler/getting-started/overview/
 	"alumio",              // https://www.alumio.com/
 	"azure-logic-apps",    // https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview
-	"bazaarvoice",         // https://knowledge.bazaarvoice.com/wp-content/conversations/en_US/Collect/DCC.html
 	"barkrowler",          // https://babbar.tech/crawler
+	"bazaarvoice",         // https://knowledge.bazaarvoice.com/wp-content/conversations/en_US/Collect/DCC.html
 	"ccbot",               // https://commoncrawl.org/faq/
 	"celigo",              // https://www.celigo.com/
 	"chatgpt-user",        // https://platform.openai.com/docs/plugins/bot
@@ -217,11 +217,12 @@ var botPatterns = []string{
 	"linespider",          // https://lin.ee/4dwxkth
 	"microsoft data access internet publishing provider dav",
 	"microsoft-webdav-miniredir",
-	"nostocrawlerbot",  // http://my.nosto.com/
-	"paloaltonetworks", // https://www.paloaltonetworks.com/
-	"rytebota",         // https://bot.ryte.com/
-	"scrapy",           // https://scrapy.org
-	"youbot",           // http://www.you.com/
+	"nostocrawlerbot",   // http://my.nosto.com/
+	"openapi-generator", // https://github.com/OpenAPITools/openapi-generator
+	"paloaltonetworks",  // https://www.paloaltonetworks.com/
+	"rytebota",          // https://bot.ryte.com/
+	"scrapy",            // https://scrapy.org
+	"youbot",            // http://www.you.com/
 
 	// !!! Anonymous bots !!! //
 	// Bots for which I couldn't find public documentation, and a public facing service.
