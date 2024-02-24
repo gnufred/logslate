@@ -58,7 +58,7 @@ func TestFalsePositives(t *testing.T) {
 }
 
 func TestAttackTypeString(t *testing.T) {
-	testMatch := func(t *testing.T, in AttackType, exp string) {
+	testMatch := func(t *testing.T, in Attacks, exp string) {
 		got := String(in)
 		if got != exp {
 			t.Errorf("attack type string doesn't match, got %s, exp %s", got, exp)
@@ -66,7 +66,7 @@ func TestAttackTypeString(t *testing.T) {
 	}
 
 	data := []struct {
-		In  AttackType
+		In  Attacks
 		Exp string
 	}{
 		{Nil, ""},

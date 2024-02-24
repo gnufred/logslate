@@ -10,7 +10,7 @@ import (
 type ThreatLog struct {
 	Time   time.Time
 	Ip     net.IP
-	Attack threat.AttackType
+	Attack threat.Attacks
 	Bot    string
 	Ad     string
 	Path   string
