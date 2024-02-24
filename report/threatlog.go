@@ -9,7 +9,7 @@ import (
 
 type AdsEnum map[string]uint
 type BotsEnum map[string]uint
-type AttacksEnum map[threat.AttackType]uint
+type AttacksEnum map[threat.Attacks]uint
 type AttackersEnum map[string]uint
 type AttackLogEnum []AttackLogRD
 

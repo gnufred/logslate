@@ -6,7 +6,7 @@ import (
 
 type result struct {
 	To uint32
-	Ty AttackType
+	Ty Attacks
 }
 
 func TestDetect(t *testing.T) {
