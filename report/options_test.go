@@ -15,7 +15,7 @@ func TestExecOptionsErrors(t *testing.T) {
 	}
 
 	err := error(nil)
-	rep := New("screen", 2, "ads")
+	rep := New("ads")
 	data := NewText(rep)
 	fd := filterData{List: data.Ads}
 
@@ -29,7 +29,7 @@ func TestExecOptionsErrors(t *testing.T) {
 
 func TestAtkrFilterOrder(t *testing.T) {
 	err := error(nil)
-	rep := New("screen", 2, "attackers")
+	rep := New("attackers")
 	rep.Attackers["127.0.0.1"] = ListRD{10}
 	rep.Attackers["127.0.0.2"] = ListRD{100}
 	data := NewText(rep)
@@ -52,7 +52,7 @@ func TestAtkrFilterOrder(t *testing.T) {
 
 func TestAdOrder(t *testing.T) {
 	err := error(nil)
-	rep := New("screen", 2, "ads")
+	rep := New("ads")
 	rep.Ads["goog"] = ListRD{10}
 	rep.Ads["face"] = ListRD{100}
 	data := NewText(rep)
@@ -75,7 +75,7 @@ func TestAdOrder(t *testing.T) {
 
 func TestBotOrder(t *testing.T) {
 	err := error(nil)
-	rep := New("screen", 2, "bots")
+	rep := New("bots")
 	rep.Bots["one"] = ListRD{10}
 	rep.Bots["two"] = ListRD{100}
 	data := NewText(rep)
@@ -115,7 +115,7 @@ func TestAtkrMin(t *testing.T) {
 	}
 
 	err := error(nil)
-	rep := New("screen", 2, "attackers")
+	rep := New("attackers")
 	rep.Attackers["127.0.0.0"] = ListRD{0}
 	rep.Attackers["127.0.0.1"] = ListRD{1}
 	rep.Attackers["127.0.0.2"] = ListRD{5}
@@ -156,7 +156,7 @@ func TestAdMin(t *testing.T) {
 	}
 
 	err := error(nil)
-	rep := New("screen", 2, "ads")
+	rep := New("ads")
 	rep.Ads["goog"] = ListRD{1}
 	rep.Ads["face"] = ListRD{10}
 	rep.Ads["pin"] = ListRD{20}
@@ -197,7 +197,7 @@ func TestBotMin(t *testing.T) {
 	}
 
 	err := error(nil)
-	rep := New("screen", 2, "bots")
+	rep := New("bots")
 	rep.Bots["zero"] = ListRD{1}
 	rep.Bots["one"] = ListRD{10}
 	rep.Bots["two"] = ListRD{20}

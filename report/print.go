@@ -3,14 +3,10 @@ package report
 import (
 	"bytes"
 	_ "embed"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
-	"log"
-	"os"
 	"strings"
-
-	"gitlab.com/gnufred/logslate/args"
 )
 
 //go:embed templates/parsed
@@ -48,62 +44,24 @@ var templateEmbeds = map[string]string{
 	"bots":      botsTemplate,
 }
 
-func (r *Report) Print() {
-	switch r.format {
-	case args.SCREEN:
-		printScreen(r)
-	case args.TEXT:
-		printText(r)
-	case args.JSON:
-		printJson(r)
+var Stringify = func(data any) (string, error) {
+
+	r, ok := data.(Report)
+	if !ok {
+		return "", errors.New("Fatal: error with Report struct data")
 	}
-}
 
-func printJson(r *Report) error {
-	lerr := log.New(os.Stderr, "", 0)
-
-	out, err := json.MarshalIndent(r, "", "  ")
+	tr, err := prepareData(&r)
 	if err != nil {
-		lerr.Println(err)
-		return err
+		return "", fmt.Errorf("layout specification: %w", err)
 	}
-	if err := writeReport(r.path, out); err != nil {
-		lerr.Println(err)
-		return err
-	}
-	return nil
-}
 
-func printText(r *Report) error {
-	lerr := log.New(os.Stderr, "", 0)
-
-	out, err := createTextOutput(r)
+	out, err := createTextOutput(tr)
 	if err != nil {
-		err := fmt.Errorf("report error: %w", err)
-		lerr.Println(err)
-		return err
+		return "", fmt.Errorf("report error: %w", err)
 	}
 
-	err = writeReport(r.path, out.Bytes())
-	if err != nil {
-		lerr.Println(err)
-		return err
-	}
-	return nil
-}
-
-func printScreen(r *Report) error {
-	lerr := log.New(os.Stderr, "", 0)
-
-	out, err := createTextOutput(r)
-	if err != nil {
-		err := fmt.Errorf("report error: %w", err)
-		lerr.Println(err)
-		return err
-	}
-
-	fmt.Print(out.String())
-	return nil
+	return out.String(), nil
 }
 
 func newTemplate() *template.Template {
@@ -117,47 +75,6 @@ func newTemplate() *template.Template {
 	return tmpl
 }
 
-func createTextOutput(r *Report) (bytes.Buffer, error) {
-	var out bytes.Buffer
-
-	data, err := prepareData(r)
-	if err != nil {
-		fmt.Println()
-		err := fmt.Errorf("layout specification: %w", err)
-		return out, err
-	}
-
-	for _, section := range r.layout {
-		templateText, ok := templateEmbeds[section.Name]
-		if !ok {
-			return out, fmt.Errorf("section \"%s\" does not exist", section.Name)
-		}
-
-		tmpl := newTemplate()
-
-		_, err = tmpl.Parse(templateText)
-		if err != nil {
-			err := fmt.Errorf("template parsing: %w", err)
-			return out, err
-		}
-
-		buf := bytes.Buffer{}
-		err = tmpl.Execute(&buf, &data)
-		if err != nil {
-			err := fmt.Errorf("template execution: %w", err)
-			return out, err
-		}
-
-		bytes := buf.Bytes()
-		if len(bytes) > 1 {
-			out.WriteString(header(section.Name))
-			out.Write(bytes)
-		}
-	}
-
-	return out, nil
-}
-
 func header(name string) string {
 	name = strings.ToUpper(name[:1]) + name[1:]
 	return fmt.Sprintf("=== [[ %s ]] ===", name)
@@ -166,7 +83,7 @@ func header(name string) string {
 func prepareData(r *Report) (*TextReport, error) {
 	var err error
 	t := NewText(r)
-	for _, section := range r.layout {
+	for _, section := range r.Layout {
 		switch section.Name {
 		case "attackers":
 			fd := filterData{List: t.Attackers}
@@ -191,6 +108,36 @@ func prepareData(r *Report) (*TextReport, error) {
 	return t, err
 }
 
-func writeReport(path string, out []byte) error {
-	return os.WriteFile(path, out, 0644)
+func createTextOutput(r *TextReport) (bytes.Buffer, error) {
+	var out bytes.Buffer
+
+	for _, section := range r.Layout {
+		templateText, ok := templateEmbeds[section.Name]
+		if !ok {
+			return out, fmt.Errorf("section \"%s\" does not exist", section.Name)
+		}
+
+		tmpl := newTemplate()
+
+		_, err := tmpl.Parse(templateText)
+		if err != nil {
+			err := fmt.Errorf("template parsing: %w", err)
+			return out, err
+		}
+
+		buf := bytes.Buffer{}
+		err = tmpl.Execute(&buf, &r)
+		if err != nil {
+			err := fmt.Errorf("template execution: %w", err)
+			return out, err
+		}
+
+		bytes := buf.Bytes()
+		if len(bytes) > 1 {
+			out.WriteString(header(section.Name))
+			out.Write(bytes)
+		}
+	}
+
+	return out, nil
 }

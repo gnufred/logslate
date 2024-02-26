@@ -12,6 +12,7 @@ import (
 	"gitlab.com/gnufred/logslate/debug"
 	"gitlab.com/gnufred/logslate/log"
 	"gitlab.com/gnufred/logslate/pipe"
+	"gitlab.com/gnufred/logslate/printer"
 	"gitlab.com/gnufred/logslate/prof"
 	"gitlab.com/gnufred/logslate/report"
 	"gitlab.com/gnufred/logslate/threat"
@@ -86,30 +87,50 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Initialize the threat log.
 	outputToThreatLog := false
-	var rtl *log.ReportTL
+	var tlPrinter printer.Printer
 	if a.ThreatPath != "" {
 		outputToThreatLog = true
-		rtl = log.New(
-			a.ThreatPath,
-			a.ThreatFormat,
-		)
-		if a.ThreatPath == "screen" {
-			showProgress = false
+		tlPrinter = printer.Printer{
+			Path:        a.ThreatPath,
+			Format:      a.ThreatFormat,
+			NewLine:     "\n",
+			Stringifier: log.StringifyThreatLog,
 		}
-		defer rtl.CloseFile()
+		if a.ThreatFormat == args.SCREEN {
+			showProgress = false
+		} else {
+			err := tlPrinter.OpenFile()
+			if err != nil {
+				return par, err
+			}
+			defer tlPrinter.CloseFile()
+		}
 	}
 
 	// Initialize reporting.
 	outputToReport := false
 	var rep *report.Report
-	repTL := report.NewThreatLog()
+	var repTL report.ReportTL
+	var repPrinter printer.Printer
 	if a.ReportPath != "" {
 		outputToReport = true
+		repTL = report.NewTL()
 		rep = report.New(
-			a.ReportPath,
-			a.ReportFormat,
 			a.ReportLayout,
 		)
+		repPrinter = printer.Printer{
+			Path:        a.ReportPath,
+			Format:      a.ReportFormat,
+			Stringifier: report.Stringify,
+		}
+
+		if a.ReportFormat != args.SCREEN {
+			err := repPrinter.OpenFile()
+			if err != nil {
+				return par, err
+			}
+			defer repPrinter.CloseFile()
+		}
 	}
 
 	// Runtime counter start here.
@@ -198,8 +219,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			line := log.SlateToThreat(sl)
 
 			if outputToThreatLog {
-				rtl.Entry = line
-				rtl.Print()
+				tlPrinter.Print(line)
 			}
 
 			if outputToReport {
@@ -221,10 +241,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 	// Runtime counter stop here.
 	runEndedAt := time.Now()
-
-	if outputToThreatLog {
-		rtl.CloseFile()
-	}
 
 	if showProgress {
 		// Need to print a return character after the last progress bar terminal update.
@@ -293,8 +309,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		// Print report.
-		rep.Print()
+		repPrinter.Print(*rep)
 	}
 
 	// Stop CPU profiling.

@@ -2,24 +2,19 @@ package report
 
 import (
 	"time"
-
-	"gitlab.com/gnufred/logslate/args"
 )
 
 // Global data set.
 type Report struct {
-	// Report specifications.
-	path   string
-	format args.LogFormat
-	layout []section
+	Layout []section `json:"-"`
 
 	// Report Data (RD).
-	Runtime   RuntimeRD  `json:"runtime"`
-	Parsed    ParsedRD   `json:"parsed"`
-	Size      SizeRD     `json:"size"`
-	TimeArgs  TimeArgsRD `json:"time_args"`
-	Threats   ThreatsRD  `json:"threats"`
-	ThreatLog ThreatLogRD
+	Runtime   RuntimeRD         `json:"runtime"`
+	Parsed    ParsedRD          `json:"parsed"`
+	Size      SizeRD            `json:"size"`
+	TimeArgs  TimeArgsRD        `json:"time_args"`
+	Threats   ThreatsRD         `json:"threats"`
+	ThreatLog ReportTL          `json:"-"`
 	Ads       map[string]ListRD `json:"ads"`
 	Bots      map[string]ListRD `json:"bots"`
 	Attacks   AttacksRD         `json:"attacks"`
@@ -52,27 +47,26 @@ type Count struct {
 	Item string
 }
 
-func New(path string, format args.LogFormat, layout string) *Report {
+func New(layout string) *Report {
 	r := Report{}
-	r.path = path
-	r.format = format
 	if layout == "" {
 		layout = defaultLayout
 	}
-	r.layout = parseLayout(layout)
+	r.Layout = parseLayout(layout)
+
 	r.Ads = make(map[string]ListRD)
 	r.Bots = make(map[string]ListRD)
 	r.Attackers = make(map[string]ListRD)
+
 	// "Zero" values for first/last entry must be, infinitely in the future/past.
 	r.Parsed.First, _ = time.Parse("2006-01-02", "9999-01-02")
+
 	return &r
 }
 
 func NewText(r *Report) *TextReport {
 	t := TextReport{}
-	t.path = r.path
-	t.format = r.format
-	t.layout = r.layout
+	t.Layout = r.Layout
 	t.Runtime = r.Runtime
 	t.Parsed = r.Parsed
 	t.Size = r.Size

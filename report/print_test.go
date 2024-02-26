@@ -1,86 +1,53 @@
 package report
 
 import (
-	"os"
 	"strings"
 	"testing"
 	"time"
 
-	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/test"
 )
 
-func newTestReport(path string, format args.LogFormat) *Report {
-	r := New(path, format, defaultLayout)
-	r.Runtime = RuntimeRD{
-		time.Now(),
-		time.Now().Add(time.Second * 10),
-	}
-	r.Parsed = ParsedRD{5000, 0, 0, time.Time{}, time.Time{}}
-	r.Size.Byte = 50000000
-	return r
+func TestStringifyErrStruct(t *testing.T) {
+	_, err := Stringify("")
+	test.ErrorExpected(t, err, "struct data")
 }
 
-func TestPrint(t *testing.T) {
-	printFrmt(t, "screen")
-	printFrmt(t, "text")
-	printFrmt(t, "json")
+func TestLayoutInvalidOption(t *testing.T) {
+	r := newTestReport("bots:count_invalid")
+	_, err := Stringify(*r)
+	test.ErrorExpected(t, err, "invalid option")
 }
 
-func printFrmt(t *testing.T, frmt string) {
-	var path string
-	var format args.LogFormat
+func TestStringifyErrLayout(t *testing.T) {
+	r := newTestReport("bots:count_invalid")
+	_, err := Stringify(*r)
+	test.ErrorExpected(t, err, "layout specification")
+}
 
-	switch frmt {
-	case "screen":
-		path = "screen"
-		format = args.SCREEN
-	case "text":
-		path = "testreport.txt"
-		format = args.TEXT
-	case "json":
-		path = "testreport.json"
-		format = args.JSON
+func TestStringify(t *testing.T) {
+	r := newTestReport("ads")
+	got, err := Stringify(*r)
+	if err != nil {
+		t.Fatalf("unexpected error %s", err)
 	}
 
-	r := newTestReport(path, format)
-	test.DisableOutput()
-	r.Print()
-	test.EnableOutput()
+	exp := `=== [[ Ads ]] ===
+Pinterest: 10
+`
 
-	if path != "screen" {
-		err := os.Remove(path)
-		if err != nil {
-			t.Error(err)
-		}
+	if got != exp {
+		t.Errorf("stringify miss match, got %s, exp %s", got, exp)
 	}
 }
 
-func TestPrintTest(t *testing.T) {
-	r := New("screen", args.TEXT, "banana!")
-	err := printText(r)
-	test.ErrorExpected(t, err, "report error")
-
-	r = New("/invalid/path/fail/please", args.TEXT, "parsed")
-	err = printText(r)
-	test.ErrorExpected(t, err, "no such file")
-
-	r = New("/invalid/path/fail/please", args.TEXT, "parsed")
-	err = printJson(r)
-	test.ErrorExpected(t, err, "no such file")
-}
-
-func TestCreateTextOutput(t *testing.T) {
-	validTextOutput(t)
-	invalidTextOutput(t)
-}
-
-func validTextOutput(t *testing.T) {
+func TestValidTextOutput(t *testing.T) {
 	testMatch := func(t *testing.T, layout, exp string) {
-		r := New("screen", args.TEXT, layout)
+		r := New(layout)
 		r.Threats.Bots.Its = 100
 		r.Threats.Bots.Prct = 1
-		got, err := createTextOutput(r)
+		tr, _ := prepareData(r)
+		got, err := createTextOutput(tr)
 		if err != nil {
 			t.Error(err)
 		}
@@ -106,14 +73,52 @@ func validTextOutput(t *testing.T) {
 	}
 }
 
-func invalidTextOutput(t *testing.T) {
-	r := New("screen", args.TEXT, "banana!")
-	_, err := createTextOutput(r)
+func TestLayoutDoesNotExist(t *testing.T) {
+	r := New("banana!")
+	tr := NewText(r)
+	_, err := createTextOutput(tr)
 	test.ErrorExpected(t, err, "does not exist")
+}
 
-	r = New("screen", args.TEXT, "bots:banana!_lots!")
-	_, err = createTextOutput(r)
-	test.ErrorExpected(t, err, "layout specification")
+func newTestReport(layout string) *Report {
+	r := New(layout)
+	r.Runtime = RuntimeRD{
+		time.Now(),
+		time.Now().Add(time.Second * 10),
+	}
+	r.Parsed = ParsedRD{5000, 0, 0, time.Time{}, time.Time{}}
+	r.Size.Byte = 50000000
+	r.Ads = map[string]ListRD{
+		"Pinterest": ListRD{Cnt: 10},
+	}
+	r.Bots = map[string]ListRD{
+		"Google": ListRD{Cnt: 100},
+	}
+	r.Attackers = map[string]ListRD{
+		"1.2.3.4": ListRD{Cnt: 1000},
+	}
+	return r
+}
+
+func TestPrepareData(t *testing.T) {
+	r := newTestReport("ads:order_count,bots:order_count,attackers:order_count")
+
+	tr, err := prepareData(r)
+	if err != nil {
+		t.Fatalf("unexpected error %s", err)
+	}
+
+	if tr.Ads["Pinterest"].Cnt != uint(10) {
+		t.Errorf("filtered ads: Pinterest != 10")
+	}
+
+	if tr.Bots["Google"].Cnt != uint(100) {
+		t.Errorf("filtered bots: Google != 100")
+	}
+
+	if tr.Attackers["1.2.3.4"].Cnt != uint(1000) {
+		t.Errorf("filtered attackers: 1.2.3.4 != 1000")
+	}
 }
 
 func TestHeader(t *testing.T) {

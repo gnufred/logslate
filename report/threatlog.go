@@ -10,27 +10,27 @@ type BotsEnum map[string]uint
 type AttacksEnum map[threat.AttackType]uint
 type AttackersEnum map[string]uint
 
-type ThreatLogRD struct {
+type ReportTL struct {
 	Ads       AdsEnum
 	Bots      BotsEnum
 	Attacks   AttacksEnum
 	Attackers AttackersEnum
 }
 
-func NewThreatLog() ThreatLogRD {
-	tl := ThreatLogRD{}
+func NewTL() ReportTL {
+	tl := ReportTL{}
 	tl.init()
 	return tl
 }
 
-func (rd *ThreatLogRD) init() {
+func (rd *ReportTL) init() {
 	rd.Ads = make(AdsEnum)
 	rd.Bots = make(BotsEnum)
 	rd.Attacks = make(AttacksEnum)
 	rd.Attackers = make(AttackersEnum)
 }
 
-func (rd *ThreatLogRD) Parse(t log.ThreatLog) {
+func (rd *ReportTL) Parse(t log.ThreatLog) {
 	if t.IsAd() {
 		rd.Ads[t.Ad]++
 	}

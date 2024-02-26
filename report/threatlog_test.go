@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewThreatLog(t *testing.T) {
-	tl := NewThreatLog()
+	tl := NewTL()
 
 	if len(tl.Ads) != 0 {
 		t.Error("tl.Ads not equal 0")
@@ -29,7 +29,7 @@ func TestParseAds(t *testing.T) {
 	in := "Pinterest"
 	tl := log.ThreatLog{Detection: threat.Detection{Ad: in}}
 
-	tlr := NewThreatLog()
+	tlr := NewTL()
 	tlr.Parse(tl)
 	if tlr.Ads[in] != 1 {
 		t.Error("ad count miss match")
@@ -40,7 +40,7 @@ func TestParseBots(t *testing.T) {
 	in := "Google"
 	tl := log.ThreatLog{Detection: threat.Detection{Bot: in}}
 
-	tlr := NewThreatLog()
+	tlr := NewTL()
 	tlr.Parse(tl)
 	if tlr.Bots[in] != 1 {
 		t.Error("bot count miss match")
@@ -57,7 +57,7 @@ func TestParseAttacks(t *testing.T) {
 		Ip: ip,
 	}
 
-	tlr := NewThreatLog()
+	tlr := NewTL()
 	tlr.Parse(tl)
 	if tlr.Attacks[in] != 1 {
 		t.Error("attack count miss match")
