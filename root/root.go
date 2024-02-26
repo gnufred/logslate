@@ -5,17 +5,16 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sort"
 	"time"
 
 	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/db"
 	"gitlab.com/gnufred/logslate/debug"
+	"gitlab.com/gnufred/logslate/log"
 	"gitlab.com/gnufred/logslate/pipe"
 	"gitlab.com/gnufred/logslate/prof"
 	"gitlab.com/gnufred/logslate/report"
 	"gitlab.com/gnufred/logslate/threat"
-	"gitlab.com/gnufred/logslate/translate"
 
 	progbar "github.com/schollz/progressbar/v3"
 	nginx "gitlab.com/gnufred/nxparse"
@@ -40,6 +39,15 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	pi := pipe.New()
 	par := Parsed{}
 
+	// Initialize progress bar.
+	var bytesTotal uint
+	showProgress := true
+	var bar *progbar.ProgressBar
+
+	if showProgress {
+		fmt.Printf("Logslate %s @ https://gitlab.com/gnufred/logslate\n", a.Version)
+	}
+
 	if !pi.IsPiped() {
 		return par, ErrNoInputData
 	}
@@ -53,9 +61,11 @@ func ParseStdin(a args.Args) (Parsed, error) {
 	// stops when specifically requested.
 	defer prof.StopCpuProfile(a, cpuf)
 
-	// Initialize database
+	// Initialize database.
 	d := db.Singleton()
+	outputToDB := false
 	if a.Db != "" {
+		outputToDB = true
 		err := d.Create(a.Db)
 		if err != nil {
 			return par, err
@@ -68,16 +78,46 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		}(d)
 	}
 
-	// Create runtime progress bar
-	bar := createBar()
+	// Initialize debug output.
+	outputToDebug := false
+	if a.Debug >= int(debug.VVV) {
+		outputToDebug = true
+	}
 
-	// Initialize parser loop variables.
-	var bytesTotal uint
 	// Initialize the threat log.
-	var tl []translate.ThreatLog
+	outputToThreatLog := false
+	var rtl *log.ReportTL
+	if a.ThreatPath != "" {
+		outputToThreatLog = true
+		rtl = log.New(
+			a.ThreatPath,
+			a.ThreatFormat,
+		)
+		if a.ThreatPath == "screen" {
+			showProgress = false
+		}
+		defer rtl.CloseFile()
+	}
+
+	// Initialize reporting.
+	outputToReport := false
+	var rep *report.Report
+	repTL := report.NewThreatLog()
+	if a.ReportPath != "" {
+		outputToReport = true
+		rep = report.New(
+			a.ReportPath,
+			a.ReportFormat,
+			a.ReportLayout,
+		)
+	}
 
 	// Runtime counter start here.
 	runStartedAt := time.Now()
+
+	if showProgress {
+		bar = createBar()
+	}
 
 	// Parser loop.
 	for {
@@ -87,7 +127,9 @@ func ParseStdin(a args.Args) (Parsed, error) {
 
 		line, byteCnt, err := pi.ReadLine()
 		bytesTotal = bytesTotal + uint(byteCnt)
-		bar.Add(byteCnt)
+		if showProgress {
+			bar.Add(byteCnt)
+		}
 
 		if err == io.EOF {
 			break
@@ -96,6 +138,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		if err != nil {
 			return par, fmt.Errorf("%s: %w", ErrReadPipe, err)
 		}
+
 		if line == "" {
 			par.Err++
 			continue
@@ -108,7 +151,7 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			continue
 		}
 
-		sl, err := translate.NginxToSlate(nx)
+		sl, err := log.NginxToSlate(nx)
 		if err != nil {
 			par.Err++
 			debug.Log(debug.VVV, "translateError", err)
@@ -121,7 +164,24 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			continue
 		}
 
-		if a.Db != "" {
+		if sl.IsAttack() {
+			par.Atk++
+			debug.Log(debug.VVV, "flagged", sl.Attack.Name+" | "+sl.Path+sl.Query)
+		}
+
+		if sl.IsAd() {
+			par.Ad++
+		}
+
+		if sl.IsBot() {
+			par.Bot++
+		}
+
+		par.Ok++
+
+		// === OUTPUT SECTION == //
+
+		if outputToDB {
 			err = d.Insert(sl)
 			if err != nil {
 				return par, err
@@ -134,44 +194,50 @@ func ParseStdin(a args.Args) (Parsed, error) {
 			}
 		}
 
-		if sl.Attack.Type != threat.Nil {
-			par.Atk++
-			debug.Log(debug.VVV, "flagged", sl.Attack.Name+" | "+sl.Path+sl.Query)
+		if sl.IsThreat() {
+			line := log.SlateToThreat(sl)
+
+			if outputToThreatLog {
+				rtl.Entry = line
+				rtl.Print()
+			}
+
+			if outputToReport {
+				repTL.Parse(line)
+			}
+
+			if outputToDebug {
+				if sl.IsAttack() {
+					par.Atk++
+					debug.Log(debug.VVV, "flagged", line.Path+" "+line.Query)
+				}
+			}
 		}
 
-		if sl.Ad != "" {
-			par.Ad++
+		if outputToReport {
+			rep.Parsed.ParseFirstLast(sl.Time)
 		}
-
-		if sl.Bot != "" {
-			par.Bot++
-		}
-
-		tl = append(tl, translate.SlateToThreat(sl))
-
-		par.Ok++
 	}
 
 	// Runtime counter stop here.
 	runEndedAt := time.Now()
 
-	// Need to print a return character after the last progress bar terminal update.
-	fmt.Print("\n")
+	if outputToThreatLog {
+		rtl.CloseFile()
+	}
 
-	// Print parsed line data.
-	fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
-	fmt.Printf("Threats: attack [%d], ad [%d], bots [%d]\n", par.Atk, par.Ad, par.Bot)
+	if showProgress {
+		// Need to print a return character after the last progress bar terminal update.
+		fmt.Print("\n")
+
+		// Print parsed line data.
+		fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
+		fmt.Printf("Threats: attack [%d], ad [%d], bots [%d]\n", par.Atk, par.Ad, par.Bot)
+	}
 
 	// Process report data if requested.
-	if a.ReportPath != "" {
-		rep := report.New(
-			a.ReportPath,
-			a.ReportFormat,
-			a.ReportLayout,
-		)
-
-		// Parse the ThreatLog.
-		rep.ThreatLog.Parse(tl)
+	if outputToReport {
+		rep.ThreatLog = repTL
 
 		rep.Runtime.Start = runStartedAt
 		rep.Runtime.End = runEndedAt
@@ -180,11 +246,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Parsed.Ok = par.Ok
 		rep.Parsed.Skip = par.Skip
 		rep.Parsed.Error = par.Err
-
-		if rep.ThreatLog.First.Equal(a.EndTime()) || rep.ThreatLog.First.Before(a.EndTime()) {
-			rep.Parsed.First = rep.ThreatLog.First
-		}
-		rep.Parsed.Last = rep.ThreatLog.Last
 
 		// If the time entries didn't change, we set them to
 		// what the user specified.
@@ -218,12 +279,12 @@ func ParseStdin(a args.Args) (Parsed, error) {
 		rep.Threats.Attacks.Prct = report.Prct(par.Atk, par.Ok)
 
 		rep.Attacks = report.AttacksRD{
-			Unk: rep.ThreatLog.Attacks[threat.Unk],
+			UNK: rep.ThreatLog.Attacks[threat.UNK],
 			SQL: rep.ThreatLog.Attacks[threat.SQL],
 			CMD: rep.ThreatLog.Attacks[threat.CMD],
-			Dir: rep.ThreatLog.Attacks[threat.Dir],
+			DIR: rep.ThreatLog.Attacks[threat.DIR],
 			XSS: rep.ThreatLog.Attacks[threat.XSS],
-			Scn: rep.ThreatLog.Attacks[threat.Scn],
+			SCN: rep.ThreatLog.Attacks[threat.SCN],
 		}
 
 		for ip, cnt := range rep.ThreatLog.Attackers {
@@ -231,12 +292,6 @@ func ParseStdin(a args.Args) (Parsed, error) {
 				Cnt: cnt,
 			}
 		}
-
-		al := rep.ThreatLog.AttackLog
-		sort.Slice(al, func(i, j int) bool {
-			return al[i].Time < al[j].Time
-		})
-		rep.AttackLog = al
 
 		// Print report.
 		rep.Print()
@@ -262,9 +317,6 @@ func createBar() *progbar.ProgressBar {
 		progbar.OptionSetWidth(10),
 		progbar.OptionThrottle(166*time.Millisecond),
 		progbar.OptionShowCount(),
-		progbar.OptionOnCompletion(func() {
-			fmt.Fprint(os.Stdout, "\n")
-		}),
 		progbar.OptionSpinnerType(14),
 		progbar.OptionSetRenderBlankState(true),
 	)

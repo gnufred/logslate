@@ -109,7 +109,7 @@ func BenchmarkDumpScanLeft(b *testing.B) {
 		for _, e := range ext {
 			dump = append(dump, ptrn{
 				Name:  f + "." + e,
-				Type:  Scn,
+				Type:  SCN,
 				Score: 5,
 			})
 		}
@@ -127,14 +127,14 @@ func BenchmarkDumpScanStandard(b *testing.B) {
 	for _, f := range file {
 		dump = append(dump, ptrn{
 			Name:  f,
-			Type:  Scn,
+			Type:  SCN,
 			Score: 3,
 		})
 	}
 	for _, f := range ext {
 		dump = append(dump, ptrn{
 			Name:  f,
-			Type:  Scn,
+			Type:  SCN,
 			Score: 3,
 		})
 	}

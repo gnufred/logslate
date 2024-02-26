@@ -4,13 +4,13 @@ import "fmt"
 
 const (
 	// Attack types.
-	Unk = byte(iota + 1)
+	UNK = byte(iota + 1)
 	SQL
 	CMD
-	Dir
+	DIR
 	XSS
 )
 
 func main() {
-	fmt.Println(Unk, SQL, CMD, Dir, XSS)
+	fmt.Println(UNK, SQL, CMD, DIR, XSS)
 }

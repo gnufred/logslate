@@ -81,6 +81,12 @@ and `--log_format`
 --log_format '$remote_addr - $remote_user [$time_iso8601] "$request" $status $bytes_sent "$http_referer" "$http_user_agent"'
 ```
 
+## Threats log
+
+It's possible to generate a threat log with the `--threats` argument. The possible values are `screen`, `file.txt`, or `file.json`.
+
+For each parsed NGINX access.log line, if a threat is detected, it will be logged to the selected output.
+
 ## Using time stamps
 
 You can use the `--since` and `--until` arguments to parse only the wanted lines. You can use any time format that's listed in [araddon/dateparse](https://github.com/araddon/dateparse#extended-example) or [systemd.time](https://www.man7.org/linux/man-pages/man7/systemd.time.7.html) format.

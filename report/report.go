@@ -2,13 +2,15 @@ package report
 
 import (
 	"time"
+
+	"gitlab.com/gnufred/logslate/args"
 )
 
 // Global data set.
 type Report struct {
 	// Report specifications.
 	path   string
-	format string
+	format args.LogFormat
 	layout []section
 
 	// Report Data (RD).
@@ -50,7 +52,7 @@ type Count struct {
 	Item string
 }
 
-func New(path, format, layout string) *Report {
+func New(path string, format args.LogFormat, layout string) *Report {
 	r := Report{}
 	r.path = path
 	r.format = format
@@ -61,6 +63,8 @@ func New(path, format, layout string) *Report {
 	r.Ads = make(map[string]ListRD)
 	r.Bots = make(map[string]ListRD)
 	r.Attackers = make(map[string]ListRD)
+	// "Zero" values for first/last entry must be, infinitely in the future/past.
+	r.Parsed.First, _ = time.Parse("2006-01-02", "9999-01-02")
 	return &r
 }
 
@@ -132,8 +136,17 @@ type ParsedRD struct {
 	Last  time.Time `json:"last"`
 }
 
-func (l *ParsedRD) Total() uint {
-	return l.Ok + l.Skip + l.Error
+func (p *ParsedRD) Total() uint {
+	return p.Ok + p.Skip + p.Error
+}
+
+func (p *ParsedRD) ParseFirstLast(t time.Time) {
+	if t.Before(p.First) {
+		p.First = t
+	}
+	if t.After(p.Last) {
+		p.Last = t
+	}
 }
 
 // Size data.
@@ -168,16 +181,16 @@ type PrctRD struct {
 
 // Attack data.
 type AttacksRD struct {
-	Unk uint `json:"gen"`
+	UNK uint `json:"gen"`
 	SQL uint `json:"sql"`
 	CMD uint `json:"cmd"`
-	Dir uint `json:"dir"`
+	DIR uint `json:"dir"`
 	XSS uint `json:"xss"`
-	Scn uint `json:"scn"`
+	SCN uint `json:"scn"`
 }
 
 func (a *AttacksRD) Total() uint {
-	return a.Unk + a.SQL + a.CMD + a.Dir + a.XSS
+	return a.UNK + a.SQL + a.CMD + a.DIR + a.XSS
 }
 
 // Generic list with count.

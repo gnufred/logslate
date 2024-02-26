@@ -3,16 +3,16 @@ package threat
 import "testing"
 
 var testPatterns = []ptrn{
-	{Name: "x", Type: Unk, Score: 1},
-	{Name: "xy", Type: Unk, Score: 2},
-	{Name: "xyz", Type: Unk, Score: 3},
+	{Name: "x", Type: UNK, Score: 1},
+	{Name: "xy", Type: UNK, Score: 2},
+	{Name: "xyz", Type: UNK, Score: 3},
 
-	{Name: "\x99()", Type: Unk, Score: 255},
+	{Name: "\x99()", Type: UNK, Score: 255},
 	{Name: "'SLEEP(0)", Type: SQL, Score: 255},
 	{Name: "socket.hitmycommandcenter", Type: CMD, Score: 255},
-	{Name: "../etc/passwd", Type: Dir, Score: 255},
+	{Name: "../etc/passwd", Type: DIR, Score: 255},
 	{Name: "<script>", Type: XSS, Score: 255},
-	{Name: "/dump.sql", Type: Scn, Score: 255},
+	{Name: "/dump.sql", Type: SCN, Score: 255},
 }
 
 // TestFalsePositives tests squashed false positives after 2023-07-06. This will avoid
@@ -58,7 +58,7 @@ func TestFalsePositives(t *testing.T) {
 }
 
 func TestAttackTypeString(t *testing.T) {
-	testMatch := func(t *testing.T, in Attacks, exp string) {
+	testMatch := func(t *testing.T, in AttackType, exp string) {
 		got := String(in)
 		if got != exp {
 			t.Errorf("attack type string doesn't match, got %s, exp %s", got, exp)
@@ -66,16 +66,16 @@ func TestAttackTypeString(t *testing.T) {
 	}
 
 	data := []struct {
-		In  Attacks
+		In  AttackType
 		Exp string
 	}{
-		{Nil, ""},
-		{Unk, "unknown"},
-		{SQL, "sql_inject"},
-		{CMD, "cmd_inject"},
-		{Dir, "dir_travers"},
+		{NIL, ""},
+		{UNK, "???"},
+		{SQL, "sql"},
+		{CMD, "cmd"},
+		{DIR, "dir"},
 		{XSS, "xss"},
-		{Scn, "scan"},
+		{SCN, "scn"},
 	}
 
 	for _, d := range data {

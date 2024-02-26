@@ -16,7 +16,6 @@ import (
 var Version = "dev"
 
 func main() {
-	Banner()
 	err := Init()
 	if err != nil {
 		status := Exit(err)
@@ -43,12 +42,9 @@ func Init() error {
 	return nil
 }
 
-func Banner() {
-	fmt.Printf("Logslate %s @ https://gitlab.com/gnufred/logslate\n", Version)
-}
-
 func Run() error {
 	a := args.Get()
+	a.Version = Version
 	debug.Log(debug.VV, "start time", a.StartTime())
 	debug.Log(debug.VV, "end time", a.EndTime())
 
