@@ -12,24 +12,12 @@ upload_package() {
 	echo ""
 }
 
-echo "Compressing Linux package."
-tar \
-	-C .bin \
-	-czf ".bin/${LINUX_AMD64_BINARY}.tar.gz" \
-	"${LINUX_AMD64_BINARY}"
-
 echo "Uploading Linux package."
 upload_package \
-	".bin/${LINUX_AMD64_BINARY}.tar.gz" \
-	"${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}.tar.gz"
-
-echo "Compressing MacOS package."
-tar \
-	-C .bin \
-	-czf ".bin/${DARWIN_AMD64_BINARY}.tar.gz" \
-	"${DARWIN_AMD64_BINARY}"
+	".bin/${LINUX_AMD64_BINARY}.${ARCHIVE_EXT}" \
+	"${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}.${ARCHIVE_EXT}"
 
 echo "Uploading MacOS package."
 upload_package \
-	".bin/${DARWIN_AMD64_BINARY}.tar.gz" \
-	"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}.tar.gz"
+	".bin/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}" \
+	"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}"

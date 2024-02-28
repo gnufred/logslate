@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "Installing xz-utils"
+apt-get update -y && \
+apt-get install -y xz-utils
+
+echo "Compressing Linux package."
+tar \
+	-C .bin \
+	-cJf ".bin/${LINUX_AMD64_BINARY}.${ARCHIVE_EXT}" \
+	"${LINUX_AMD64_BINARY}"
+
+echo "Compressing MacOS package."
+tar \
+	-C .bin \
+	-cJf ".bin/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}" \
+	"${DARWIN_AMD64_BINARY}"

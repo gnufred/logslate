@@ -7,7 +7,7 @@ echo "class ${BREW_BIN^} < Formula
 
   on_linux do
     sha256 '${BREW_SHA256_PACKAGE_LINUX}'
-    url '${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}.tar.gz'
+    url '${PACKAGE_REGISTRY_CURRENT}/${LINUX_AMD64_BINARY}.${ARCHIVE_EXT}'
     def install
       bin.install '${LINUX_AMD64_BINARY}' => '${BREW_BIN}'
     end
@@ -15,7 +15,7 @@ echo "class ${BREW_BIN^} < Formula
 
   on_macos do
     sha256 '${BREW_SHA256_PACKAGE_DARWIN}'
-    url '${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}.tar.gz'
+    url '${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}'
     def install
       bin.install '${DARWIN_AMD64_BINARY}' => '${BREW_BIN}'
     end
