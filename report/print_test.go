@@ -89,13 +89,13 @@ func newTestReport(layout string) *Report {
 	r.Parsed = ParsedRD{5000, 0, 0, time.Time{}, time.Time{}}
 	r.Size.Byte = 50000000
 	r.Ads = map[string]ListRD{
-		"Pinterest": ListRD{Cnt: 10},
+		"Pinterest": {Cnt: 10},
 	}
 	r.Bots = map[string]ListRD{
-		"Google": ListRD{Cnt: 100},
+		"Google": {Cnt: 100},
 	}
 	r.Attackers = map[string]ListRD{
-		"1.2.3.4": ListRD{Cnt: 1000},
+		"1.2.3.4": {Cnt: 1000},
 	}
 	return r
 }

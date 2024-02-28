@@ -18,7 +18,7 @@ type AB struct {
 var StringifyAB = func(data any) (string, error) {
 	d, ok := data.(AB)
 	if !ok {
-		return "", errors.New("Fatal: error with AB struct data")
+		return "", errors.New("invalid AB struct data")
 	}
 	s := "a: " + d.A + ", b: " + strconv.Itoa(d.B)
 	return s, nil
@@ -142,7 +142,7 @@ func TestPrintStringifyFail(t *testing.T) {
 	}
 
 	ab := struct{ Fail bool }{true}
-	exp := "error with AB"
+	exp := "struct data"
 
 	err := p.Print(ab)
 	test.ErrorExpected(t, err, exp)

@@ -5,7 +5,7 @@ import "errors"
 var StringifyThreatLog = func(data any) (string, error) {
 	t, ok := data.(ThreatLog)
 	if !ok {
-		return "", errors.New("Fatal: error with ThreatLog struct data")
+		return "", errors.New("invalid ThreatLog struct data")
 	}
 
 	var s string

@@ -48,7 +48,7 @@ var Stringify = func(data any) (string, error) {
 
 	r, ok := data.(Report)
 	if !ok {
-		return "", errors.New("Fatal: error with Report struct data")
+		return "", errors.New("invalid Report struct data")
 	}
 
 	tr, err := prepareData(&r)
