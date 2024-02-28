@@ -32,7 +32,21 @@ func TestStringify(t *testing.T) {
 		t.Fatalf("unexpected error %s", err)
 	}
 
-	exp := `"0001-01-01 00:00:00 +0000 UTC" 1.2.3.4 bot:Detectify adv:threatscan att: /?'PG_SLEEP(100);
+	exp := `1.2.3.4 - [0001-01-01 00:00:00] "BOT Detectify" "ADV threatscan" "ATT: /?'PG_SLEEP(100);"
+`
+	if got != exp {
+		t.Errorf("stringify miss match, got %s, exp %s", got, exp)
+	}
+
+	tl.Ad = "email"
+	tl.Bot = ""
+	tl.Attack = nil
+	got, err = StringifyThreatLog(tl)
+	if err != nil {
+		t.Fatalf("unexpected error %s", err)
+	}
+
+	exp = `redacted - [0001-01-01 00:00:00] "ADV email"
 `
 	if got != exp {
 		t.Errorf("stringify miss match, got %s, exp %s", got, exp)

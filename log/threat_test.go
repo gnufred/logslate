@@ -111,8 +111,7 @@ func TestSTTad(t *testing.T) {
 	if tl.Time != sl.Time {
 		t.Errorf("time miss match, got %s, exp %s", tl.Time, sl.Time)
 	}
-	nilIp := net.IP{}
-	if tl.Ip.String() != nilIp.String() {
+	if tl.Ip.String() != sl.Ip.String() {
 		t.Errorf("ip miss match, got %s, exp %s", tl.Ip.String(), sl.Ip.String())
 	}
 	if tl.Attack != sl.Attack {

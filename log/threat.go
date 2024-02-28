@@ -18,6 +18,7 @@ type ThreatLog struct {
 func SlateToThreat(sl SlateLog) ThreatLog {
 	tl := ThreatLog{
 		Time: sl.Time,
+		Ip:   sl.Ip,
 	}
 
 	if sl.IsAd() && !sl.IsAttack() {
@@ -34,13 +35,5 @@ func SlateToThreat(sl SlateLog) ThreatLog {
 		tl.Query = sl.Query
 	}
 
-	if !anonymizeIp(sl) {
-		tl.Ip = sl.Ip
-	}
-
 	return tl
-}
-
-func anonymizeIp(sl SlateLog) bool {
-	return sl.IsAd()
 }

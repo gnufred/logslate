@@ -8,26 +8,26 @@ var StringifyThreatLog = func(data any) (string, error) {
 		return "", errors.New("invalid ThreatLog struct data")
 	}
 
-	var s string
-	sep := " "
-	q := "\""
+	s := ""
 
-	s = s + q + t.Time.String() + q
-
-	if t.Ip != nil {
-		s = s + sep + t.Ip.String()
+	if !t.IsBot() && !t.IsAttack() && t.IsAd() {
+		s = s + "redacted -"
+	} else {
+		s = s + t.Ip.String() + " -"
 	}
 
+	s = s + " [" + t.Time.Format("2006-01-02 15:04:05") + "]"
+
 	if t.IsBot() {
-		s = s + sep + "bot:" + t.Bot
+		s = s + " \"" + "BOT " + t.Bot + "\""
 	}
 
 	if t.IsAd() {
-		s = s + sep + "adv:" + t.Ad
+		s = s + " \"" + "ADV " + t.Ad + "\""
 	}
 
 	if t.IsAttack() {
-		s = s + sep + "att:" + t.Attack.Name + sep + url(t.Path, t.Query)
+		s = s + " \"" + "ATT:" + t.Attack.Name + " " + url(t.Path, t.Query) + "\""
 	}
 
 	s = s + "\n"
