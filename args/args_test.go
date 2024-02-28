@@ -9,70 +9,56 @@ import (
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
-func TestValidate(t *testing.T) {
+func TestValidateHelp(t *testing.T) {
 	test.DisableOutput()
-	validateHelp(t)
-	invalidDebugArg(t)
-	invalidThreatPath(t)
-	invalidReportPath(t)
-	invalidNargs(t)
-	invalidLayout(t)
-	customReportWithJsonFormat(t)
-	test.EnableOutput()
-}
-
-func validateHelp(t *testing.T) {
 	narg := 0
 	args.Help = true
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
 	args.Help = false
+	test.EnableOutput()
 }
 
-func invalidDebugArg(t *testing.T) {
+func TestInvalidDebugArg(t *testing.T) {
+	test.DisableOutput()
 	narg := 0
+	args.Subcmd = PARSE
 	args.Debug = 999
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
 	args.Debug = 0
+	test.EnableOutput()
 }
 
-func invalidThreatPath(t *testing.T) {
-	narg := 0
-	args.ThreatPath = "report.invalid"
+func TestInvalidNargs(t *testing.T) {
+	test.DisableOutput()
+	narg := 2
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
-	args.ThreatPath = ""
+	test.EnableOutput()
 }
 
-func invalidReportPath(t *testing.T) {
-	narg := 0
-	args.ReportPath = "report.invalid"
-	err := validate(narg)
-	test.ErrorExpected(t, err, "help shown")
-	args.ReportPath = ""
-}
-
-func invalidNargs(t *testing.T) {
+func TestInvalidLayout(t *testing.T) {
+	test.DisableOutput()
 	narg := 1
-	err := validate(narg)
-	test.ErrorExpected(t, err, "help shown")
-}
-
-func invalidLayout(t *testing.T) {
-	narg := 0
+	args.Subcmd = PARSE
 	args.ReportLayout = "banana!"
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
+	test.EnableOutput()
 }
 
-func customReportWithJsonFormat(t *testing.T) {
+func TestCustomReportWithJsonFormat(t *testing.T) {
+	test.DisableOutput()
+	nargs := 0
+	args.Subcmd = PARSE
 	args.ReportPath = "report.json"
 	args.ReportFormat = JSON
 	args.ReportLayout = "parsed"
-	validate(0)
+	validate(nargs)
 	args.ReportPath = ""
 	args.ReportLayout = ""
+	test.EnableOutput()
 }
 
 func TestDefaultArgs(t *testing.T) {
@@ -156,5 +142,27 @@ func TestParseLogFormat(t *testing.T) {
 	frmt = parseLogFormat("/user/run/1000/example.com/report.log")
 	if frmt != TEXT {
 		t.Errorf("unexpected format %d", frmt)
+	}
+}
+
+func TestParseSubcmd(t *testing.T) {
+	testMatch := func(t *testing.T, in string, exp SubCmd) {
+		got := parseSubCmd(in)
+		if got != exp {
+			t.Errorf("sub command miss match, got %d, exp %d", got, exp)
+		}
+	}
+
+	data := []struct {
+		In  string
+		Exp SubCmd
+	}{
+		{"", PARSE},
+		{"parse", PARSE},
+		{"invalid", NILSUB},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
 	}
 }

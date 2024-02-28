@@ -4,4 +4,4 @@ root_dir=$(git rev-parse --show-toplevel)
 cd $root_dir
 
 go clean -testcache
-TZ=Etc/UTC go test "$@" ./... | grep -v '\[no test files\]'
+TZ=Etc/UTC go test "$@" ./...

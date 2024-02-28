@@ -12,15 +12,23 @@ import (
 	nginx "gitlab.com/gnufred/nxparse"
 )
 
+type SubCmd byte
 type LogFormat byte
 
 const (
-	SCREEN LogFormat = 1
-	TEXT   LogFormat = 2
-	JSON   LogFormat = 3
+	NILSUB SubCmd = iota
+	PARSE
+
+	SCREEN LogFormat = iota
+	TEXT
+	JSON
 )
 
 type Args struct {
+	// Subcommand.
+	Subcmd SubCmd
+
+	// Global arguments.
 	Version string
 	Help    bool
 	Debug   int
@@ -70,7 +78,11 @@ func Get() Args {
 	return args
 }
 
-func Help() {
+func Help(err string) {
+	if err != "" {
+		fmt.Fprint(os.Stderr, "\nError: "+err+".\n\n")
+	}
+
 	usage := `
 PARSING
   -f, --log_format
@@ -108,61 +120,38 @@ MORE
 }
 
 func validate(narg int) error {
-	showHelp := func() error {
-		Help()
+	// Show help function.
+	showHelp := func(err string) error {
+		Help(err)
 		return ErrHelpShown
 	}
 
-	// User asked for help.
-	if args.Help {
-		return showHelp()
+	// Return true if invalid.
+	cHelp := func(a Args) bool { return args.Help }
+	cManySubC := func(a Args) bool { return narg > 1 }
+	cSubC := func(a Args) bool { return args.Subcmd == NILSUB }
+	cDebug := func(a Args) bool { return a.Debug < 0 || a.Debug > 3 }
+	cLayout := func(a Args) bool {
+		match, _ := regexp.MatchString("[^a-z0-9:,\\_]", a.ReportLayout)
+		return match
+	}
+	cReportFormat := func(a Args) bool { return a.ReportFormat == JSON && a.ReportLayout != "" }
+
+	checks := []struct {
+		F func(a Args) bool
+		E string
+	}{
+		{cHelp, ""},
+		{cManySubC, "multiple sub commands"},
+		{cSubC, "invalid sub command"},
+		{cDebug, "debug args must be -v or --debug=[1,3]"},
+		{cLayout, "invalid characters in layout format"},
+		{cReportFormat, "report layout is only available for screen and text reports"},
 	}
 
-	// --debug argument is invalid.
-	if args.Debug < 0 || args.Debug > 3 {
-		fmt.Printf("\nError: debug args must be -v or --debug=[1,3].\n\n")
-		return showHelp()
-	}
-
-	// --layout contains only valid characters.
-	regex := "[^a-z0-9:,\\_]"
-	match, _ := regexp.MatchString(regex, args.ReportLayout)
-	if match {
-		fmt.Printf("\nError: invalid characters in layout format.\n\n")
-		return showHelp()
-	}
-
-	// --layout is not used with JSON format reports.
-	if args.ReportFormat == JSON && args.ReportLayout != "" {
-		fmt.Printf("\nError: report layout is only available for screen and text reports.\n\n")
-		return showHelp()
-	}
-
-	// There are extra unknown arguments or params.
-	if narg != 0 {
-		fmt.Printf("\nError: unknown argument(s) found\n\n")
-		return showHelp()
-	}
-
-	// ThreatLog format is invalid.
-	if args.ThreatPath != "" {
-		if f := args.ThreatFormat; f != SCREEN && f != JSON && f != TEXT {
-			fmt.Printf(
-				"\nError: '%s' invalid for --threat.\nMust be 'screen' or end with '.txt', '.text', or '.json'.\n\n",
-				args.ThreatPath,
-			)
-			return showHelp()
-		}
-	}
-
-	// Report format is invalid.
-	if args.ReportPath != "" {
-		if f := args.ReportFormat; f != SCREEN && f != JSON && f != TEXT {
-			fmt.Printf(
-				"\nError: '%s' invalid for --format.\nMust be 'screen' or end with '.txt', '.text', or '.json'.\n\n",
-				args.ReportPath,
-			)
-			return showHelp()
+	for _, c := range checks {
+		if invalid := c.F(args); invalid {
+			return showHelp(c.E)
 		}
 	}
 
@@ -222,6 +211,9 @@ func parse() error {
 	args = Args{}
 	pflag.Parse()
 
+	// Get subcommand
+	args.Subcmd = parseSubCmd(flags.Arg(0))
+
 	args.Help = bool(*helpFlag)
 
 	debugCnt, _ := flags.GetCount("debug")
@@ -258,4 +250,15 @@ func parseLogFormat(path string) LogFormat {
 		return JSON
 	}
 	return TEXT
+}
+
+func parseSubCmd(s string) SubCmd {
+	switch s {
+	case "":
+		return PARSE
+	case "parse":
+		return PARSE
+	default:
+		return NILSUB
+	}
 }

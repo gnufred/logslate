@@ -199,7 +199,7 @@ func TestTimeArgs(t *testing.T) {
 func TestReport(t *testing.T) {
 	a := args.Get()
 	a.ReportPath = "testdata/report.txt"
-	a.ReportFormat = 2
+	a.ReportFormat = args.TEXT
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
@@ -217,7 +217,7 @@ func TestReport(t *testing.T) {
 func TestThreatsScreen(t *testing.T) {
 	a := args.Get()
 	a.ThreatPath = "screen"
-	a.ThreatFormat = 1
+	a.ThreatFormat = args.SCREEN
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
@@ -229,7 +229,7 @@ func TestThreatsScreen(t *testing.T) {
 func TestThreatsText(t *testing.T) {
 	a := args.Get()
 	a.ThreatPath = "testdata/threat.text"
-	a.ThreatFormat = 2
+	a.ThreatFormat = args.TEXT
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
@@ -248,7 +248,7 @@ func TestThreatsDebug(t *testing.T) {
 	a := args.Get()
 	a.Debug = 3
 	a.ThreatPath = "screen"
-	a.ThreatFormat = 1
+	a.ThreatFormat = args.SCREEN
 	a.LogFrmt = nginx.Combined
 	testInputDataLoop(t, a,
 		[]testData{
