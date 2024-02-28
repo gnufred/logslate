@@ -40,21 +40,17 @@ func invalidDebugArg(t *testing.T) {
 func invalidThreatPath(t *testing.T) {
 	narg := 0
 	args.ThreatPath = "report.invalid"
-	args.ThreatFormat = NILFMT
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
 	args.ThreatPath = ""
-	args.ThreatFormat = NILFMT
 }
 
 func invalidReportPath(t *testing.T) {
 	narg := 0
 	args.ReportPath = "report.invalid"
-	args.ReportFormat = NILFMT
 	err := validate(narg)
 	test.ErrorExpected(t, err, "help shown")
 	args.ReportPath = ""
-	args.ReportFormat = NILFMT
 }
 
 func invalidNargs(t *testing.T) {
@@ -76,7 +72,6 @@ func customReportWithJsonFormat(t *testing.T) {
 	args.ReportLayout = "parsed"
 	validate(0)
 	args.ReportPath = ""
-	args.ReportFormat = NILFMT
 	args.ReportLayout = ""
 }
 
@@ -127,15 +122,15 @@ func TestDefaultArgs(t *testing.T) {
 	if args.ThreatPath != "" {
 		t.Error("ThreatPath is not an empty string")
 	}
-	if args.ThreatFormat != NILFMT {
-		t.Error("ThreatFormat is not NILFMT")
+	if args.ThreatFormat != TEXT {
+		t.Error("ThreatFormat is not TEXT")
 	}
 
 	if args.ReportPath != "" {
 		t.Error("ReportPath is not an empty string")
 	}
-	if args.ReportFormat != NILFMT {
-		t.Error("ReportFormat is not NILFMT")
+	if args.ReportFormat != TEXT {
+		t.Error("ReportFormat is not SCREEN")
 	}
 	if args.ReportLayout != "" {
 		t.Error("ReportLayout is not an empty string")
@@ -158,13 +153,8 @@ func TestParseLogFormat(t *testing.T) {
 	if frmt != TEXT {
 		t.Errorf("unexpected format %d", frmt)
 	}
-	frmt = parseLogFormat("/user/run/1000/example.com/report.text")
+	frmt = parseLogFormat("/user/run/1000/example.com/report.log")
 	if frmt != TEXT {
-		t.Errorf("unexpected format %d", frmt)
-	}
-	// Test unknown report format.
-	frmt = parseLogFormat("/user/run/1000/example.com/report.csv")
-	if frmt != NILFMT {
 		t.Errorf("unexpected format %d", frmt)
 	}
 }

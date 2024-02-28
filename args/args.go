@@ -15,7 +15,6 @@ import (
 type LogFormat byte
 
 const (
-	NILFMT LogFormat = 0
 	SCREEN LogFormat = 1
 	TEXT   LogFormat = 2
 	JSON   LogFormat = 3
@@ -89,11 +88,13 @@ DATABASE
 
 THREAT
   -t, --threats
-    Threat log file path. Must be screen, or a .(txt|json) file.
+    Threat log file path. Must be screen, or a file.
+	Files ending with .json will be formatted accordingly.
 
 REPORT
   -r, --report
-    Report file path. Must be screen, or a .(txt|json) file.
+    Report file path. Must be screen, or a file.
+	Files ending with .json will be formatted accordingly.
 
   -l, --layout
     Custom report layout for screen and text reports.
@@ -253,13 +254,8 @@ func parseLogFormat(path string) LogFormat {
 	lpath := strings.ToLower(path)
 	if path == "screen" {
 		return SCREEN
-	}
-	if strings.HasSuffix(lpath, ".txt") {
-		return TEXT
-	} else if strings.HasSuffix(lpath, ".text") {
-		return TEXT
 	} else if strings.HasSuffix(lpath, ".json") {
 		return JSON
 	}
-	return NILFMT
+	return TEXT
 }

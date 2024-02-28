@@ -25,7 +25,7 @@ Read the [database usage guide](database.md) for instruction on how to query the
 
 There's no report by default. In most cases, you'll want to use `--report screen` to print the report on the screen after parsing completes.
 
-Otherwise, write the report to disk with `--report report.txt` or `--report report.json` to get a text or JSON formatted output.
+Otherwise, write the report to disk with `--report file.log` or `--report file.json` to get a text or json formatted output.
 
 ### Custom report layouts
 
@@ -83,7 +83,7 @@ and `--log_format`
 
 ## Threats log
 
-It's possible to generate a threat log with the `--threats` argument. The possible values are `screen`, `file.txt`, or `file.json`.
+It's possible to generate a threat log with the `--threats` argument. The possible values are `screen`, `file.log`, or `file.json`.
 
 For each parsed NGINX access.log line, if a threat is detected, it will be logged to the selected output.
 
