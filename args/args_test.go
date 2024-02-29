@@ -158,7 +158,10 @@ func TestParseSubcmd(t *testing.T) {
 		Exp SubCmd
 	}{
 		{"", PARSE},
+		{"p", PARSE},
 		{"parse", PARSE},
+		{"v", VERSION},
+		{"version", VERSION},
 		{"invalid", NILSUB},
 	}
 

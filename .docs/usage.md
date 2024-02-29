@@ -83,7 +83,7 @@ and `--log_format`
 
 ## Threats log
 
-It's possible to generate a threat log with the `--threats` argument. The possible values are `screen`, `file.log`, or `file.json`.
+It's possible to generate a threat log with the `--threats` argument. Accepted values are `screen`, `file.log`, or `file.json`.
 
 For each parsed NGINX access.log line, if a threat is detected, it will be logged to the selected output.
 

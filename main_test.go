@@ -24,20 +24,20 @@ func TestInit(t *testing.T) {
 	Init()
 }
 
-func TestRun(t *testing.T) {
-	testRunOk(t)
+func TestParse(t *testing.T) {
+	testParseOk(t)
 	// TODO: fix test.MockStdin() to get 100% coverage.
 	// testRunTooLong(t)
 }
 
-func testRunOk(t *testing.T) {
+func testParseOk(t *testing.T) {
 	file := "root/testdata/20ok.log"
 	input, err := os.ReadFile(file)
 	if err != nil {
 		t.Error(err)
 	}
 	test.MockStdin(input)
-	Run()
+	Parse()
 }
 
 // TODO: fix test.MockStdin() to get 100% coverage.
@@ -50,6 +50,10 @@ func testRunOk(t *testing.T) {
 	test.MockStdin(input)
 	Run()
 } */
+
+func TestPrintVersion(t *testing.T) {
+	PrintVersion()
+}
 
 func TestExit(t *testing.T) {
 	exitErrHelp(t)

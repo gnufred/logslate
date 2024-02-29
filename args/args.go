@@ -18,6 +18,7 @@ type LogFormat byte
 const (
 	NILSUB SubCmd = iota
 	PARSE
+	VERSION
 
 	SCREEN LogFormat = iota
 	TEXT
@@ -84,35 +85,40 @@ func Help(err string) {
 	}
 
 	usage := `
-PARSING
-  -f, --log_format
+USAGE
+  logslate [SUBCOMMAND] [OPTIONS]
+
+SUB COMMANDS
+  p, parse (default)
+    Parse NGINX access.log.
+
+  v, version
+    Print version.
+
+PARSE
+  -f, --log_format <NGINX LOG_FORMAT>
     Need to match NGINX log_format directive from your nginx.conf.
     Default to NGINX default combined format.
 
-  -s, --since
-  -u, --until
+  -s, --since <TIME>
+  -u, --until <TIME>
     Parse entries using specified date(s).
     Can use timestamps or system.d style wording.
 
-DATABASE
-  -d, --db
-    SQLite3 DB file path.
+  -d, --db <FILE>
+    Convert NGINX access.log to an SQLite3 DB.
 
-THREAT
-  -t, --threats
-    Threat log file path. Must be screen, or a file.
-	Files ending with .json will be formatted accordingly.
+  -t, --threats (screen|<FILE>)
+    Output threat log. ".json" files will be formatted as such.
 
-REPORT
-  -r, --report
-    Report file path. Must be screen, or a file.
-	Files ending with .json will be formatted accordingly.
+  -r, --report (screen|<FILE>)
+    Output report. ".json" files will be formatted as such.
 
-  -l, --layout
+  -l, --layout <LAYOUT>
     Custom report layout for screen and text reports.
 
 MORE
-  You should read the detailed usage guide at:
+  For detailed usage instructions read:
   https://gitlab.com/gnufred/logslate/-/blob/main/.docs/usage.md
 `
 
@@ -256,8 +262,14 @@ func parseSubCmd(s string) SubCmd {
 	switch s {
 	case "":
 		return PARSE
+	case "p":
+		return PARSE
 	case "parse":
 		return PARSE
+	case "v":
+		return VERSION
+	case "version":
+		return VERSION
 	default:
 		return NILSUB
 	}

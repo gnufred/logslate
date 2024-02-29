@@ -22,7 +22,14 @@ func main() {
 		os.Exit(status)
 	}
 
-	err = Run()
+	a := args.Get()
+	switch a.Subcmd {
+	case args.VERSION:
+		err = PrintVersion()
+	case args.PARSE:
+		err = Parse()
+	}
+
 	status := Exit(err)
 	if status > 0 {
 		os.Exit(status)
@@ -42,7 +49,12 @@ func Init() error {
 	return nil
 }
 
-func Run() error {
+func PrintVersion() error {
+	fmt.Println(Version)
+	return nil
+}
+
+func Parse() error {
 	a := args.Get()
 	a.Version = Version
 	debug.Log(debug.VV, "start time", a.StartTime())
