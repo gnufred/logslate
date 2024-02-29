@@ -4,16 +4,14 @@ import (
 	"os"
 	"runtime"
 	"runtime/pprof"
-
-	"gitlab.com/gnufred/logslate/args"
 )
 
-func StartCpuProfile(a args.Args) (*os.File, error) {
-	if a.CpuProf == "" {
+func StartCpuProfile(path string) (*os.File, error) {
+	if path == "" {
 		return nil, nil
 	}
 
-	cpuf, err := os.Create(a.CpuProf)
+	cpuf, err := os.Create(path)
 	if err != nil {
 		return nil, err
 	}
@@ -25,20 +23,20 @@ func StartCpuProfile(a args.Args) (*os.File, error) {
 	return cpuf, nil
 }
 
-func StopCpuProfile(a args.Args, cpuf *os.File) {
-	if a.CpuProf == "" {
+func StopCpuProfile(path string, cpuf *os.File) {
+	if path == "" {
 		return
 	}
 	pprof.StopCPUProfile()
 	cpuf.Close()
 }
 
-func MemProfile(a args.Args) error {
-	if a.MemProf == "" {
+func MemProfile(path string) error {
+	if path == "" {
 		return nil
 	}
 
-	memf, err := os.Create(a.MemProf)
+	memf, err := os.Create(path)
 	if err != nil {
 		return err
 	}

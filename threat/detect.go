@@ -32,7 +32,7 @@ func (d *Detection) AttackName() string {
 }
 
 type Attack struct {
-	Type  AttackType `json:"-"`
+	Type  AttackType `json:"type"`
 	Score uint32     `json:"-"`
 	Name  string     `json:"name"`
 }

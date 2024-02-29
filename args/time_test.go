@@ -7,60 +7,59 @@ import (
 	"gitlab.com/gnufred/logslate/test"
 )
 
-func TestSetSinceUntil(t *testing.T) {
-	validSinceUntil(t)
-	invalidSince(t)
-	invalidUntil(t)
-}
-
-func validSinceUntil(t *testing.T) {
+func TestValidSinceUntil(t *testing.T) {
+	var err error
 	sinceArg := "-24 hours ago"
 	untilArg := "now"
 
-	a := Get()
-	err := a.SetSinceUntil(sinceArg, untilArg)
+	a := Singleton()
+	err = a.Time.SetSince(sinceArg)
+	if err != nil {
+		t.Error(err)
+	}
+	err = a.Time.SetUntil(untilArg)
 	if err != nil {
 		t.Error(err)
 	}
 
-	since := a.Since()
+	since := a.Time.Since()
 	if since != sinceArg {
 		t.Errorf("since: bad value, got %s, exp %s", since, sinceArg)
 	}
 
-	until := a.Until()
+	until := a.Time.Until()
 	if until != untilArg {
 		t.Errorf("until: bad value, got %s, exp %s", until, untilArg)
 	}
 
-	start := a.StartTime().Add(-24 * time.Hour).Truncate(time.Hour)
+	start := a.Time.StartTime().Add(-24 * time.Hour).Truncate(time.Hour)
 	exp := time.Now().Truncate(time.Hour)
 	if start != exp {
 		t.Errorf("start: bad value, got %v, exp %v", start, exp)
 	}
 
-	end := a.EndTime().Truncate(time.Hour)
+	end := a.Time.EndTime().Truncate(time.Hour)
 	exp = time.Now().Truncate(time.Hour)
 	if end != exp {
 		t.Errorf("end: bad value, got %v, exp %v", end, exp)
 	}
 }
 
-func invalidSince(t *testing.T) {
+func TestInvalidSince(t *testing.T) {
+	var err error
 	sinceArg := "invalid_time_string"
-	untilArg := "now"
 
-	a := Get()
-	err := a.SetSinceUntil(sinceArg, untilArg)
+	a := Singleton()
+	err = a.Time.SetSince(sinceArg)
 	test.ErrorExpected(t, err, "unable to parse")
 }
 
-func invalidUntil(t *testing.T) {
-	sinceArg := "now"
+func TestInvalidUntil(t *testing.T) {
+	var err error
 	untilArg := "invalid_time_string"
 
-	a := Get()
-	err := a.SetSinceUntil(sinceArg, untilArg)
+	a := Singleton()
+	err = a.Time.SetUntil(untilArg)
 	test.ErrorExpected(t, err, "unable to parse")
 }
 

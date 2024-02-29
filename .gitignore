@@ -4,6 +4,10 @@
 .cover/
 .dbs/
 .logs/
-*.db
-*.json
-*.txt
+.threats/
+
+/*.db
+/*.txt
+/*.text
+/*.json
+/*.log

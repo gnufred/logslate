@@ -3,8 +3,6 @@ package prof
 import (
 	"os"
 	"testing"
-
-	"gitlab.com/gnufred/logslate/args"
 )
 
 func TestStartCpuProfile(t *testing.T) {
@@ -13,9 +11,9 @@ func TestStartCpuProfile(t *testing.T) {
 }
 
 func startCpuNoArgs(t *testing.T) {
-	a := args.Get()
+	file := ""
 	exp := os.File{}
-	got, err := StartCpuProfile(a)
+	got, err := StartCpuProfile(file)
 	if err != nil {
 		t.Error(err)
 	}
@@ -25,16 +23,14 @@ func startCpuNoArgs(t *testing.T) {
 }
 
 func startCpuProf(t *testing.T) {
-	a := args.Get()
 	file := "test_cpu.prof"
-	a.CpuProf = file
 
-	prof, err := StartCpuProfile(a)
+	prof, err := StartCpuProfile(file)
 	if err != nil {
 		t.Error(err)
 	}
 
-	StopCpuProfile(a, prof)
+	StopCpuProfile(file, prof)
 
 	_, err = os.Stat(file)
 	if err != nil {
@@ -53,19 +49,17 @@ func TestMemProfile(t *testing.T) {
 }
 
 func startMemNoArgs(t *testing.T) {
-	a := args.Get()
-	err := MemProfile(a)
+	file := ""
+	err := MemProfile(file)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func startMemProf(t *testing.T) {
-	a := args.Get()
 	file := "test_mem.prof"
-	a.MemProf = file
 
-	err := MemProfile(a)
+	err := MemProfile(file)
 	if err != nil {
 		t.Error(err)
 	}

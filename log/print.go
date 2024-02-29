@@ -10,13 +10,11 @@ var StringifyThreatLog = func(data any) (string, error) {
 
 	s := ""
 
-	if !t.IsBot() && !t.IsAttack() && t.IsAd() {
-		s = s + "redacted -"
-	} else {
-		s = s + t.Ip.String() + " -"
-	}
+	s = s + "[" + t.Time.Format("2006-01-02 15:04:05") + "]"
 
-	s = s + " [" + t.Time.Format("2006-01-02 15:04:05") + "]"
+	if t.Ip != nil {
+		s = s + " " + t.Ip.String()
+	}
 
 	if t.IsBot() {
 		s = s + " \"" + "BOT " + t.Bot + "\""

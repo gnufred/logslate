@@ -16,51 +16,43 @@ import (
 var Version = "dev"
 
 func main() {
-	err := Init()
-	if err != nil {
-		status := Exit(err)
-		os.Exit(status)
+	if err := Init(); err != nil {
+		os.Exit(Exit(err))
 	}
-
-	a := args.Get()
-	switch a.Subcmd {
-	case args.VERSION:
-		err = PrintVersion()
-	case args.PARSE:
-		err = Parse()
-	}
-
-	status := Exit(err)
-	if status > 0 {
-		os.Exit(status)
+	a := args.Singleton()
+	if err := Exec(a); err != nil {
+		os.Exit(Exit(err))
 	}
 }
 
 func Init() error {
-	err := args.Init()
-	if err != nil {
+	if err := args.Init(); err != nil {
 		return err
 	}
-
 	debug.Init()
-	debug.Log(debug.VVV, "os.Args", os.Args)
-	debug.Log(debug.VVV, "args.Get", args.Get())
-
 	return nil
 }
 
-func PrintVersion() error {
+func Exec(a *args.ArgsV2) error {
+	switch a.Command {
+	case args.VERSION:
+		return execVersion()
+	case args.PARSE:
+		return execParse(a)
+	case args.REPARSE:
+		return execParse(a)
+	default:
+		return errors.New("no command")
+	}
+}
+
+func execVersion() error {
 	fmt.Println(Version)
 	return nil
 }
 
-func Parse() error {
-	a := args.Get()
-	a.Version = Version
-	debug.Log(debug.VV, "start time", a.StartTime())
-	debug.Log(debug.VV, "end time", a.EndTime())
-
-	_, err := root.ParseStdin(a)
+func execParse(a *args.ArgsV2) error {
+	_, err := root.ParseStdin(a, Version)
 	return err
 }
 
@@ -70,7 +62,7 @@ func Exit(err error) int {
 	}
 
 	if errors.Is(err, args.ErrHelpShown) {
-		return 1
+		return 2
 	}
 
 	stderr := log.New(os.Stderr, "", 0)
@@ -79,13 +71,13 @@ func Exit(err error) int {
 	if errors.Is(err, bufio.ErrTooLong) {
 		err = errors.New("input data might be corrupted or invalid")
 		stderr.Printf(fmtErr, err)
-		return 2
+		return 3
 	}
 
 	if errors.Is(err, root.ErrLimitReach) {
 		stderr.Printf(fmtErr, err)
 		fmt.Println("--log_format is probably incorrect.")
-		return 3
+		return 4
 	}
 
 	stderr.Printf(fmtErr, err)

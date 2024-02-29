@@ -25,7 +25,7 @@ var StringifyAB = func(data any) (string, error) {
 }
 
 func TestOpenCloseFile(t *testing.T) {
-	fp := "test.json"
+	fp := "testdata/test.json"
 	p := Printer{Path: fp}
 
 	err := p.OpenFile()
@@ -35,6 +35,7 @@ func TestOpenCloseFile(t *testing.T) {
 	}
 
 	p.CloseFile()
+	os.Remove(fp)
 }
 
 func TestOpenFileFail(t *testing.T) {
@@ -97,6 +98,7 @@ func TestPrintText(t *testing.T) {
 	}
 
 	matchReadFile(t, fp, exp)
+	os.Remove(fp)
 }
 
 func TestPrintJson(t *testing.T) {
@@ -116,6 +118,7 @@ func TestPrintJson(t *testing.T) {
 	}
 
 	matchReadFile(t, fp, exp)
+	os.Remove(fp)
 }
 
 func TestPrintNoFormat(t *testing.T) {

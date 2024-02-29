@@ -24,20 +24,34 @@ func TestInit(t *testing.T) {
 	Init()
 }
 
-func TestParse(t *testing.T) {
-	testParseOk(t)
-	// TODO: fix test.MockStdin() to get 100% coverage.
-	// testRunTooLong(t)
+func TestMainPrintVersion(t *testing.T) {
+	a := args.Singleton()
+	a.Command = args.VERSION
+	main()
 }
 
-func testParseOk(t *testing.T) {
+func TestParseOk(t *testing.T) {
+	a := args.Singleton()
+	a.Command = args.PARSE
 	file := "root/testdata/20ok.log"
 	input, err := os.ReadFile(file)
 	if err != nil {
 		t.Error(err)
 	}
 	test.MockStdin(input)
-	Parse()
+	Exec(a)
+}
+
+func TestParseREPORT(t *testing.T) {
+	a := args.Singleton()
+	a.Command = args.REPARSE
+	file := "root/testdata/threat.json"
+	input, err := os.ReadFile(file)
+	if err != nil {
+		t.Error(err)
+	}
+	test.MockStdin(input)
+	Exec(a)
 }
 
 // TODO: fix test.MockStdin() to get 100% coverage.
@@ -51,45 +65,37 @@ func testParseOk(t *testing.T) {
 	Run()
 } */
 
-func TestPrintVersion(t *testing.T) {
-	PrintVersion()
+func TestExecNoCmd(t *testing.T) {
+	a := args.Singleton()
+	a.Command = args.NILSUB
+	err := Exec(a)
+	test.ErrorExpected(t, err, "no command")
 }
 
-func TestExit(t *testing.T) {
-	exitErrHelp(t)
-	exitErrAny(t)
-	exitErrTooLong(t)
-	exitErrLimitReach(t)
+func TestExecVersion(t *testing.T) {
+	execVersion()
 }
 
-func exitErrHelp(t *testing.T) {
-	got := Exit(args.ErrHelpShown)
-	exp := 1
-	if got != exp {
-		t.Errorf("bad exit status, got %d, exp %d", got, exp)
+func TestExitNoErr(t *testing.T) {
+	testMatch := func(t *testing.T, in error, exp int) {
+		got := Exit(in)
+		if got != exp {
+			t.Errorf("bad exit status, got %d, exp %d", got, exp)
+		}
 	}
-}
 
-func exitErrAny(t *testing.T) {
-	got := Exit(errors.New("testing.error"))
-	exp := 1
-	if got != exp {
-		t.Errorf("bad exit status, got %d, exp %d", got, exp)
+	data := []struct {
+		In  error
+		Exp int
+	}{
+		{nil, 0},
+		{errors.New("testing.error"), 1},
+		{args.ErrHelpShown, 2},
+		{bufio.ErrTooLong, 3},
+		{root.ErrLimitReach, 4},
 	}
-}
 
-func exitErrTooLong(t *testing.T) {
-	got := Exit(bufio.ErrTooLong)
-	exp := 2
-	if got != exp {
-		t.Errorf("bad exit status, got %d, exp %d", got, exp)
-	}
-}
-
-func exitErrLimitReach(t *testing.T) {
-	got := Exit(root.ErrLimitReach)
-	exp := 3
-	if got != exp {
-		t.Errorf("bad exit status, got %d, exp %d", got, exp)
+	for _, d := range data {
+		testMatch(t, d.In, d.Exp)
 	}
 }

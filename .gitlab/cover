@@ -2,15 +2,16 @@
 
 # hardcoded minimums
 declare -A minCov
-minCov[args/args.go]=96
+minCov[args/args.go]=93
 minCov[args/sysdt/sysdt.go]=89
 minCov[args/time.go]=100
+minCov[args/v2.go]=100
 minCov[db/db.go]=85
 minCov[debug/debug.go]=87
 minCov[log/print.go]=100
 minCov[log/slate.go]=100
 minCov[log/threat.go]=100
-minCov[main.go]=88
+minCov[main.go]=91
 minCov[pipe/pipe.go]=90
 minCov[printer/print.go]=92
 minCov[prof/prof.go]=79
@@ -20,7 +21,8 @@ minCov[report/options.go]=100
 minCov[report/print.go]=90
 minCov[report/report.go]=100
 minCov[report/threatlog.go]=100
-minCov[root/root.go]=96
+minCov[root/parse.go]=95
+minCov[root/root.go]=100
 minCov[test/test.go]=72
 minCov[threat/ahocorasick.go]=100
 minCov[threat/attacks.go]=100

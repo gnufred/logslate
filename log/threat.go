@@ -1,24 +1,30 @@
 package log
 
 import (
+	"encoding/json"
 	"net"
 	"time"
 
 	"gitlab.com/gnufred/logslate/threat"
 )
 
+// WARNING: Changing the struct field order will
+// change the threat.json output log order.
 type ThreatLog struct {
+	Time time.Time `json:"time"`
+	Ip   net.IP    `json:"ip,omitempty"`
 	threat.Detection
-	Time  time.Time `json:"time"`
-	Ip    net.IP    `json:"ip,omitempty"`
-	Path  string    `json:"path,omitempty"`
-	Query string    `json:"query,omitempty"`
+	Path  string `json:"path,omitempty"`
+	Query string `json:"query,omitempty"`
 }
 
 func SlateToThreat(sl SlateLog) ThreatLog {
 	tl := ThreatLog{
 		Time: sl.Time,
-		Ip:   sl.Ip,
+	}
+
+	if sl.IsBot() || sl.IsAttack() {
+		tl.Ip = sl.Ip
 	}
 
 	if sl.IsAd() && !sl.IsAttack() {
@@ -36,4 +42,15 @@ func SlateToThreat(sl SlateLog) ThreatLog {
 	}
 
 	return tl
+}
+
+func ParseThreat(threat string) (ThreatLog, error) {
+	var tl ThreatLog
+
+	err := json.Unmarshal([]byte(threat), &tl)
+	if err != nil {
+		return ThreatLog{}, err
+	}
+
+	return tl, nil
 }

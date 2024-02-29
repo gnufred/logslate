@@ -3,8 +3,13 @@ package debug
 import (
 	"testing"
 
+	"gitlab.com/gnufred/logslate/args"
 	"gitlab.com/gnufred/logslate/test"
 )
+
+func init() {
+	args.Init()
+}
 
 func TestInit(t *testing.T) {
 	Init()

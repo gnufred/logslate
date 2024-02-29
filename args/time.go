@@ -9,39 +9,34 @@ import (
 	"github.com/araddon/dateparse"
 )
 
-func (a *Args) Since() string {
-	return a.since
+func (t *timeArgs) Since() string {
+	return t.since
 }
 
-func (a *Args) Until() string {
-	return a.until
+func (t *timeArgs) Until() string {
+	return t.until
 }
 
-func (a *Args) StartTime() time.Time {
-	return a.startTime
+func (t *timeArgs) StartTime() time.Time {
+	return t.startTime
 }
 
-func (a *Args) EndTime() time.Time {
-	return a.endTime
+func (t *timeArgs) EndTime() time.Time {
+	return t.endTime
 }
 
-func (a *Args) SetSinceUntil(sincestamp string, untilstamp string) error {
-	a.since = sincestamp
-	a.until = untilstamp
+func (t *timeArgs) SetSince(since string) error {
+	var err error
+	t.since = since
+	t.startTime, err = parseTimestamp(since, time.Time{})
+	return err
+}
 
-	tm, err := parseTimestamp(sincestamp, time.Time{})
-	if err != nil {
-		return err
-	}
-	a.startTime = tm
-
-	tm, err = parseTimestamp(untilstamp, time.Now())
-	if err != nil {
-		return err
-	}
-	a.endTime = tm
-
-	return nil
+func (t *timeArgs) SetUntil(until string) error {
+	var err error
+	t.until = until
+	t.endTime, err = parseTimestamp(until, time.Now())
+	return err
 }
 
 func parseTimestamp(timestamp string, unset time.Time) (time.Time, error) {

@@ -28,9 +28,9 @@ var stderr = log.New(os.Stderr, "", 0)
 func Init() {
 	var verb, argDebug, envDebug verbosity
 	verb = OFF
-	a := args.Get()
+	a := args.Singleton()
 
-	argDebug = verbosity(a.Debug)
+	argDebug = verbosity(a.Debug.Verbosity)
 	if argDebug > 0 {
 		verb = argDebug
 	}
