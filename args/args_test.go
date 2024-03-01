@@ -120,7 +120,7 @@ func TestReparseInvalidDB(t *testing.T) {
 	test.DisableOutput()
 	err := validate(narg)
 	test.EnableOutput()
-	test.ErrorExpected(t, err, "cannot use")
+	test.ErrorExpected(t, err, "can only use")
 	a.Parse.Db = ""
 }
 

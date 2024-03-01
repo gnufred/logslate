@@ -101,7 +101,7 @@ func validate(nargs int) error {
 	}
 	cReportFormat := func(a *ArgsV2) bool { return a.Report.Format == JSON && a.Report.Layout != "" }
 	cReparseDb := func(a *ArgsV2) bool { return a.Parse.Db != "" && a.Command != PARSE }
-	cReparseLogFmt := func(a *ArgsV2) bool { return a.Parse.LogFrmt != "" && a.Command != PARSE }
+	cReparseLogFmt := func(a *ArgsV2) bool { return a.Parse.LogFrmt != nginx.Combined && a.Command != PARSE }
 
 	checks := []struct {
 		F func(a *ArgsV2) bool
@@ -112,8 +112,8 @@ func validate(nargs int) error {
 		{cDebug, "debug args must be -v or --debug=[1,3]"},
 		{cLayout, "invalid characters in layout format"},
 		{cReportFormat, "report layout is only available for screen and text reports"},
-		{cReparseDb, "cannot use -d, --db with reparse"},
-		{cReparseLogFmt, "cannot use -f, --log_format with reparse"},
+		{cReparseDb, "can only use -d, --db with the parse command"},
+		{cReparseLogFmt, "can only use -f, --log_format with the parse command"},
 	}
 
 	for _, c := range checks {
