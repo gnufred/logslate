@@ -52,7 +52,7 @@ func TestParseAttacks(t *testing.T) {
 	in := threat.XSS
 	tl := log.ThreatLog{
 		Detection: threat.Detection{
-			Attack: &threat.Attack{in, 0, ""},
+			Attack: &threat.Attack{0, in, ""},
 		},
 		Ip: ip,
 	}

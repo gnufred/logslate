@@ -105,7 +105,7 @@ func TestIsThreat(t *testing.T) {
 
 func TestDetect(t *testing.T) {
 	// Just testing one result. Multiple results tested in sub functions.
-	att := &Attack{SQL, 10, "sql"}
+	att := &Attack{10, SQL, "sql"}
 	td := struct {
 		Path  string
 		Query string
@@ -116,8 +116,8 @@ func TestDetect(t *testing.T) {
 		"id=1'PG_SLEEP(1000)",
 		"EdgeScan/1.1 (+https://www.edgescan.com/)",
 		Detection{
-			"",
 			"EdgeScan",
+			"",
 			att,
 		},
 	}

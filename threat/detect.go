@@ -13,9 +13,11 @@ var adRegexp *regexp.Regexp
 // Holds the score that we need to flag a searches as an attack.
 var Threshold = uint32(5)
 
+// WARNING: Changing the struct field order will
+// change the threat.json output log order.
 type Detection struct {
-	Ad     string  `json:"ad,omitempty"`
 	Bot    string  `json:"bot,omitempty"`
+	Ad     string  `json:"ad,omitempty"`
 	Attack *Attack `json:"attack,omitempty"`
 }
 
@@ -32,8 +34,8 @@ func (d *Detection) AttackName() string {
 }
 
 type Attack struct {
-	Type  AttackType `json:"type"`
 	Score uint32     `json:"-"`
+	Type  AttackType `json:"type"`
 	Name  string     `json:"name"`
 }
 
