@@ -62,3 +62,7 @@ func createBar() *progbar.ProgressBar {
 	)
 	return bar
 }
+
+func withinRange(log, since, until time.Time) bool {
+	return !log.Before(since) && !log.After(until)
+}

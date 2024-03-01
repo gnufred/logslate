@@ -169,8 +169,7 @@ func ParseStdin(a *args.ArgsV2, version string) (Parsed, error) {
 
 		}
 
-		if !timeMatch(
-			tl.Time, bool(a.Time.Since() != ""), bool(a.Time.Until() != ""), a.Time.StartTime(), a.Time.EndTime()) {
+		if !withinRange(tl.Time, a.Time.StartTime(), a.Time.EndTime()) {
 			par.Skip++
 			continue
 		}
@@ -296,35 +295,4 @@ func ParseStdin(a *args.ArgsV2, version string) (Parsed, error) {
 	}
 
 	return par, nil
-}
-
-func timeMatch(ts time.Time, since bool, until bool, start time.Time, end time.Time) bool {
-	// First possibility: no arguments.
-	if !since && !until {
-		return true
-	}
-
-	// Second possibility: since is specified.
-	if since && !until {
-		if ts.Equal(start) || ts.After(start) {
-			return true
-		}
-	}
-
-	// Third possibility: until is specified.
-	if !since && until {
-		if ts.Before(end) || ts.Equal(end) {
-			return true
-		}
-	}
-
-	// Fourth possibility: both are specified.
-	if since && until {
-		if (ts.Equal(start) || ts.After(start)) &&
-			(ts.Before(end) || ts.Equal(end)) {
-			return true
-		}
-	}
-
-	return false
 }
