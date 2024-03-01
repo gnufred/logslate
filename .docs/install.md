@@ -18,11 +18,15 @@ For other uses cases, head to the [release page](https://gitlab.com/gnufred/logs
 
 If you're using `logslate` on a server, or need to install it in a built container, it's recommended to use `curl`.
 
+You can use something like:
+
 ```
+#!/bin/bash
 ARCH=linux-amd64
-curl --location "https://gitlab.com/api/v4/projects/gnufred%2Flogslate/packages/generic/logslate/latest/logslate-$ARCH.xz" --output "logslate-$ARCH.xz"
-tar -xJvf "logslate-$ARCH.xz"
-chmod +x "logslate-$ARCH"
+curl --location "https://gitlab.com/api/v4/projects/gnufred%2Flogslate/packages/generic/logslate/latest/logslate-$ARCH.xz" --output "logslate-$ARCH.xz" && \
+tar -xJf "logslate-$ARCH.xz" && \
+rm "logslate-$ARCH.xz" && \
+chmod +x "logslate-$ARCH" && \
 mv "logslate-$ARCH" logslate
 ```
 
