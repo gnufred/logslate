@@ -21,3 +21,25 @@ echo "Uploading MacOS package."
 upload_package \
 	".bin/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}" \
 	"${PACKAGE_REGISTRY_CURRENT}/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}"
+
+# Check if we're releasing a "real" version.
+# We want to avoid pushing to the "latest/" endpoint if we're running test releases.
+version=$(git describe --tags|grep -E '^[0-9]*\.[0-9]*\.[0-9]*'|wc -l)
+echo "Checking if we need to upload to: lastest..."
+if [[ "$version" -ne "1" ]]; then
+	echo "No. We don't."
+	exit 0
+else
+	echo "Yes. We do."
+fi
+
+echo -e "\nUploading latest packages."
+
+upload_package \
+	".bin/${LINUX_AMD64_BINARY}.${ARCHIVE_EXT}" \
+	"${PACKAGE_REGISTRY_LATEST}/${LINUX_AMD64_BINARY}.${ARCHIVE_EXT}"
+
+upload_package \
+	".bin/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}" \
+	"${PACKAGE_REGISTRY_LATEST}/${DARWIN_AMD64_BINARY}.${ARCHIVE_EXT}"
+
