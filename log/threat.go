@@ -27,7 +27,7 @@ func SlateToThreat(sl SlateLog) ThreatLog {
 		tl.Ip = sl.Ip
 	}
 
-	if sl.IsAd() && !sl.IsAttack() {
+	if sl.IsAd() && !sl.IsBot() && !sl.IsAttack() {
 		tl.Ad = sl.Ad
 	}
 
