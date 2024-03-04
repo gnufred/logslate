@@ -22,8 +22,9 @@ type debugArgs struct {
 }
 
 type parseArgs struct {
-	Db      string
-	LogFrmt string
+	Db       string
+	LogFrmt  string
+	HideProg bool
 }
 
 type timeArgs struct {

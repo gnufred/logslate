@@ -65,6 +65,9 @@ PARSE, REPARSE
   -l, --layout <LAYOUT>
     Custom report layout for screen and text reports.
 
+  --hide_progress
+    Disable parsing progress display.
+
 MORE
   For detailed usage instructions read:
   https://gitlab.com/gnufred/logslate/-/blob/main/.docs/usage.md
@@ -135,6 +138,7 @@ func parse() error {
 		MemProf      *string
 		Db           *string
 		LogFrmt      *string
+		HideProg     *bool
 		Since        *string
 		Until        *string
 		ThreatLog    *string
@@ -146,6 +150,7 @@ func parse() error {
 		MemProf:      flags.StringP("profmem", "", "", ""),
 		Db:           flags.StringP("db", "d", "", ""),
 		LogFrmt:      flags.StringP("log_format", "f", nginx.Combined, ""),
+		HideProg:     flags.BoolP("hide_progress", "", false, ""),
 		Since:        flags.StringP("since", "s", "", ""),
 		Until:        flags.StringP("until", "u", "", ""),
 		ThreatLog:    flags.StringP("threats", "t", "", ""),
@@ -176,8 +181,9 @@ func parse() error {
 			MemProf:   string(*f.MemProf),
 		},
 		Parse: parseArgs{
-			Db:      string(*f.Db),
-			LogFrmt: string(*f.LogFrmt),
+			Db:       string(*f.Db),
+			LogFrmt:  string(*f.LogFrmt),
+			HideProg: bool(*f.HideProg),
 		},
 		Threat: threatArgs{
 			Path:   string(*f.ThreatLog),

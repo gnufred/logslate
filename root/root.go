@@ -33,8 +33,8 @@ var (
 )
 
 func initOutput() *OutputTo {
-	outputToProgress := func(file args.LogFormat) bool {
-		return file != args.SCREEN
+	outputToProgress := func(hide bool, file args.LogFormat) bool {
+		return !hide && file != args.SCREEN
 	}
 	outputToFile := func(file string) bool {
 		return file != ""
@@ -42,7 +42,7 @@ func initOutput() *OutputTo {
 
 	a := args.Singleton()
 	return &OutputTo{
-		Progress:  outputToProgress(a.Threat.Format),
+		Progress:  outputToProgress(a.Parse.HideProg, a.Threat.Format),
 		DB:        outputToFile(a.Parse.Db),
 		ThreatLog: outputToFile(a.Threat.Path),
 		Report:    outputToFile(a.Report.Path),
