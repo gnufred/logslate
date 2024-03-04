@@ -3,6 +3,8 @@ package root
 import (
 	"testing"
 	"time"
+
+	"gitlab.com/gnufred/logslate/args"
 )
 
 func TestWithinRange(t *testing.T) {
@@ -41,5 +43,26 @@ func TestWithinRange(t *testing.T) {
 
 	for _, d := range data {
 		testMatch(t, d.Log, d.Since, d.Until, d.Exp)
+	}
+}
+
+func TestBarActionWord(t *testing.T) {
+	testMatch := func(t *testing.T, c args.SubCmd, exp string) {
+		got := barActionWord(c)
+		if got != exp {
+			t.Errorf("action word miss match, got %s, exp %s", got, exp)
+		}
+	}
+	data := []struct {
+		CMD args.SubCmd
+		Exp string
+	}{
+		{args.NILSUB, "processing"},
+		{args.PARSE, "parsing"},
+		{args.REPARSE, "reparsing"},
+	}
+
+	for _, d := range data {
+		testMatch(t, d.CMD, d.Exp)
 	}
 }

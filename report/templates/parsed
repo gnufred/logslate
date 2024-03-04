@@ -1,4 +1,7 @@
 
-Lines: {{AddCommas .Parsed.Total}} ({{AddCommas .LinesPerSec}}/s)
+Total: {{AddCommas .Parsed.Total}} ({{AddCommas .LinesPerSec}}/s)
+ok     {{AddCommas .Parsed.Ok}}
+skip   {{AddCommas .Parsed.Skip}}
+error  {{AddCommas .Parsed.Error}}
 Size (MB): {{BytesToMB .Size.Byte}} ({{BytesToMB .BytesPerSec}}/s)
 Runtime: {{HumanDuration .Runtime.Total}}

@@ -62,7 +62,7 @@ func ParseStdin(a *args.ArgsV2, version string) (Parsed, error) {
 	var bytesTotal uint
 	var bar *progbar.ProgressBar
 	if outTo.Progress {
-		bar = createBar()
+		bar = createBar(a.Command)
 	}
 
 	// Initialize the threat log.
@@ -224,7 +224,7 @@ func ParseStdin(a *args.ArgsV2, version string) (Parsed, error) {
 		fmt.Print("\n")
 
 		// Print parsed line data.
-		fmt.Printf("Parsed: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
+		fmt.Printf("Entries: ok [%d] skip [%d] error [%d]\n", par.Ok, par.Skip, par.Err)
 		fmt.Printf("Threats: attack [%d], ad [%d], bots [%d]\n", par.Atk, par.Ad, par.Bot)
 	}
 

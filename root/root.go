@@ -49,18 +49,30 @@ func initOutput() *OutputTo {
 	}
 }
 
-func createBar() *progbar.ProgressBar {
+func createBar(command args.SubCmd) *progbar.ProgressBar {
 	bar := progbar.NewOptions(-1,
-		progbar.OptionSetDescription("parsing"),
+		progbar.OptionSetDescription(barActionWord(command)),
 		progbar.OptionSetWriter(os.Stdout),
 		progbar.OptionShowBytes(true),
 		progbar.OptionSetWidth(10),
-		progbar.OptionThrottle(166*time.Millisecond),
+		progbar.OptionThrottle(50*time.Millisecond),
 		progbar.OptionShowCount(),
 		progbar.OptionSpinnerType(14),
 		progbar.OptionSetRenderBlankState(true),
 	)
 	return bar
+}
+
+func barActionWord(command args.SubCmd) string {
+	switch command {
+	case args.PARSE:
+		return "parsing"
+	case args.REPARSE:
+		return "reparsing"
+	default:
+		return "processing"
+	}
+
 }
 
 func withinRange(log, since, until time.Time) bool {
