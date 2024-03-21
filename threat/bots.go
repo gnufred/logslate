@@ -205,6 +205,7 @@ var botPatterns = []string{
 	"ccbot",               // https://commoncrawl.org/faq/
 	"celigo",              // https://www.celigo.com/
 	"chatgpt-user",        // https://platform.openai.com/docs/plugins/bot
+	"cincraw",             // https://cincrawdata.net/
 	"claudebot",           // https://github.com/claudebot
 	"devart ado.net",      // https://www.devart.com/dotconnect/
 	"feedburner",          // http://www.feedburner.com
