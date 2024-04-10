@@ -224,6 +224,7 @@ var botPatterns = []string{
 	"paloaltonetworks",  // https://www.paloaltonetworks.com/
 	"rytebota",          // https://bot.ryte.com/
 	"scrapy",            // https://scrapy.org
+	"turnitin",          // https://www.turnitin.com/robot/crawlerinfo.html
 	"youbot",            // http://www.you.com/
 
 	// !!! Anonymous bots !!! //
