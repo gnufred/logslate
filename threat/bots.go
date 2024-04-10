@@ -191,6 +191,7 @@ var botPatterns = []string{
 	"uptime-kuma", // https://github.com/louislam/uptime-kuma
 
 	// !!! security scanner bots !!! //
+	"censysinspect",         // https://about.censys.io/
 	"detectify",             // https://detectify.com/bot/6c07c4e2-94e5-4719-8f74-57df06c6d54d
 	"edgescan",              // https://www.edgescan.com/
 	"whitehat pink panther", // https://www.synopsys.com/software-integrity/security-testing.html
