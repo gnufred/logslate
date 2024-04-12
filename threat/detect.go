@@ -48,7 +48,7 @@ func init() {
 // Detect threats and return information about them.
 func Detect(path, query, agent string) (Detection, error) {
 	var attackPtr *Attack
-	attack, score := attackScan(path, query)
+	attack, score := attackScan(path, query, agent)
 	if attack != NIL {
 		attackPtr = &Attack{
 			Type:  attack,
@@ -76,10 +76,10 @@ func Detect(path, query, agent string) (Detection, error) {
 }
 
 // attackScan searches for attack patterns in the URL query string and URL path.
-func attackScan(path, query string) (AttackType, uint32) {
+func attackScan(path, query, agent string) (AttackType, uint32) {
 	// Important: It's faster to scan longer strings than searching twice.
 	// See https://gitlab.com/gnufred/logslate/-/issues/71 for details.
-	attack, total := attackAhoSearch(attackAC, attackPatterns, path+query)
+	attack, total := attackAhoSearch(attackAC, attackPatterns, path+" "+query+" "+agent)
 	if total >= Threshold {
 		debug.Log(debug.VVV, "high_score", attack)
 		return attack.Type, total

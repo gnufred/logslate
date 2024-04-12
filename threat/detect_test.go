@@ -182,7 +182,7 @@ func TestMonoFlag(t *testing.T) {
 
 func TestAttacks(t *testing.T) {
 	testMatch := func(t *testing.T, hay string, exp result) {
-		ty, to := attackScan(hay, "")
+		ty, to := attackScan(hay, "", "")
 		got := result{Ty: ty, To: to}
 		if got != exp {
 			t.Errorf("query total doesn't match: got %v, exp %v, for %s", got, exp, hay)
@@ -338,10 +338,11 @@ func BenchmarkDetect(b *testing.B) {
 func BenchmarkDetectAttack(b *testing.B) {
 	path := "/filemanagement.php"
 	query := "action=dl&f=../../../../../../../../../../../etc/passwd%00"
+	agent := "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
 
 	// benchmark loop
 	for i := 0; i < b.N; i++ {
-		attackScan(query, path)
+		attackScan(query, path, agent)
 	}
 }
 
