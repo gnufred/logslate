@@ -19,8 +19,8 @@ var testPatterns = []ptrn{
 // detecting them again when adding new attack patterns.
 // IMPORTANT: Listed queries need to be "anonymized" as best as possible.
 func TestFalsePositives(t *testing.T) {
-	detectionShouldNotTrigger := func(t *testing.T, id int, query, path string) {
-		atkType, atkScore := attackScan(path, query)
+	detectionShouldNotTrigger := func(t *testing.T, id int, query, path, agent string) {
+		atkType, atkScore := attackScan(path, query, agent)
 		if atkType != 0 {
 			t.Errorf(
 				"%d: false positive found, attak type != 0, got %d",
@@ -52,8 +52,9 @@ func TestFalsePositives(t *testing.T) {
 		{8, "/c/p/v/id/12345", "'%20+%20p.key%20+%20(p.suffix%20%7C%7C%20'')"},
 	}
 
+	agent := "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
 	for _, d := range falsePositives {
-		detectionShouldNotTrigger(t, d.Id, d.Path, d.Query)
+		detectionShouldNotTrigger(t, d.Id, d.Path, d.Query, agent)
 	}
 }
 
