@@ -216,6 +216,7 @@ var botPatterns = []string{
 	"google-firebase",     // https://firebase.google.com/
 	"grammarly",           // https://www.grammarly.com/plagiarism-checker
 	"hesbot",              // https://hesbot.ir/
+	"hey",                 // https://github.com/rakyll/hey
 	"internetmeasurement", // https://internet-measurement.com/
 	"linespider",          // https://lin.ee/4dwxkth
 	"microsoft data access internet publishing provider dav",
