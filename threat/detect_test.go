@@ -311,10 +311,15 @@ func TestAdScan(t *testing.T) {
 		Exp   string
 	}{
 		{"nothing_to_see_here", ""},
+		{"utm_null=", ""},
+		{"utm_weDontWant=something", ""},
 		{"utm_medium=email", ""},
 		{"utm_source=google", "google"},
 		{"utm_source=facebook&utm_medium=email", "facebook"},
 		{"utm_source=pinterest&utm_medium=cpc&utm_campaign=black_friday&utm_id=007&utm_term=vaccum_cleaner&utm_content=ultra_clean_my_house_2k1", "pinterest"},
+		{"utm_campaign=google", "google"},
+		{"utm_campaign=facebook&utm_medium=email", "facebook"},
+		{"utm_campaign=pinterest&utm_medium=cpc&utm_campaign=black_friday&utm_id=007&utm_term=vaccum_cleaner&utm_content=ultra_clean_my_house_2k1", "pinterest"},
 	}
 
 	for _, d := range data {

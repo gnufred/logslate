@@ -42,7 +42,7 @@ type Attack struct {
 func init() {
 	// MustCompile() cost about 90% of the execution time.
 	// We need to run this outside of the detection loop.
-	adRegexp = regexp.MustCompile(`utm_source=(\w*)`)
+	adRegexp = regexp.MustCompile(`utm_(?:source|campaign)=(\w*)`)
 }
 
 // Detect threats and return information about them.
