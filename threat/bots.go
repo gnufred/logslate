@@ -11,6 +11,7 @@ var botPatterns = []string{
 
 	// http://www.google.com/bot.html
 	// http://www.google.com/adsbot.html
+	// https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers
 	"adsbot-google",
 	"adsbot-google-mobile",
 	"apis-google",
@@ -20,6 +21,7 @@ var botPatterns = []string{
 	"google-read-aloud",
 	"google-safety",
 	"google-site-verification",
+	"google-extended",
 	"googleassociationservice", // https://support.google.com/webmasters/answer/9419894
 	"googlebot",
 	"googlebot-image",
@@ -196,6 +198,16 @@ var botPatterns = []string{
 	"edgescan",              // https://www.edgescan.com/
 	"whitehat pink panther", // https://www.synopsys.com/software-integrity/security-testing.html
 
+	// !!! Anthropic bots !!! //
+	// Their bots have been overly aggressive, and there's more everyday.
+	//
+	// https://darkvisitors.com/agents/anthropic-ai
+	// https://github.com/claudebot
+	// https://support.anthropic.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler
+	"anthropic-ai",
+	"claude-web",
+	"claudebot",
+
 	// !!! other bots !!! //
 	// this section include anything that's not in another category and can be a threat.
 	// reasons will widly vary based on the specific bot.
@@ -208,7 +220,6 @@ var botPatterns = []string{
 	"celigo",              // https://www.celigo.com/
 	"chatgpt-user",        // https://platform.openai.com/docs/plugins/bot
 	"cincraw",             // https://cincrawdata.net/
-	"claudebot",           // https://github.com/claudebot
 	"devart ado.net",      // https://www.devart.com/dotconnect/
 	"feedburner",          // http://www.feedburner.com
 	"feedonomics",         // https://feedonomics.com/
