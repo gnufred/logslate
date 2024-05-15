@@ -8,7 +8,8 @@ import (
 )
 
 // Advertising compiled regexp
-var adRegexp *regexp.Regexp
+var regexpAdsGeneric *regexp.Regexp
+var regexpAdsGoogle *regexp.Regexp
 
 // Holds the score that we need to flag a searches as an attack.
 var Threshold = uint32(5)
@@ -42,7 +43,8 @@ type Attack struct {
 func init() {
 	// MustCompile() cost about 90% of the execution time.
 	// We need to run this outside of the detection loop.
-	adRegexp = regexp.MustCompile(`utm_(?:source|campaign)=(\w*)`)
+	regexpAdsGeneric = regexp.MustCompile(`utm_(?:source|campaign)=(\w*)`)
+	regexpAdsGoogle = regexp.MustCompile(`(?i)(gclid|dclid)=`)
 }
 
 // Detect threats and return information about them.
@@ -137,11 +139,22 @@ func botAhoSearch(AC *ac.AhoCorasick, haystack string) (string, error) {
 
 // adScan search a query string for "utm_source" query param and returns the value.
 func adScan(query string) string {
-	matches := adRegexp.FindStringSubmatch(query)
+	var matches []string
 
-	if len(matches) == 0 {
-		return ""
+	// Search for generic advertisement.
+	matches = regexpAdsGeneric.FindStringSubmatch(query)
+	if len(matches) > 0 {
+		return matches[1]
 	}
 
-	return matches[1]
+	// Search for Google advertisement.
+	// https://support.google.com/google-ads/answer/9744275?hl=en
+	// URLs for such campaigns will include `gclid=`.
+	// Legacy param is `dclid=` which is still in use.
+	matches = regexpAdsGoogle.FindStringSubmatch(query)
+	if len(matches) > 0 {
+		return matches[1]
+	}
+
+	return ""
 }
