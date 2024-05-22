@@ -211,25 +211,26 @@ var botPatterns = []string{
 	// !!! other bots !!! //
 	// this section include anything that's not in another category and can be a threat.
 	// reasons will widly vary based on the specific bot.
-	"algolia crawler",     // https://www.algolia.com/doc/tools/crawler/getting-started/overview/
-	"alumio",              // https://www.alumio.com/
-	"azure-logic-apps",    // https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview
-	"barkrowler",          // https://babbar.tech/crawler
-	"bazaarvoice",         // https://knowledge.bazaarvoice.com/wp-content/conversations/en_US/Collect/DCC.html
-	"ccbot",               // https://commoncrawl.org/faq/
-	"celigo",              // https://www.celigo.com/
-	"chatgpt-user",        // https://platform.openai.com/docs/plugins/bot
-	"cincraw",             // https://cincrawdata.net/
-	"devart ado.net",      // https://www.devart.com/dotconnect/
-	"feedburner",          // http://www.feedburner.com
-	"feedonomics",         // https://feedonomics.com/
-	"google-apps-script",  // https://script.google.com
-	"google-firebase",     // https://firebase.google.com/
-	"grammarly",           // https://www.grammarly.com/plagiarism-checker
-	"hesbot",              // https://hesbot.ir/
-	"hey",                 // https://github.com/rakyll/hey
-	"internetmeasurement", // https://internet-measurement.com/
-	"linespider",          // https://lin.ee/4dwxkth
+	"algolia crawler",        // https://www.algolia.com/doc/tools/crawler/getting-started/overview/
+	"alumio",                 // https://www.alumio.com/
+	"amazonproductdiscovery", // https://vendorcentral.amazon.com/support/amazonproductbot
+	"azure-logic-apps",       // https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview
+	"barkrowler",             // https://babbar.tech/crawler
+	"bazaarvoice",            // https://knowledge.bazaarvoice.com/wp-content/conversations/en_US/Collect/DCC.html
+	"ccbot",                  // https://commoncrawl.org/faq/
+	"celigo",                 // https://www.celigo.com/
+	"chatgpt-user",           // https://platform.openai.com/docs/plugins/bot
+	"cincraw",                // https://cincrawdata.net/
+	"devart ado.net",         // https://www.devart.com/dotconnect/
+	"feedburner",             // http://www.feedburner.com
+	"feedonomics",            // https://feedonomics.com/
+	"google-apps-script",     // https://script.google.com
+	"google-firebase",        // https://firebase.google.com/
+	"grammarly",              // https://www.grammarly.com/plagiarism-checker
+	"hesbot",                 // https://hesbot.ir/
+	"hey",                    // https://github.com/rakyll/hey
+	"internetmeasurement",    // https://internet-measurement.com/
+	"linespider",             // https://lin.ee/4dwxkth
 	"microsoft data access internet publishing provider dav",
 	"microsoft-webdav-miniredir",
 	"nostocrawlerbot",   // http://my.nosto.com/
