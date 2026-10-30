@@ -70,7 +70,7 @@ PARSE, REPARSE
 
 MORE
   For detailed usage instructions read:
-  https://gitlab.com/gnufred/logslate/-/blob/main/.docs/usage.md
+  https://github.com/gnufred/logslate/blob/main/.docs/usage.md
 `)
 
 }
